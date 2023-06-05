@@ -5,7 +5,7 @@
  * @format
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
@@ -15,6 +15,7 @@ import {
   Text,
   useColorScheme,
   View,
+  TouchableOpacity,
 } from 'react-native';
 
 import {
@@ -24,6 +25,8 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+
+import Slider from '@react-native-community/slider';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -62,6 +65,36 @@ function App(): JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  const [tempo, setTempo] = useState(100)
+  const [isPlaying, togglePlaying] = useState(false)
+  const [showDot, setShowDot] = useState(true)
+
+  useEffect(() => {
+    const interval = setInterval( () => {
+      setShowDot(true)
+        setTimeout(()=>{
+          setShowDot(false)
+        }, 100)
+    }, tempo)
+
+    return () => {
+      clearInterval(interval)
+    }
+
+  }, [tempo])
+
+  // useEffect(() => {
+  //   console.log("effect trigg")
+
+  //   if (isPlaying) {
+  //     setInterval(() => {
+        
+  //     }, 500)
+  //   } else {
+
+  //   }
+  // }, [isPlaying])
+
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
@@ -74,10 +107,46 @@ function App(): JSX.Element {
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
+            alignItems: "center",
           }}>
-          <Section title="Mako Metronome">
-            Getting started...
+          <Section title="Mako Metronome"></Section>
+
+          <Section title="Tempo">
+            { tempo }
           </Section>
+
+          <Slider
+              style={{width: 300, height: 20}}
+              minimumValue={20}
+              maximumValue={1000}
+              step={1}
+              onValueChange={(v) => setTempo(v)}
+              value={tempo}
+              minimumTrackTintColor="#FFFFFF"
+              maximumTrackTintColor="#333333"
+            />
+
+          <Section title="">
+            <TouchableOpacity onPress={() => togglePlaying(!isPlaying)}>
+              <View>
+                <Text style={{color: "white"}}>
+                  Play / Pause
+                </Text>
+              </View>
+              
+            </TouchableOpacity> 
+
+          </Section>
+
+          <Section title={isPlaying ? "Playing" : "Paused"}></Section>
+
+          <Section title="">
+            {showDot && isPlaying && 
+            <View style={{width: 100, height: 100, backgroundColor: "yellow", borderRadius: 100}}></View>
+            }
+            
+          </Section>
+          
         </View>
       </ScrollView>
     </SafeAreaView>
