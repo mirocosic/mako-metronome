@@ -66,6 +66,7 @@ function App(): JSX.Element {
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+    flex: 1
   };
 
   const [tempo, setTempo] = useState(100)
@@ -122,36 +123,21 @@ function App(): JSX.Element {
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
       />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
+      <View
+        style={{paddingBottom: 50, flex: 1}}>
         <View
           style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
+            flex: 1,
             alignItems: "center",
+            justifyContent: "space-evenly",
           }}>
           <Section title="Mako Metronome"></Section>
 
-          <Section title="Tempo (bpm)">
-            { tempo }
-          </Section>
+          <View style={{flexDirection: "row"}}>
 
-          <Slider
-              style={{width: 300, height: 20}}
-              minimumValue={10}
-              maximumValue={300}
-              step={1}
-              onValueChange={(v) => setTempo(v)}
-              value={tempo}
-              minimumTrackTintColor="#FFFFFF"
-              maximumTrackTintColor="#333333"
-            />
-
-          <Section title="">
             <TouchableOpacity onPress={() => togglePlaying(!isPlaying)}>
-              <View style={{backgroundColor: "lightblue", padding: 10, borderRadius: 10, alignItems: "center"}}>
+              <View style={{backgroundColor: "lightblue", padding: 20, borderRadius: 10, alignItems: "center", margin:10}}>
                 <Text style={{color: "black", fontSize: 20}}>
                 {isPlaying ? "Pause" : "Play"}
                 </Text>
@@ -159,14 +145,11 @@ function App(): JSX.Element {
               
             </TouchableOpacity> 
 
-          </Section>
-
-          <Section title="">
             <TouchableOpacity onPress={() => {
               getTapTempo()
               playSound()
               }}>
-              <View style={{backgroundColor: "lightblue", padding: 20, borderRadius: 10, alignItems: "center"}}>
+              <View style={{backgroundColor: "lightblue", padding: 20, borderRadius: 10, alignItems: "center", margin: 10}}>
                 <Text style={{color: "black", fontSize: 20}}>
                 Tap
                 </Text>
@@ -174,17 +157,42 @@ function App(): JSX.Element {
               
             </TouchableOpacity> 
 
-          </Section>
+          </View>
 
           <Section title="">
+            
+
+          </Section>
+
+          <View>
+          <Section title={`Tempo - ${ tempo } bpm `}>
+            
+            </Section>
+  
+            <Slider
+                style={{width: 300, height: 20}}
+                minimumValue={10}
+                maximumValue={300}
+                step={1}
+                onValueChange={(v) => setTempo(v)}
+                value={tempo}
+                minimumTrackTintColor="#FFFFFF"
+                maximumTrackTintColor="#333333"
+              />
+
+          </View>
+
+          
+
+          {/* <Section title="">
             {showDot && isPlaying && 
               <View style={{width: 100, height: 100, backgroundColor: "yellow", borderRadius: 100}}></View>
             }
             
-          </Section>
+          </Section> */}
           
         </View>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
