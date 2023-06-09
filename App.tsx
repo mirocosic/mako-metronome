@@ -1,9 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
 
 import React, { useState, useEffect } from 'react';
 import type {PropsWithChildren} from 'react';
@@ -18,15 +12,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-import Slider from '@react-native-community/slider';
+import { Colors } from 'react-native/Libraries/NewAppScreen'
+import Slider from '@react-native-community/slider'
+import RNSound from "react-native-sound"
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -58,6 +46,21 @@ function Section({children, title}: SectionProps): JSX.Element {
   );
 }
 
+var sound = new RNSound('click2.mp3', RNSound.MAIN_BUNDLE, (error) => {
+  if (error) {
+    console.log('failed to load the sound', error)
+    return
+  }
+})
+
+const bpmToMs = (bpm) => {
+  return 1000 / (bpm / 60)
+}
+
+const msToBpm = (ms) => {
+  return Math.round((1000 / ms ) * 60)
+}
+
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -69,31 +72,51 @@ function App(): JSX.Element {
   const [isPlaying, togglePlaying] = useState(false)
   const [showDot, setShowDot] = useState(true)
 
-  useEffect(() => {
-    const interval = setInterval( () => {
-      setShowDot(true)
-        setTimeout(()=>{
-          setShowDot(false)
-        }, 100)
-    }, tempo)
+  const [lastTap, setLastTap] = useState(0)
 
+  const getTapTempo = () => {
+
+    if (lastTap === 0) {
+      setLastTap(Date.now())
+      return;
+    } else {
+      const diff = Date.now() - lastTap
+      console.log("ms diff: ", diff)
+      console.log("bpm diff:", msToBpm(diff))
+      setLastTap(Date.now())
+      setTempo(msToBpm(diff))
+    }
+    
+
+
+  }
+
+  const playSound = () => {
+    sound.play()
+
+    // this produces uneven metronome on higher tempos
+
+    // sound.stop(() => {
+    //   sound.play()
+    // })
+  }
+  
+   useEffect(() => {
+
+    if (isPlaying) { playSound() }
+
+    // run interval fn
+    const interval = setInterval(() => {
+      if (isPlaying) { playSound() }
+    }, bpmToMs(tempo))
+
+    // cleanup interval fn
     return () => {
+      console.log("clear int")
       clearInterval(interval)
     }
 
-  }, [tempo])
-
-  // useEffect(() => {
-  //   console.log("effect trigg")
-
-  //   if (isPlaying) {
-  //     setInterval(() => {
-        
-  //     }, 500)
-  //   } else {
-
-  //   }
-  // }, [isPlaying])
+   }, [tempo, isPlaying])
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -111,14 +134,14 @@ function App(): JSX.Element {
           }}>
           <Section title="Mako Metronome"></Section>
 
-          <Section title="Tempo">
+          <Section title="Tempo (bpm)">
             { tempo }
           </Section>
 
           <Slider
               style={{width: 300, height: 20}}
-              minimumValue={20}
-              maximumValue={1000}
+              minimumValue={10}
+              maximumValue={300}
               step={1}
               onValueChange={(v) => setTempo(v)}
               value={tempo}
@@ -128,9 +151,9 @@ function App(): JSX.Element {
 
           <Section title="">
             <TouchableOpacity onPress={() => togglePlaying(!isPlaying)}>
-              <View>
-                <Text style={{color: "white"}}>
-                  Play / Pause
+              <View style={{backgroundColor: "lightblue", padding: 10, borderRadius: 10, alignItems: "center"}}>
+                <Text style={{color: "black", fontSize: 20}}>
+                {isPlaying ? "Pause" : "Play"}
                 </Text>
               </View>
               
@@ -138,11 +161,24 @@ function App(): JSX.Element {
 
           </Section>
 
-          <Section title={isPlaying ? "Playing" : "Paused"}></Section>
+          <Section title="">
+            <TouchableOpacity onPress={() => {
+              getTapTempo()
+              playSound()
+              }}>
+              <View style={{backgroundColor: "lightblue", padding: 20, borderRadius: 10, alignItems: "center"}}>
+                <Text style={{color: "black", fontSize: 20}}>
+                Tap
+                </Text>
+              </View>
+              
+            </TouchableOpacity> 
+
+          </Section>
 
           <Section title="">
             {showDot && isPlaying && 
-            <View style={{width: 100, height: 100, backgroundColor: "yellow", borderRadius: 100}}></View>
+              <View style={{width: 100, height: 100, backgroundColor: "yellow", borderRadius: 100}}></View>
             }
             
           </Section>

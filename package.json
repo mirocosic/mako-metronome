@@ -11,8 +11,11 @@
   },
   "dependencies": {
     "@react-native-community/slider": "^4.4.2",
+    "expo": "^48.0.0",
+    "expo-av": "~13.2.1",
     "react": "18.2.0",
-    "react-native": "0.71.8"
+    "react-native": "0.71.8",
+    "react-native-sound": "^0.11.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
