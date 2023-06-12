@@ -10,6 +10,7 @@ import {
   useColorScheme,
   View,
   TouchableOpacity,
+  TextInput,
 } from 'react-native';
 
 import { Colors } from 'react-native/Libraries/NewAppScreen'
@@ -72,8 +73,10 @@ function App(): JSX.Element {
   const ticks = [...Array(300).keys()];
 
   const scrollRef = useRef()
+  const inputRef = useRef()
 
   const [tempo, setTempo] = useState(100)
+  const [input, setInput] = useState(100)
   const [isPlaying, togglePlaying] = useState(false)
   const [showDot, setShowDot] = useState(true)
 
@@ -135,7 +138,7 @@ function App(): JSX.Element {
           style={{
             flex: 1,
             alignItems: "center",
-            justifyContent: "space-evenly",
+            // justifyContent: "space-evenly",
           }}>
           <Section title="Mako Metronome"></Section>
 
@@ -170,7 +173,27 @@ function App(): JSX.Element {
           </Section>
 
           <View>
-            <Section title={`Tempo - ${ tempo } bpm `}></Section>
+            <TextInput
+              ref={inputRef}
+              value={ inputRef.current.isFocused() ? String(input) : String(tempo)}
+              style={{color: "white", fontSize: 40, padding: 10, marginBottom: 50, borderWidth: 1, borderColor: "gray", borderRadius: 10, width: 100}}
+              keyboardType="number-pad"
+              returnKeyType={ 'done' }
+              onChangeText={(v) => {
+                console.log(v)
+                setInput(v)
+              }}
+              onSubmitEditing={()=>{
+                if (Number(input) > 0 && Number(input) < 400) {
+                  setTempo(Number(input))
+                } else {
+                  setInput(String(tempo))
+                }
+                  
+              }}
+            />
+
+            {/* <Text style={{color: "white", fontSize: 40}}>{tempo}</Text> */}
   
             {/* <Slider
                 style={{width: 300, height: 20}}
