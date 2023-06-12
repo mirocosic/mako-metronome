@@ -175,10 +175,11 @@ function App(): JSX.Element {
           <View>
             <TextInput
               ref={inputRef}
-              value={ inputRef.current.isFocused() ? String(input) : String(tempo)}
-              style={{color: "white", fontSize: 40, padding: 10, marginBottom: 50, borderWidth: 1, borderColor: "gray", borderRadius: 10, width: 100}}
+              value={ inputRef.current && inputRef.current.isFocused() ? String(input) : String(tempo)}
+              style={{color: "white", fontSize: 40, padding: 10, marginBottom: 50, borderWidth: 1, borderColor: "gray", borderRadius: 10, width: 100, alignItems:"center", justifyContent: "center", textAlign: "center"}}
               keyboardType="number-pad"
               returnKeyType={ 'done' }
+              onFocus={() => setInput("")}
               onChangeText={(v) => {
                 console.log(v)
                 setInput(v)
@@ -211,7 +212,7 @@ function App(): JSX.Element {
 
           </View>
 
-          <View style={{height: 40, flexDirection: "row", alignItems: "center", justifyContent: "space-evenly"}}>
+          <View style={{height: 50, flexDirection: "row", alignItems: "center", justifyContent: "space-evenly"}}>
 
           <TouchableOpacity
               style={{paddingHorizontal: 10}}
@@ -222,7 +223,7 @@ function App(): JSX.Element {
               <Text style={{color: "white", fontSize:35}}>-5</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={{paddingHorizontal: 10}}
               onPress={() => {
                 scrollRef.current.scrollTo({x: (tempo - 1) * 10, y: 0, animated: true})
@@ -232,9 +233,9 @@ function App(): JSX.Element {
 
             <ScrollView
               ref={scrollRef}
-              style={{width: 100, flex: 1, backgroundColor: "black", height: 30}}
+              style={{width: 100, flex: 1, height: 50}}
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{height: 30}}
+              contentContainerStyle={{height: 40}}
               horizontal={true}
               scrollEventThrottle={16}
               onScroll={(ev) => {
@@ -249,7 +250,7 @@ function App(): JSX.Element {
 
               { ticks.map((item, idx)=>{
                 return(
-                  <View key={idx} style={{backgroundColor: "white", width: 5, height: 30, margin: 5}}></View>
+                  <View key={idx} style={{backgroundColor: "white", width: 5, height: 50, margin: 5}}></View>
                 )
               })
 
