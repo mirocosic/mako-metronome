@@ -11,6 +11,7 @@ import {
   View,
   TouchableOpacity,
   TextInput,
+  KeyboardAvoidingView,
 } from 'react-native';
 
 import { Colors } from 'react-native/Libraries/NewAppScreen'
@@ -93,6 +94,8 @@ function App(): JSX.Element {
       console.log("bpm diff:", msToBpm(diff))
       setLastTap(Date.now())
       setTempo(msToBpm(diff))
+      //maybe
+      //scrollRef.current.scrollTo({x: msToBpm(diff) * 10, y: 0, animated: true})
     }
     
 
@@ -132,13 +135,14 @@ function App(): JSX.Element {
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
       />
-      <View
+      <KeyboardAvoidingView
+        behavior="padding"
         style={{paddingBottom: 50, flex: 1}}>
         <View
           style={{
             flex: 1,
             alignItems: "center",
-            // justifyContent: "space-evenly",
+            justifyContent: "space-evenly",
           }}>
           <Section title="Mako Metronome"></Section>
 
@@ -167,16 +171,35 @@ function App(): JSX.Element {
 
           </View>
 
-          <Section title="">
+          {/* <Section title="">
             
 
-          </Section>
+          </Section> */}
 
-          <View>
+          <View style={{margin: 20, flexDirection: "row", alignItems: "center", justifyContent: "space-evenly"}}>
+
+           <TouchableOpacity
+              style={{paddingHorizontal: 10}}
+              onPress={() => {
+                scrollRef.current.scrollTo({x: (tempo - 5) * 10, y: 0, animated: true})
+                
+              }}>
+              <Text style={{color: "white", fontSize:25}}>-5</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{paddingHorizontal: 10}}
+              onPress={() => {
+                scrollRef.current.scrollTo({x: (tempo - 1) * 10, y: 0, animated: true})
+              }}>
+              <Text style={{color: "white", fontSize:35}}>-1</Text>
+            </TouchableOpacity>
+
+            
             <TextInput
               ref={inputRef}
               value={ inputRef.current && inputRef.current.isFocused() ? String(input) : String(tempo)}
-              style={{color: "white", fontSize: 40, padding: 10, marginBottom: 50, borderWidth: 1, borderColor: "gray", borderRadius: 10, width: 100, alignItems:"center", justifyContent: "center", textAlign: "center"}}
+              style={{color: "white", fontSize: 40, padding: 10, borderWidth: 1, borderColor: "gray", borderRadius: 10, width: 100, height: 60, alignItems:"center", justifyContent: "center", textAlign: "center"}}
               keyboardType="number-pad"
               returnKeyType={ 'done' }
               onFocus={() => setInput("")}
@@ -187,12 +210,32 @@ function App(): JSX.Element {
               onSubmitEditing={()=>{
                 if (Number(input) > 0 && Number(input) < 400) {
                   setTempo(Number(input))
+                  scrollRef.current.scrollTo({x: Number(input) * 10, y: 0, animated: true})
                 } else {
                   setInput(String(tempo))
                 }
                   
               }}
             />
+
+            <TouchableOpacity
+              style={{paddingHorizontal: 10}}
+              onPress={() => {
+                scrollRef.current.scrollTo({x: (tempo + 1) * 10, y: 0, animated: true})
+                
+              }}>
+              <Text style={{color: "white", fontSize:35}}>+1</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{paddingHorizontal: 10}}
+              onPress={() => {
+                scrollRef.current.scrollTo({x: (tempo + 5) * 10, y: 0, animated: true})
+                
+              }}>
+              <Text style={{color: "white", fontSize: 25}}>+5</Text>
+            </TouchableOpacity>
+            
 
             {/* <Text style={{color: "white", fontSize: 40}}>{tempo}</Text> */}
   
@@ -214,7 +257,7 @@ function App(): JSX.Element {
 
           <View style={{height: 50, flexDirection: "row", alignItems: "center", justifyContent: "space-evenly"}}>
 
-          <TouchableOpacity
+            {/* <TouchableOpacity
               style={{paddingHorizontal: 10}}
               onPress={() => {
                 scrollRef.current.scrollTo({x: (tempo - 5) * 10, y: 0, animated: true})
@@ -229,19 +272,17 @@ function App(): JSX.Element {
                 scrollRef.current.scrollTo({x: (tempo - 1) * 10, y: 0, animated: true})
               }}>
               <Text style={{color: "white", fontSize:35}}>-1</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <ScrollView
               ref={scrollRef}
-              style={{width: 100, flex: 1, height: 50}}
+              style={{width: 100, flex: 1, height: 50, marginHorizontal: 20}}
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{height: 40}}
               horizontal={true}
               scrollEventThrottle={16}
               onScroll={(ev) => {
-                console.log(ev.nativeEvent.contentOffset)
                 const bpm = Math.round (ev.nativeEvent.contentOffset.x / 10)
-                console.log(bpm)
                 if (bpm > 0 && bpm <= 400) {
                   setTempo(bpm)
                 }
@@ -258,7 +299,7 @@ function App(): JSX.Element {
 
             </ScrollView>
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={{paddingHorizontal: 10}}
               onPress={() => {
                 scrollRef.current.scrollTo({x: (tempo + 1) * 10, y: 0, animated: true})
@@ -274,7 +315,7 @@ function App(): JSX.Element {
                 
               }}>
               <Text style={{color: "white", fontSize:35}}>+5</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
           </View>
 
@@ -290,7 +331,7 @@ function App(): JSX.Element {
           </Section> */}
           
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
