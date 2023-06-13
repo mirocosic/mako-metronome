@@ -14,6 +14,8 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 
+import * as Haptics from 'expo-haptics';
+
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 import Slider from '@react-native-community/slider'
 import RNSound from "react-native-sound"
@@ -79,6 +81,7 @@ function App(): JSX.Element {
   const [tempo, setTempo] = useState(100)
   const [input, setInput] = useState(100)
   const [isPlaying, togglePlaying] = useState(false)
+  const [isVibrateEnabled, setIsVibrateEnabled] = useState(false)
   const [showDot, setShowDot] = useState(true)
 
   const [lastTap, setLastTap] = useState(0)
@@ -114,11 +117,17 @@ function App(): JSX.Element {
   
    useEffect(() => {
 
-    if (isPlaying) { playSound() }
+    if (isPlaying) {
+      playSound()
+      if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
+    }
 
     // run interval fn
     const interval = setInterval(() => {
-      if (isPlaying) { playSound() }
+      if (isPlaying) {
+        playSound()
+        if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
+      }
     }, bpmToMs(tempo))
 
     // cleanup interval fn
@@ -126,9 +135,11 @@ function App(): JSX.Element {
       clearInterval(interval)
     }
 
-   }, [tempo, isPlaying])
+   }, [tempo, isPlaying, isVibrateEnabled])
 
    console.log("tempo: " , tempo)
+
+   console.log("vibrate enabled: ", isVibrateEnabled)
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -158,6 +169,7 @@ function App(): JSX.Element {
             </TouchableOpacity> 
 
             <TouchableOpacity onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
               getTapTempo()
               playSound()
               }}>
@@ -167,6 +179,14 @@ function App(): JSX.Element {
                 </Text>
               </View>
               
+            </TouchableOpacity> 
+
+            <TouchableOpacity onPress={() => setIsVibrateEnabled(!isVibrateEnabled)}>
+              <View style={{backgroundColor: "lightblue", padding: 20, borderRadius: 10, alignItems: "center", margin:10}}>
+                <Text style={{color: "black", fontSize: 20}}>
+                {isVibrateEnabled ? "No vibrate" : "Vibrate"}
+                </Text>
+              </View>
             </TouchableOpacity> 
 
           </View>
@@ -286,6 +306,11 @@ function App(): JSX.Element {
                 if (bpm > 0 && bpm <= 400) {
                   setTempo(bpm)
                 }
+
+                if ((bpm !== tempo) && (bpm > 0) && (bpm <= 400)) {
+                  Haptics.selectionAsync()
+                }
+
               }}
             >
 
