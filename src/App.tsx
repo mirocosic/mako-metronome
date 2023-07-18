@@ -84,19 +84,35 @@ function App(): JSX.Element {
   const [isVibrateEnabled, setIsVibrateEnabled] = useState(false)
   const [showDot, setShowDot] = useState(true)
 
-  const [lastTap, setLastTap] = useState(0)
+  const [taps, setTaps] = useState([0])
+  const [tapMessage, setTapMessage] = useState("")
 
   const getTapTempo = () => {
 
+    const lastTap = taps[taps.length - 1]
+
     if (lastTap === 0) {
-      setLastTap(Date.now())
+      setTaps([Date.now()])
+      setTapMessage("Keep tapping")
+      return;
+    } else if ( (Date.now() - lastTap) > 3000 ) {
+      setTaps([Date.now()])
+      setTapMessage("Keep tapping")
       return;
     } else {
-      const diff = Date.now() - lastTap
-      console.log("ms diff: ", diff)
-      console.log("bpm diff:", msToBpm(diff))
-      setLastTap(Date.now())
-      setTempo(msToBpm(diff))
+      const diff1 = Date.now() - lastTap
+      const diff2 = lastTap - taps[taps.length - 2]
+      const diff3 = taps[taps.length - 2] - taps[taps.length - 3]
+
+      const avgTaps = (diff1 + diff2 + diff3) / 3
+
+      setTaps([...taps, Date.now()])
+    
+      if (avgTaps) {
+        setTapMessage("")  
+        setTempo(msToBpm(avgTaps))
+      }
+      
       //maybe
       //scrollRef.current.scrollTo({x: msToBpm(diff) * 10, y: 0, animated: true})
     }
@@ -138,8 +154,6 @@ function App(): JSX.Element {
    }, [tempo, isPlaying, isVibrateEnabled])
 
    console.log("tempo: " , tempo)
-
-   console.log("vibrate enabled: ", isVibrateEnabled)
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -189,6 +203,10 @@ function App(): JSX.Element {
               </View>
             </TouchableOpacity> 
 
+          </View>
+
+          <View>
+            <Text style={{color:"white"}}>{tapMessage}</Text>
           </View>
 
           {/* <Section title="">
