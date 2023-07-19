@@ -17,7 +17,6 @@ import {
 import * as Haptics from 'expo-haptics';
 
 import { Colors } from 'react-native/Libraries/NewAppScreen'
-import Slider from '@react-native-community/slider'
 import RNSound from "react-native-sound"
 
 type SectionProps = PropsWithChildren<{
@@ -87,6 +86,12 @@ function App(): JSX.Element {
   const [taps, setTaps] = useState([0])
   const [tapMessage, setTapMessage] = useState("")
 
+  // todo, rename these, probably something to do with time signatures, accents, etc...
+  const [indicators, setIndicators] = useState({first: {active: true, indicating: false},
+                                                second: {active: true, indicating: false},
+                                                third: {active: true, indicating: false},
+                                                fourth: {active: false, indicating: false}})
+
   const getTapTempo = () => {
 
     const lastTap = taps[taps.length - 1]
@@ -130,20 +135,82 @@ function App(): JSX.Element {
     //   sound.play()
     // })
   }
+
+  const showIndicator = (currentIndicator) => {
+
+    setIndicators({
+      first: {
+        ...indicators.first,
+        indicating: currentIndicator === 1 && indicators.first.active
+      },
+      second: {
+        ...indicators.second,
+        indicating: currentIndicator === 2 && indicators.second.active
+      },
+      third: {
+        ...indicators.third,
+        indicating: currentIndicator === 3 && indicators.third.active
+      }, 
+      fourth: {
+        ...indicators.fourth,
+        indicating: currentIndicator === 4 && indicators.fourth.active
+      },
+    })
+    setTimeout(() => {
+      setIndicators({
+      first: {
+        ...indicators.first,
+        indicating: false
+      },
+      second: {
+        ...indicators.second,
+        indicating: false
+      },
+      third: {
+        ...indicators.third,
+        indicating: false
+      }, 
+      fourth: {
+        ...indicators.fourth,
+        indicating: false
+      },
+    })
+    }, 200)
+
+  }
   
    useEffect(() => {
+
+    let currentIndicator = 1
 
     if (isPlaying) {
       playSound()
       if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
+      
+      showIndicator(currentIndicator)
+
+      if(currentIndicator === 4) {
+        currentIndicator = 1
+      } else {
+        currentIndicator = currentIndicator + 1
+      }
     }
 
     // run interval fn
     const interval = setInterval(() => {
+
       if (isPlaying) {
         playSound()
         if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
+        showIndicator(currentIndicator)
+
+        if(currentIndicator === 4) {
+          currentIndicator = 1
+        } else {
+          currentIndicator = currentIndicator + 1
+        }
       }
+
     }, bpmToMs(tempo))
 
     // cleanup interval fn
@@ -170,6 +237,32 @@ function App(): JSX.Element {
             justifyContent: "space-evenly",
           }}>
           <Section title="Mako Metronome"></Section>
+
+          <View style={{flexDirection: "row"}}>
+            <TouchableOpacity
+              style={[styles.indicatorBox,
+                      indicators.first.active && {backgroundColor: "lightgray"},
+                      indicators.first.indicating && {backgroundColor: "teal"}]}
+              onPress={() => setIndicators({...indicators, first: {...indicators.first, active: !indicators.first.active}})} />
+
+            <TouchableOpacity
+              style={[styles.indicatorBox,
+                      indicators.second.active && {backgroundColor: "lightgray"},
+                      indicators.second.indicating && {backgroundColor: "teal"}]}
+              onPress={() => setIndicators({...indicators, second: {...indicators.second, active: !indicators.second.active}})} />
+            
+            <TouchableOpacity
+              style={[styles.indicatorBox,
+                      indicators.third.active && {backgroundColor: "lightgray"},
+                      indicators.third.indicating && {backgroundColor: "teal"}]}
+              onPress={() => setIndicators({...indicators, third: {...indicators.third, active: !indicators.third.active}})} />
+
+            <TouchableOpacity
+              style={[styles.indicatorBox,
+                      indicators.fourth.active && {backgroundColor: "lightgray"},
+                      indicators.fourth.indicating && {backgroundColor: "teal"}]}
+              onPress={() => setIndicators({...indicators, fourth: {...indicators.fourth, active: !indicators.fourth.active}})} />
+          </View>
 
           <View style={{flexDirection: "row"}}>
 
@@ -396,6 +489,14 @@ const styles = StyleSheet.create({
   highlight: {
     fontWeight: '700',
   },
+
+  indicatorBox: {
+    width: 50, height: 50, 
+    borderRadius: 6,
+    // backgroundColor: "teal", 
+    borderColor: "lightgray", 
+    borderWidth: 1,
+    margin: 10}
 });
 
 export default App;
