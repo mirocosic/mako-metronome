@@ -19,6 +19,13 @@ import * as Haptics from 'expo-haptics';
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 import RNSound from "react-native-sound"
 
+
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import Settings from "./screens/settings" 
+
+
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
@@ -64,7 +71,9 @@ const msToBpm = (ms) => {
   return Math.round((1000 / ms ) * 60)
 }
 
-function App(): JSX.Element {
+const Stack = createNativeStackNavigator();
+
+function App({navigation}): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
@@ -236,7 +245,11 @@ function App(): JSX.Element {
             alignItems: "center",
             justifyContent: "space-evenly",
           }}>
-          <Section title="Mako Metronome"></Section>
+          <Section title="Mako Metronome">
+            <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
+              <Text style={{color: "white", textAlign: "center"}}>⚙️ Settings</Text>
+            </TouchableOpacity>
+          </Section>
 
           <View style={{flexDirection: "row"}}>
             <TouchableOpacity
@@ -493,10 +506,18 @@ const styles = StyleSheet.create({
   indicatorBox: {
     width: 50, height: 50, 
     borderRadius: 6,
-    // backgroundColor: "teal", 
     borderColor: "lightgray", 
     borderWidth: 1,
     margin: 10}
 });
 
-export default App;
+export default function Main() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="App">
+        <Stack.Screen name="Home" component={App} />
+        <Stack.Screen name="Settings" component={Settings} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  )
+}
