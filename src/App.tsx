@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import Settings from "./screens/settings"
 import Metronome from "./screens/metronome"
+import Presets from "./screens/presets"
 
 import { PersistGate } from 'redux-persist/integration/react'
 import {store, persistor} from './store'
@@ -25,6 +26,7 @@ export default function Main() {
           <Stack.Navigator initialRouteName="Metronome">
             <Stack.Screen name="Home" component={Metronome} />
             <Stack.Screen name="Settings" component={Settings} />
+            <Stack.Screen name="Presets" component={Presets} />
           </Stack.Navigator>
         </NavigationContainer>
       </PersistGate>
