@@ -55,6 +55,22 @@ const presetSlice = createSlice({
   }
 })
 
+const indicatorsSlice = createSlice({
+  name: "indicators",
+  initialState: [{active: true, indicating: false},
+                 {active: true, indicating: false},
+                 {active: true, indicating: false},
+                 {active: true, indicating: false}],
+  reducers: {
+    toggleIndicator: (state, {payload}) => {
+      state[payload.idx].active = payload.active
+    },
+    flashIndicator: (state, { payload }) => {
+      state[payload.idx].indicating = payload.indicating
+    }
+  }
+})
+
 export const actions = {
   saveTempo: tempoSlice.actions.saveTempo,
   loadTempo: tempoSlice.actions.loadTempo,
@@ -62,12 +78,15 @@ export const actions = {
   loadPreset: presetSlice.actions.loadPreset,
   clearPresets: presetSlice.actions.clearPresets,
   setVibrate: settingsSlice.actions.setVibrate,
+  toggleIndicator: indicatorsSlice.actions.toggleIndicator,
+  flashIndicator: indicatorsSlice.actions.flashIndicator,
 }
 
 const reducers = combineReducers({
   tempo: tempoSlice.reducer,
   presets: presetSlice.reducer,
   settings: settingsSlice.reducer,
+  indicators: indicatorsSlice.reducer,
 })
 
 const persistedReducer = persistReducer(persistConfig, reducers)

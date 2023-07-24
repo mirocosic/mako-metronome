@@ -84,18 +84,12 @@ const Metronome = ({navigation}) => {
 
   const [input, setInput] = useState(100)
   const [isPlaying, togglePlaying] = useState(false)
-  //const [isVibrateEnabled, setIsVibrateEnabled] = useState(false)
   const isVibrateEnabled = useSelector(state => state.settings.vibrate)
-  const [showDot, setShowDot] = useState(true)
 
   const [taps, setTaps] = useState([0])
   const [tapMessage, setTapMessage] = useState("")
 
-  // todo, rename these, probably something to do with time signatures, accents, etc...
-  const [indicators, setIndicators] = useState({first: {active: true, indicating: false},
-                                                second: {active: true, indicating: false},
-                                                third: {active: true, indicating: false},
-                                                fourth: {active: false, indicating: false}})
+  const indicators = useSelector(state => state.indicators)
 
   const getTapTempo = () => {
 
@@ -138,65 +132,40 @@ const Metronome = ({navigation}) => {
     // sound.stop(() => {
     //   sound.play()
     // })
-  }
+  } 
 
-  const showIndicator = (currentIndicator) => {
+  const showIndicator = (currentIndicatorIdx) => {
 
-    setIndicators({
-      first: {
-        ...indicators.first,
-        indicating: currentIndicator === 1 && indicators.first.active
-      },
-      second: {
-        ...indicators.second,
-        indicating: currentIndicator === 2 && indicators.second.active
-      },
-      third: {
-        ...indicators.third,
-        indicating: currentIndicator === 3 && indicators.third.active
-      }, 
-      fourth: {
-        ...indicators.fourth,
-        indicating: currentIndicator === 4 && indicators.fourth.active
-      },
-    })
+    if (!indicators[currentIndicatorIdx].active) { return }
+
+    dispatch(actions.flashIndicator({
+      idx: currentIndicatorIdx,
+      indicating: true
+    }))
+
     setTimeout(() => {
-      setIndicators({
-      first: {
-        ...indicators.first,
+      dispatch(actions.flashIndicator({
+        idx: currentIndicatorIdx,
         indicating: false
-      },
-      second: {
-        ...indicators.second,
-        indicating: false
-      },
-      third: {
-        ...indicators.third,
-        indicating: false
-      }, 
-      fourth: {
-        ...indicators.fourth,
-        indicating: false
-      },
-    })
-    }, 200)
+      }))
 
+    }, 200);
   }
   
    useEffect(() => {
 
-    let currentIndicator = 1
+    let currentIndicatorIdx = 0
 
     if (isPlaying) {
       playSound()
       if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
       
-      showIndicator(currentIndicator)
+      showIndicator(currentIndicatorIdx)
 
-      if(currentIndicator === 4) {
-        currentIndicator = 1
+      if(currentIndicatorIdx === 3) {
+        currentIndicatorIdx = 0
       } else {
-        currentIndicator = currentIndicator + 1
+        currentIndicatorIdx = currentIndicatorIdx + 1
       }
     }
 
@@ -206,12 +175,12 @@ const Metronome = ({navigation}) => {
       if (isPlaying) {
         playSound()
         if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
-        showIndicator(currentIndicator)
+        showIndicator(currentIndicatorIdx)
 
-        if(currentIndicator === 4) {
-          currentIndicator = 1
+        if(currentIndicatorIdx === 3) {
+          currentIndicatorIdx = 0
         } else {
-          currentIndicator = currentIndicator + 1
+          currentIndicatorIdx = currentIndicatorIdx + 1
         }
       }
 
@@ -266,29 +235,18 @@ const Metronome = ({navigation}) => {
           </Section>
 
           <View style={{flexDirection: "row"}}>
-            <TouchableOpacity
-              style={[styles.indicatorBox,
-                      indicators.first.active && {backgroundColor: "lightgray"},
-                      indicators.first.indicating && {backgroundColor: "teal"}]}
-              onPress={() => setIndicators({...indicators, first: {...indicators.first, active: !indicators.first.active}})} />
-
-            <TouchableOpacity
-              style={[styles.indicatorBox,
-                      indicators.second.active && {backgroundColor: "lightgray"},
-                      indicators.second.indicating && {backgroundColor: "teal"}]}
-              onPress={() => setIndicators({...indicators, second: {...indicators.second, active: !indicators.second.active}})} />
-            
-            <TouchableOpacity
-              style={[styles.indicatorBox,
-                      indicators.third.active && {backgroundColor: "lightgray"},
-                      indicators.third.indicating && {backgroundColor: "teal"}]}
-              onPress={() => setIndicators({...indicators, third: {...indicators.third, active: !indicators.third.active}})} />
-
-            <TouchableOpacity
-              style={[styles.indicatorBox,
-                      indicators.fourth.active && {backgroundColor: "lightgray"},
-                      indicators.fourth.indicating && {backgroundColor: "teal"}]}
-              onPress={() => setIndicators({...indicators, fourth: {...indicators.fourth, active: !indicators.fourth.active}})} />
+            {
+              indicators.map((indicator, idx) => {
+                return (
+                  <TouchableOpacity
+                    key={idx}
+                    style={[styles.indicatorBox,
+                            indicator.active && {backgroundColor: "lightgray"},
+                            indicator.indicating && {backgroundColor: "teal"}]}
+                    onPress={() => dispatch(actions.toggleIndicator({idx, active: !indicator.active}))} />
+                )
+              })
+            }
           </View>
 
           <View style={{flexDirection: "row"}}>
