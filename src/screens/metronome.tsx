@@ -210,13 +210,6 @@ const Metronome = ({navigation}) => {
           }}>
           <Section title="Mako Metronome">
             <View>
-              <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
-                <Text style={{color: "white", textAlign: "center"}}>⚙️ Settings</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigation.navigate("Presets")}>
-                <Text style={{color: "white", textAlign: "center"}}>⚙️ Presets</Text>
-              </TouchableOpacity>
-
               <TouchableOpacity onPress={() => dispatch(actions.savePreset({name: "new preset", tempo: tempo, vibrate: isVibrateEnabled}))}>
                 <Text style={{color: "white", textAlign: "center"}}>Save preset</Text>
               </TouchableOpacity>
