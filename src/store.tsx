@@ -15,11 +15,15 @@ const persistConfig = {
 const settingsSlice = createSlice({
   name: "settings",
   initialState: {
-    vibrate: false
+    vibrate: false,
+    sound: true,
   },
   reducers: {
     setVibrate: (state, {payload}) => {
       state.vibrate = payload
+    },
+    toggleSound: (state, {payload}) => {
+      state.sound = payload
     }
   }
 })
@@ -78,6 +82,7 @@ export const actions = {
   loadPreset: presetSlice.actions.loadPreset,
   clearPresets: presetSlice.actions.clearPresets,
   setVibrate: settingsSlice.actions.setVibrate,
+  toggleSound: settingsSlice.actions.toggleSound,
   toggleIndicator: indicatorsSlice.actions.toggleIndicator,
   flashIndicator: indicatorsSlice.actions.flashIndicator,
 }

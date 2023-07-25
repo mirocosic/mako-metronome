@@ -17,7 +17,9 @@ import {
 
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 import RNSound from "react-native-sound"
-import * as Haptics from 'expo-haptics';
+import * as Haptics from 'expo-haptics'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { Ionicons } from '@expo/vector-icons';
 
 import Section from "../components/section"
 
@@ -85,6 +87,7 @@ const Metronome = ({navigation}) => {
   const [input, setInput] = useState(100)
   const [isPlaying, togglePlaying] = useState(false)
   const isVibrateEnabled = useSelector(state => state.settings.vibrate)
+  const isSoundEnabled = useSelector(state => state.settings.sound)
 
   const [taps, setTaps] = useState([0])
   const [tapMessage, setTapMessage] = useState("")
@@ -157,7 +160,7 @@ const Metronome = ({navigation}) => {
     let currentIndicatorIdx = 0
 
     if (isPlaying) {
-      playSound()
+      if (isSoundEnabled) {playSound()}
       if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
       
       showIndicator(currentIndicatorIdx)
@@ -173,8 +176,9 @@ const Metronome = ({navigation}) => {
     const interval = setInterval(() => {
 
       if (isPlaying) {
-        playSound()
+        if (isSoundEnabled) {playSound()}
         if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
+
         showIndicator(currentIndicatorIdx)
 
         if(currentIndicatorIdx === 3) {
@@ -186,7 +190,6 @@ const Metronome = ({navigation}) => {
 
     }, bpmToMs(tempo))
 
-    // cleanup interval fn
     return () => {
       clearInterval(interval)
     }
@@ -208,7 +211,6 @@ const Metronome = ({navigation}) => {
             alignItems: "center",
             justifyContent: "space-evenly",
           }}>
-          <Section title="Mako Metronome">
             <View>
               <TouchableOpacity onPress={() => dispatch(actions.savePreset({name: "new preset", tempo: tempo, vibrate: isVibrateEnabled}))}>
                 <Text style={{color: "white", textAlign: "center"}}>Save preset</Text>
@@ -225,8 +227,6 @@ const Metronome = ({navigation}) => {
             </View>
             
 
-          </Section>
-
           <View style={{flexDirection: "row"}}>
             {
               indicators.map((indicator, idx) => {
@@ -242,38 +242,62 @@ const Metronome = ({navigation}) => {
             }
           </View>
 
-          <View style={{flexDirection: "row"}}>
+          <View style={{flexDirection: "column"}}>
 
-            <TouchableOpacity onPress={() => togglePlaying(!isPlaying)}>
-              <View style={{backgroundColor: "lightblue", padding: 20, borderRadius: 10, alignItems: "center", margin:10}}>
-                <Text style={{color: "black", fontSize: 20}}>
-                {isPlaying ? "Pause" : "Play"}
-                </Text>
-              </View>
-              
-            </TouchableOpacity> 
+            <View style={{flexDirection: "row"}}>
+              <TouchableOpacity onPress={() => togglePlaying(!isPlaying)}>
+                <View style={{backgroundColor: "lightblue", padding: 20, borderRadius: 10, alignItems: "center", margin:10}}>
+                  <Text style={{color: "black", fontSize: 20}}>
+                  {isPlaying
+                    ?
+                    <Ionicons name="pause" size={24} color="black" />
+                    :
+                    <Ionicons name="play" size={24} color="black" />
+                    }
+                  </Text>
+                </View>
+              </TouchableOpacity> 
 
-            <TouchableOpacity onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-              getTapTempo()
-              playSound()
-              }}>
-              <View style={{backgroundColor: "lightblue", padding: 20, borderRadius: 10, alignItems: "center", margin: 10}}>
-                <Text style={{color: "black", fontSize: 20}}>
-                Tap
-                </Text>
-              </View>
-              
-            </TouchableOpacity> 
+              <TouchableOpacity onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+                getTapTempo()
+                playSound()
+                }}>
+                <View style={{backgroundColor: "lightblue", padding: 20, borderRadius: 10, alignItems: "center", margin: 10}}>
+                  <MaterialCommunityIcons name="gesture-double-tap" size={24} color="black" />
+                </View>
+              </TouchableOpacity> 
+            </View>
 
-            <TouchableOpacity onPress={() => dispatch(actions.setVibrate(!isVibrateEnabled))}>
-              <View style={{backgroundColor: "lightblue", padding: 20, borderRadius: 10, alignItems: "center", margin:10}}>
-                <Text style={{color: "black", fontSize: 20}}>
-                {isVibrateEnabled ? "No vibrate" : "Vibrate"}
-                </Text>
-              </View>
-            </TouchableOpacity> 
+            <View style={{flexDirection: "row", justifyContent: "center"}}>
+              <TouchableOpacity onPress={() => dispatch(actions.setVibrate(!isVibrateEnabled))}>
+                <View style={{backgroundColor: "lightblue", padding: 10, borderRadius: 10, alignItems: "center", margin:10}}>
+                  <Text style={{color: "black", fontSize: 14}}>
+                  {isVibrateEnabled 
+                    ? 
+                    
+                    <MaterialCommunityIcons name="vibrate" size={24} color="black" />
+                    : 
+                    
+                    <MaterialCommunityIcons name="vibrate-off" size={24} color="black" />
+                  }
+                  </Text>
+                </View>
+              </TouchableOpacity> 
 
+              <TouchableOpacity onPress={() => dispatch(actions.toggleSound(!isSoundEnabled))}>
+                <View style={{backgroundColor: "lightblue", padding: 10, borderRadius: 10, alignItems: "center", margin:10}}>
+                  <Text style={{color: "black", fontSize: 14}}>
+                  {isSoundEnabled 
+                    ?
+                    <Ionicons name="volume-high" size={24} color="black" />
+                    :
+                    <Ionicons name="volume-mute" size={24} color="black" />
+                    }
+                  </Text>
+                </View>
+              </TouchableOpacity> 
+            </View>
           </View>
 
           <View>
