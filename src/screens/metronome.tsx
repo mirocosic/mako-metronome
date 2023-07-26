@@ -119,13 +119,7 @@ const Metronome = ({navigation}) => {
         setTapMessage("")  
         dispatch(actions.saveTempo(msToBpm(avgTaps)))
       }
-      
-      //maybe
-      //scrollRef.current.scrollTo({x: msToBpm(diff) * 10, y: 0, animated: true})
     }
-    
-
-
   }
 
   const playSound = () => {
@@ -152,7 +146,7 @@ const Metronome = ({navigation}) => {
         indicating: false
       }))
 
-    }, 200);
+    }, 100)
   }
   
    useEffect(() => {
@@ -196,6 +190,11 @@ const Metronome = ({navigation}) => {
 
    }, [tempo, isPlaying, isVibrateEnabled])
 
+  useEffect(() => {
+    setTimeout(() => {
+      scrollRef.current.scrollTo({x: tempo * 10, y: 0, animated: false})
+    }, 0)
+  }, [])
 
   return (
     <SafeAreaView style={backgroundStyle}>

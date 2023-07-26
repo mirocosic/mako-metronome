@@ -6,6 +6,7 @@ import { persistStore, persistReducer, FLUSH,
   PURGE,
   REGISTER, } from 'redux-persist'
 import { createSlice, configureStore, combineReducers } from '@reduxjs/toolkit'
+import settings from './screens/settings'
 
 const persistConfig = {
   key: 'root',
@@ -17,6 +18,7 @@ const settingsSlice = createSlice({
   initialState: {
     vibrate: false,
     sound: true,
+    theme: "dark",
   },
   reducers: {
     setVibrate: (state, {payload}) => {
@@ -24,6 +26,9 @@ const settingsSlice = createSlice({
     },
     toggleSound: (state, {payload}) => {
       state.sound = payload
+    },
+    setTheme: (state, {payload}) => {
+      state.theme = payload
     }
   }
 })
@@ -85,6 +90,7 @@ export const actions = {
   toggleSound: settingsSlice.actions.toggleSound,
   toggleIndicator: indicatorsSlice.actions.toggleIndicator,
   flashIndicator: indicatorsSlice.actions.flashIndicator,
+  setTheme: settingsSlice.actions.setTheme,
 }
 
 const reducers = combineReducers({
