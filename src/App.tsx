@@ -23,6 +23,13 @@ import { useDarkTheme } from './utils/ui-utils';
 const Stack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
 
+const getColor = (isFocused, isDarkTheme) => {
+  if (isFocused && isDarkTheme) { return "white"}
+  if (isFocused && !isDarkTheme) { return "blue"}
+  if (!isFocused && isDarkTheme) { return "gray"}
+  if (!isFocused && !isDarkTheme) { return "black"}
+}
+
 const AppNavigator = () => {
 
   return (
@@ -30,20 +37,21 @@ const AppNavigator = () => {
       <Tabs.Navigator
         initialRouteName="Metronome"
         screenOptions={{
-          headerShown: false
+          headerShown: false,
+          tabBarActiveTintColor: useDarkTheme() ? "white" : "blue"
         }}>
         <Tabs.Screen
           name="Presets"
           component={Presets}
-          options={{tabBarIcon: ({focused}) => <Ionicons name="md-list" size={24} color={focused ? "blue" : "black"} />}}/>
+          options={{tabBarIcon: ({focused}) => <Ionicons name="md-list" size={24} color={getColor(focused, useDarkTheme())} />}}/>
         <Tabs.Screen 
           name="Metronome"
           component={Metronome}
-          options={{tabBarIcon: ({focused}) => <MaterialCommunityIcons name="metronome-tick" size={24} color={focused ? "blue" : "black"} />}}/>
+          options={{tabBarIcon: ({focused}) => <MaterialCommunityIcons name="metronome-tick" size={24} color={getColor(focused, useDarkTheme())} />}}/>
         <Tabs.Screen
           name="Settings" 
           component={Settings}
-          options={{tabBarIcon: ({focused}) => <Ionicons name="ios-settings" size={24} color={focused ? "blue" : "black"} />}}/>
+          options={{tabBarIcon: ({focused}) => <Ionicons name="ios-settings" size={24} color={getColor(focused, useDarkTheme())} />}}/>
       </Tabs.Navigator>
     </NavigationContainer>
 )}

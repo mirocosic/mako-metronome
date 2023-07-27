@@ -20,6 +20,8 @@ import { useSelector, useDispatch } from 'react-redux'
 
 import { actions } from "../store"
 
+import Copy from "../components/copy"
+
 
 const Settings = (props) => {
   const dispatch = useDispatch()
@@ -55,10 +57,8 @@ const Settings = (props) => {
   }
 
   return (
-    <SafeAreaView>
-      <Text>
-        Settings
-      </Text>
+    <SafeAreaView style={{margin: 20}}>
+      <Copy value="Settings" />
 
       <View
         style={{
@@ -67,9 +67,9 @@ const Settings = (props) => {
           alignItems: "center",
           justifyContent: "space-between",
         }}>
-        <Text>Theme</Text>
+        <Copy value="Theme" />
         <TouchableOpacity onPress={selectTheme}>
-          <Text style={{textTransform: 'capitalize', color: "blue"}}>{theme}</Text>
+          <Text style={{textTransform: 'capitalize', color: "gray"}}>{theme}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

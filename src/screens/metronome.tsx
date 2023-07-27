@@ -8,20 +8,19 @@ import {
   StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
   TouchableOpacity,
   TextInput,
   KeyboardAvoidingView,
 } from 'react-native';
 
-import { Colors } from 'react-native/Libraries/NewAppScreen'
 import RNSound from "react-native-sound"
 import * as Haptics from 'expo-haptics'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { Ionicons } from '@expo/vector-icons';
 
-import Section from "../components/section"
+import { useDarkTheme } from '../utils/ui-utils'
+import Copy from "../components/copy"
 
 
 const styles = StyleSheet.create({
@@ -69,13 +68,12 @@ const msToBpm = (ms) => {
 
 
 const Metronome = ({navigation}) => {
-  const isDarkMode = useColorScheme() === 'dark';
+  const isDarkMode = useDarkTheme()
 
   const tempo = useSelector((state) => state.tempo.value)
   const dispatch = useDispatch()
 
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
     flex: 1
   };
 
@@ -190,6 +188,7 @@ const Metronome = ({navigation}) => {
 
    }, [tempo, isPlaying, isVibrateEnabled])
 
+  // set initial scroll position to initial tempo
   useEffect(() => {
     setTimeout(() => {
       scrollRef.current.scrollTo({x: tempo * 10, y: 0, animated: false})
@@ -204,26 +203,23 @@ const Metronome = ({navigation}) => {
       <KeyboardAvoidingView
         behavior="padding"
         style={{paddingBottom: 50, flex: 1}}>
+
+        <View style={{justifyContent: 'flex-end', alignItems: "flex-end"}}>
+          <TouchableOpacity onPress={() => dispatch(actions.savePreset({name: "new preset", tempo: tempo, vibrate: isVibrateEnabled}))}>
+            <View style={{backgroundColor: "lightblue", padding: 10, borderRadius: 10, alignItems: "center", margin:10}}>
+                <Ionicons name="ios-save" size={24} color="black" />
+            </View>
+          </TouchableOpacity> 
+        </View>
+
+
         <View
           style={{
             flex: 1,
             alignItems: "center",
             justifyContent: "space-evenly",
           }}>
-            <View>
-              <TouchableOpacity onPress={() => dispatch(actions.savePreset({name: "new preset", tempo: tempo, vibrate: isVibrateEnabled}))}>
-                <Text style={{color: "white", textAlign: "center"}}>Save preset</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={() => {
-                dispatch(actions.loadTempo(37)) // replace by lookup from state
-                dispatch(actions.setVibrate(false)) // todo: load from preset
-                //dispatch(actions.loadPreset({name: "new preset", tempo: tempo}))
-              }}>
-                <Text style={{color: "white", textAlign: "center"}}>Load preset 37</Text>
-              </TouchableOpacity>
-
-            </View>
+            
             
 
           <View style={{flexDirection: "row"}}>
@@ -312,7 +308,7 @@ const Metronome = ({navigation}) => {
                 scrollRef.current.scrollTo({x: (tempo - 5) * 10, y: 0, animated: true})
                 
               }}>
-              <Text style={{color: "white", fontSize:25}}>-5</Text>
+              <Copy style={{fontSize: 25}} value="-5" />
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -320,14 +316,14 @@ const Metronome = ({navigation}) => {
               onPress={() => {
                 scrollRef.current.scrollTo({x: (tempo - 1) * 10, y: 0, animated: true})
               }}>
-              <Text style={{color: "white", fontSize:35}}>-1</Text>
+              <Copy style={{fontSize: 35}} value="-1" />
             </TouchableOpacity>
 
             
             <TextInput
               ref={inputRef}
               value={ inputRef.current && inputRef.current.isFocused() ? String(input) : String(tempo)}
-              style={{color: "white", fontSize: 40, padding: 10, borderWidth: 1, borderColor: "gray", borderRadius: 10, width: 100, height: 60, alignItems:"center", justifyContent: "center", textAlign: "center"}}
+              style={{color: isDarkMode ? "white" : "black", fontSize: 40, padding: 10, borderWidth: 1, borderColor: "gray", borderRadius: 10, width: 100, height: 60, alignItems:"center", justifyContent: "center", textAlign: "center"}}
               keyboardType="number-pad"
               returnKeyType={ 'done' }
               onFocus={() => setInput("")}
@@ -352,7 +348,7 @@ const Metronome = ({navigation}) => {
                 scrollRef.current.scrollTo({x: (tempo + 1) * 10, y: 0, animated: true})
                 
               }}>
-              <Text style={{color: "white", fontSize:35}}>+1</Text>
+              <Copy style={{fontSize: 35}} value="+1" />
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -361,7 +357,8 @@ const Metronome = ({navigation}) => {
                 scrollRef.current.scrollTo({x: (tempo + 5) * 10, y: 0, animated: true})
                 
               }}>
-              <Text style={{color: "white", fontSize: 25}}>+5</Text>
+              <Copy style={{fontSize: 25}} value="+5" />
+
             </TouchableOpacity>  
 
           </View>
@@ -390,7 +387,9 @@ const Metronome = ({navigation}) => {
 
               { ticks.map((item, idx)=>{
                 return(
-                  <View key={idx} style={{backgroundColor: "white", width: 5, height: 50, margin: 5}}></View>
+                  <View key={idx}
+                        style={{backgroundColor: isDarkMode ? "white" : "black",
+                                width: 5, height: 50, margin: 5}}></View>
                 )
               })
 
