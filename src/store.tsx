@@ -66,13 +66,20 @@ const presetSlice = createSlice({
 
 const indicatorsSlice = createSlice({
   name: "indicators",
-  initialState: [{active: true, indicating: false},
-                 {active: true, indicating: false},
-                 {active: true, indicating: false},
-                 {active: true, indicating: false}],
+  initialState: [{active: true, indicating: false, levels: [{active: true}, {active: true}]},
+                 {active: true, indicating: false, levels: [{active: true}, {active: false}]},
+                 {active: true, indicating: false, levels: [{active: true}, {active: false}]},
+                 {active: true, indicating: false, levels: [{active: false}, {active: false}]}],
   reducers: {
     toggleIndicator: (state, {payload}) => {
-      state[payload.idx].active = payload.active
+      if (!state[payload.idx].levels[0].active) {
+        state[payload.idx].levels[0].active = true
+      } else if (!state[payload.idx].levels[1].active) {
+        state[payload.idx].levels[1].active = true
+      } else {
+        state[payload.idx].levels = [{active: false}, {active: false}]
+      }
+      
     },
     flashIndicator: (state, { payload }) => {
       state[payload.idx].indicating = payload.indicating

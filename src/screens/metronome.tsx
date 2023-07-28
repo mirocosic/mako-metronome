@@ -46,7 +46,18 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     borderColor: "lightgray", 
     borderWidth: 1,
-    margin: 10}
+    margin: 10
+  },
+  indicatorLevelTop: {
+    flex: 1,
+    borderTopLeftRadius: 5,
+    borderTopRightRadius: 5,
+  },
+  indicatorLevelBottom: {
+    flex: 1,
+    borderBottomLeftRadius: 5,
+    borderBottomRightRadius: 5,
+  }
 });
 
 
@@ -220,7 +231,6 @@ const Metronome = ({navigation}) => {
             justifyContent: "space-evenly",
           }}>
             
-            
 
           <View style={{flexDirection: "row"}}>
             {
@@ -228,10 +238,16 @@ const Metronome = ({navigation}) => {
                 return (
                   <TouchableOpacity
                     key={idx}
-                    style={[styles.indicatorBox,
-                            indicator.active && {backgroundColor: "lightgray"},
-                            indicator.indicating && {backgroundColor: "teal"}]}
-                    onPress={() => dispatch(actions.toggleIndicator({idx, active: !indicator.active}))} />
+                    style={[styles.indicatorBox, indicator.indicating && {borderColor: "teal"}]}
+                    onPress={() => dispatch(actions.toggleIndicator({idx, active: !indicator.active}))}>
+                      
+                    <View style={[styles.indicatorLevelTop,
+                                  indicator.levels[1].active && {backgroundColor: "lightgray"},
+                                  indicator.levels[1].active && indicator.indicating && {backgroundColor: "teal"}]}/>
+                    <View style={[styles.indicatorLevelBottom,
+                                  indicator.levels[0].active && {backgroundColor: "lightgray"},
+                                  indicator.levels[0].active && indicator.indicating && {backgroundColor: "teal"}]}/>
+                  </TouchableOpacity>
                 )
               })
             }
