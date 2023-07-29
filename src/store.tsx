@@ -66,10 +66,10 @@ const presetSlice = createSlice({
 
 const indicatorsSlice = createSlice({
   name: "indicators",
-  initialState: [{active: true, indicating: false, levels: [{active: true}, {active: true}]},
-                 {active: true, indicating: false, levels: [{active: true}, {active: false}]},
-                 {active: true, indicating: false, levels: [{active: true}, {active: false}]},
-                 {active: true, indicating: false, levels: [{active: false}, {active: false}]}],
+  initialState: [{active: true, levels: [{active: true}, {active: true}]},
+                 {active: true, levels: [{active: true}, {active: false}]},
+                 {active: true, levels: [{active: true}, {active: false}]},
+                 {active: true, levels: [{active: false}, {active: false}]}],
   reducers: {
     toggleIndicator: (state, {payload}) => {
       if (!state[payload.idx].levels[0].active) {
@@ -81,9 +81,6 @@ const indicatorsSlice = createSlice({
       }
       
     },
-    flashIndicator: (state, { payload }) => {
-      state[payload.idx].indicating = payload.indicating
-    }
   }
 })
 
@@ -96,7 +93,6 @@ export const actions = {
   setVibrate: settingsSlice.actions.setVibrate,
   toggleSound: settingsSlice.actions.toggleSound,
   toggleIndicator: indicatorsSlice.actions.toggleIndicator,
-  flashIndicator: indicatorsSlice.actions.flashIndicator,
   setTheme: settingsSlice.actions.setTheme,
 }
 

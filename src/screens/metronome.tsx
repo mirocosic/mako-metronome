@@ -22,6 +22,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useDarkTheme } from '../utils/ui-utils'
 import Copy from "../components/copy"
 
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolateColor } from 'react-native-reanimated';
+
 
 const styles = StyleSheet.create({
   sectionContainer: {
@@ -68,17 +70,17 @@ var sound = new RNSound('click2.mp3', RNSound.MAIN_BUNDLE, (error) => {
   }
 })
 
-const bpmToMs = (bpm) => {
+const bpmToMs = (bpm: number) => {
   return 1000 / (bpm / 60)
 }
 
-const msToBpm = (ms) => {
+const msToBpm = (ms: number) => {
   return Math.round((1000 / ms ) * 60)
 }
 
 
 
-const Metronome = ({navigation}) => {
+const Metronome = () => {
   const isDarkMode = useDarkTheme()
 
   const tempo = useSelector((state) => state.tempo.value)
@@ -140,33 +142,64 @@ const Metronome = ({navigation}) => {
     // })
   } 
 
-  const showIndicator = (currentIndicatorIdx) => {
 
-    if (!indicators[currentIndicatorIdx].active) { return }
+  const rIndicators = [useSharedValue(0), useSharedValue(0), useSharedValue(0), useSharedValue(0)]
 
-    dispatch(actions.flashIndicator({
-      idx: currentIndicatorIdx,
-      indicating: true
-    }))
+  const makeStyle = (idx: number) => {
 
+    return useAnimatedStyle(() => {
+
+      const backgroundColor = interpolateColor(
+        rIndicators[idx].value,
+        [0, 1],
+        ["#FFFFFF", "lightblue"]
+      );
+
+      return {
+        backgroundColor,
+      }
+
+    })
+
+  }
+
+  const rStyles = [makeStyle(0), makeStyle(1), makeStyle(2), makeStyle(3)]
+  
+  const toggleIndicator = (idx: number) => {
+    rIndicators[idx].value = withTiming(1, {duration: 50})
     setTimeout(() => {
-      dispatch(actions.flashIndicator({
-        idx: currentIndicatorIdx,
-        indicating: false
-      }))
-
+      rIndicators[idx].value = withTiming(0, {duration: 50})
     }, 100)
   }
-  
-   useEffect(() => {
 
-    let currentIndicatorIdx = 0
+
+  useEffect(() => {
+
+  if (!isPlaying) return
+
+  let currentIndicatorIdx = 0
+
+  if (isPlaying) {
+    if (isSoundEnabled) {playSound()}
+    if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
+    
+    toggleIndicator(currentIndicatorIdx)
+
+    if(currentIndicatorIdx === 3) {
+      currentIndicatorIdx = 0
+    } else {
+      currentIndicatorIdx = currentIndicatorIdx + 1
+    }
+  }
+
+  // run interval fn
+  const interval = setInterval(() => {
 
     if (isPlaying) {
       if (isSoundEnabled) {playSound()}
       if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
-      
-      showIndicator(currentIndicatorIdx)
+
+      toggleIndicator(currentIndicatorIdx)
 
       if(currentIndicatorIdx === 3) {
         currentIndicatorIdx = 0
@@ -175,29 +208,14 @@ const Metronome = ({navigation}) => {
       }
     }
 
-    // run interval fn
-    const interval = setInterval(() => {
+  }, bpmToMs(tempo))
 
-      if (isPlaying) {
-        if (isSoundEnabled) {playSound()}
-        if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
+  return () => {
+    clearInterval(interval)
+  }
 
-        showIndicator(currentIndicatorIdx)
+  }, [tempo, isPlaying, isVibrateEnabled, isSoundEnabled, indicators])
 
-        if(currentIndicatorIdx === 3) {
-          currentIndicatorIdx = 0
-        } else {
-          currentIndicatorIdx = currentIndicatorIdx + 1
-        }
-      }
-
-    }, bpmToMs(tempo))
-
-    return () => {
-      clearInterval(interval)
-    }
-
-   }, [tempo, isPlaying, isVibrateEnabled])
 
   // set initial scroll position to initial tempo
   useEffect(() => {
@@ -234,19 +252,19 @@ const Metronome = ({navigation}) => {
 
           <View style={{flexDirection: "row"}}>
             {
-              indicators.map((indicator, idx) => {
+              indicators.map((indicator, idx: number) => {
                 return (
                   <TouchableOpacity
                     key={idx}
                     style={[styles.indicatorBox, indicator.indicating && {borderColor: "teal"}]}
                     onPress={() => dispatch(actions.toggleIndicator({idx, active: !indicator.active}))}>
                       
-                    <View style={[styles.indicatorLevelTop,
-                                  indicator.levels[1].active && {backgroundColor: "lightgray"},
-                                  indicator.levels[1].active && indicator.indicating && {backgroundColor: "teal"}]}/>
-                    <View style={[styles.indicatorLevelBottom,
-                                  indicator.levels[0].active && {backgroundColor: "lightgray"},
-                                  indicator.levels[0].active && indicator.indicating && {backgroundColor: "teal"}]}/>
+                    <Animated.View style={[styles.indicatorLevelTop,
+                                           indicator.levels[1].active && rStyles[idx],
+                                           ]}/>
+                    <Animated.View style={[styles.indicatorLevelBottom,
+                                  indicator.levels[0].active && rStyles[idx],
+                                   ]}/>
                   </TouchableOpacity>
                 )
               })
