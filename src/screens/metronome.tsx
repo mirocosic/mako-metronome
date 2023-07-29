@@ -24,6 +24,7 @@ import Copy from "../components/copy"
 
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolateColor } from 'react-native-reanimated';
 
+import Slider from '@react-native-community/slider';
 
 const styles = StyleSheet.create({
   sectionContainer: {
@@ -152,7 +153,7 @@ const Metronome = () => {
       const backgroundColor = interpolateColor(
         rIndicators[idx].value,
         [0, 1],
-        ["#FFFFFF", "lightblue"]
+        ["lightgray", "lightblue"]
       );
 
       return {
@@ -396,6 +397,18 @@ const Metronome = () => {
             </TouchableOpacity>  
 
           </View>
+
+          <Slider
+            style={{width: 200, height: 40}}
+            minimumValue={0}
+            maximumValue={1}
+            minimumTrackTintColor="#FFFFFF"
+            maximumTrackTintColor="#000000"
+            onValueChange={(v) => {
+              sound.setVolume(v)
+              console.log(sound.getVolume())
+            }}
+          />
 
           <View style={{height: 50, flexDirection: "row", alignItems: "center", justifyContent: "space-evenly"}}>
 
