@@ -63,8 +63,16 @@ const styles = StyleSheet.create({
   }
 });
 
+RNSound.setCategory('Playback')
 
-var sound = new RNSound('click2.mp3', RNSound.MAIN_BUNDLE, (error) => {
+var sound = new RNSound('click3.mp3', RNSound.MAIN_BUNDLE, (error) => {
+  if (error) {
+    console.log('failed to load the sound', error)
+    return
+  }
+})
+
+var sound2 = new RNSound('click4.mp3', RNSound.MAIN_BUNDLE, (error) => {
   if (error) {
     console.log('failed to load the sound', error)
     return
@@ -100,6 +108,7 @@ const Metronome = () => {
   const [isPlaying, togglePlaying] = useState(false)
   const isVibrateEnabled = useSelector(state => state.settings.vibrate)
   const isSoundEnabled = useSelector(state => state.settings.sound)
+  const volume = useSelector(state => state.settings.volume)
 
   const [taps, setTaps] = useState([0])
   const [tapMessage, setTapMessage] = useState("")
@@ -134,13 +143,12 @@ const Metronome = () => {
     }
   }
 
-  const playSound = () => {
-    sound.play()
-
-    // this produces uneven metronome on higher tempos
-    // sound.stop(() => {
-    //   sound.play()
-    // })
+  const playSound = (isAccented: boolean) => {
+    if (isAccented) {
+      sound2.play()
+    } else {
+      sound.play()
+    }
   } 
 
 
@@ -153,7 +161,7 @@ const Metronome = () => {
       const backgroundColor = interpolateColor(
         rIndicators[idx].value,
         [0, 1],
-        ["lightgray", "lightblue"]
+        ["gray", "red"]
       );
 
       return {
@@ -179,9 +187,14 @@ const Metronome = () => {
   if (!isPlaying) return
 
   let currentIndicatorIdx = 0
+  const isBeatEnabled = indicators[currentIndicatorIdx].levels[0].active
+  const isAccented = indicators[currentIndicatorIdx].levels[1].active
+
 
   if (isPlaying) {
-    if (isSoundEnabled) {playSound()}
+    if (isSoundEnabled && isBeatEnabled) {
+      playSound(isAccented)
+    }
     if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
     
     toggleIndicator(currentIndicatorIdx)
@@ -196,8 +209,13 @@ const Metronome = () => {
   // run interval fn
   const interval = setInterval(() => {
 
+    const isBeatEnabled = indicators[currentIndicatorIdx].levels[0].active
+    const isAccented = indicators[currentIndicatorIdx].levels[1].active
+
     if (isPlaying) {
-      if (isSoundEnabled) {playSound()}
+      if (isSoundEnabled && isBeatEnabled) {
+        playSound(isAccented)
+      }
       if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
 
       toggleIndicator(currentIndicatorIdx)
@@ -258,13 +276,15 @@ const Metronome = () => {
                   <TouchableOpacity
                     key={idx}
                     style={[styles.indicatorBox, indicator.indicating && {borderColor: "teal"}]}
-                    onPress={() => dispatch(actions.toggleIndicator({idx, active: !indicator.active}))}>
+                    onPress={() => dispatch(actions.toggleIndicator({idx}))}>
                       
                     <Animated.View style={[styles.indicatorLevelTop,
+                                           indicator.levels[1].active && {backgroundColor: "gray"},
                                            indicator.levels[1].active && rStyles[idx],
                                            ]}/>
                     <Animated.View style={[styles.indicatorLevelBottom,
-                                  indicator.levels[0].active && rStyles[idx],
+                                           indicator.levels[0].active && {backgroundColor: "gray"},
+                                           indicator.levels[0].active && rStyles[idx],
                                    ]}/>
                   </TouchableOpacity>
                 )
@@ -363,7 +383,6 @@ const Metronome = () => {
               returnKeyType={ 'done' }
               onFocus={() => setInput("")}
               onChangeText={(v) => {
-                console.log(v)
                 setInput(v)
               }}
               onSubmitEditing={()=>{
@@ -402,11 +421,12 @@ const Metronome = () => {
             style={{width: 200, height: 40}}
             minimumValue={0}
             maximumValue={1}
+            value={volume}
             minimumTrackTintColor="#FFFFFF"
-            maximumTrackTintColor="#000000"
-            onValueChange={(v) => {
+            maximumTrackTintColor="darkgray"
+            onSlidingComplete={(v) => {
               sound.setVolume(v)
-              console.log(sound.getVolume())
+              dispatch(actions.setVolume(v))
             }}
           />
 

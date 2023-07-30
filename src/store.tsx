@@ -19,6 +19,7 @@ const settingsSlice = createSlice({
     vibrate: false,
     sound: true,
     theme: "dark",
+    volume: 0.5
   },
   reducers: {
     setVibrate: (state, {payload}) => {
@@ -29,6 +30,9 @@ const settingsSlice = createSlice({
     },
     setTheme: (state, {payload}) => {
       state.theme = payload
+    },
+    setVolume: (state, {payload}) => {
+      state.volume = payload
     }
   }
 })
@@ -66,10 +70,10 @@ const presetSlice = createSlice({
 
 const indicatorsSlice = createSlice({
   name: "indicators",
-  initialState: [{active: true, levels: [{active: true}, {active: true}]},
-                 {active: true, levels: [{active: true}, {active: false}]},
-                 {active: true, levels: [{active: true}, {active: false}]},
-                 {active: true, levels: [{active: false}, {active: false}]}],
+  initialState: [{levels: [{active: true}, {active: true}]},
+                 {levels: [{active: true}, {active: true}]},
+                 {levels: [{active: true}, {active: true}]},
+                 {levels: [{active: true}, {active: true}]}],
   reducers: {
     toggleIndicator: (state, {payload}) => {
       if (!state[payload.idx].levels[0].active) {
@@ -94,6 +98,7 @@ export const actions = {
   toggleSound: settingsSlice.actions.toggleSound,
   toggleIndicator: indicatorsSlice.actions.toggleIndicator,
   setTheme: settingsSlice.actions.setTheme,
+  setVolume: settingsSlice.actions.setVolume,
 }
 
 const reducers = combineReducers({
