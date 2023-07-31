@@ -22,18 +22,29 @@ const Presets = ({navigation}) => {
 
   return (
     <SafeAreaView>
+      <ScrollView>
       {
         presets.map((preset, idx) => {
           return (
             <TouchableOpacity
+              key={preset.id}
               onPress={() => {
                 dispatch(actions.setVibrate(preset.vibrate ? true : false))
                 dispatch(actions.loadTempo(Number(preset.tempo)))
+                navigation.navigate("Metronome")
               }}
-              key={idx} style={{margin: 10, borderBottomColor: "lightgray", borderBottomWidth: 1, padding: 10}}>
-              <Copy style={{fontWeight: "bold"}} value={preset.name} />
-              <Copy style={{fontSize: 11}} value={`Tempo: ${preset.tempo}, Vibrate: ${preset.vibrate ? "True" : "False"}`} />
-              <Text style={{fontSize: 11}}>Tempo: {preset.tempo}, Vibrate: {preset.vibrate ? "True" : "False"}</Text>
+              style={{margin: 10, borderBottomColor: "lightgray", borderBottomWidth: 1, padding: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+                <View>
+                  <Copy style={{fontWeight: "bold"}} value={preset.name} />
+                  <Copy style={{fontSize: 11}} value={`Tempo: ${preset.tempo}, Vibrate: ${preset.vibrate ? "True" : "False"}`} />
+                  <Text style={{fontSize: 11}}>Tempo: {preset.tempo}, Vibrate: {preset.vibrate ? "True" : "False"}</Text>
+                </View>
+                <View>
+                  <TouchableOpacity onPress={() => {dispatch(actions.deletePreset(preset.id))}} >
+                    <Copy style={{color: "red"}} value="Delete" />
+                  </TouchableOpacity>
+                </View>
+                
             </TouchableOpacity>
           )
         })
@@ -48,7 +59,7 @@ const Presets = ({navigation}) => {
         
       </TouchableOpacity>
 
-
+      </ScrollView>
     </SafeAreaView>
   )
 }

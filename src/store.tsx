@@ -6,7 +6,7 @@ import { persistStore, persistReducer, FLUSH,
   PURGE,
   REGISTER, } from 'redux-persist'
 import { createSlice, configureStore, combineReducers } from '@reduxjs/toolkit'
-import settings from './screens/settings'
+import uuid from 'react-native-uuid';
 
 const persistConfig = {
   key: 'root',
@@ -54,14 +54,21 @@ const tempoSlice = createSlice({
 
 const presetSlice = createSlice({
   name: "presets",
-  initialState: [{name: "Init preset", tempo: 37, vibrate: true}],
+  initialState: [],
   reducers: {
     savePreset: (state, {payload: {name, tempo, vibrate}}) => {
-      state.push({name,tempo, vibrate})
+      state.push({id: uuid.v4(),
+                  name: name,
+                  tempo: tempo,
+                  vibrate: vibrate})
     }, 
     loadPreset: (state, action) => {
       console.log(action)
     },
+    deletePreset: (state, action) => {
+      return state.filter(preset => preset.id !== action.payload)
+    },
+
     clearPresets: (state) => {
       state.length = 0
     }
@@ -99,6 +106,7 @@ export const actions = {
   toggleIndicator: indicatorsSlice.actions.toggleIndicator,
   setTheme: settingsSlice.actions.setTheme,
   setVolume: settingsSlice.actions.setVolume,
+  deletePreset: presetSlice.actions.deletePreset
 }
 
 const reducers = combineReducers({

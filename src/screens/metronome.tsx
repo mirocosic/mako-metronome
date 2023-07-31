@@ -25,6 +25,7 @@ import Copy from "../components/copy"
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolateColor } from 'react-native-reanimated';
 
 import Slider from '@react-native-community/slider';
+import Dialog from "react-native-dialog";
 
 const styles = StyleSheet.create({
   sectionContainer: {
@@ -114,6 +115,9 @@ const Metronome = () => {
   const [tapMessage, setTapMessage] = useState("")
 
   const indicators = useSelector(state => state.indicators)
+
+  const [isPresetDialogVisible, setPresetDialogVisible] = useState(false)
+  const [presetName, setPresetName] = useState("")
 
   const getTapTempo = () => {
 
@@ -253,7 +257,10 @@ const Metronome = () => {
         style={{paddingBottom: 50, flex: 1}}>
 
         <View style={{justifyContent: 'flex-end', alignItems: "flex-end"}}>
-          <TouchableOpacity onPress={() => dispatch(actions.savePreset({name: "new preset", tempo: tempo, vibrate: isVibrateEnabled}))}>
+          <TouchableOpacity onPress={() => 
+            setPresetDialogVisible(true)
+            //dispatch(actions.savePreset({name: "new preset", tempo: tempo, vibrate: isVibrateEnabled}))
+            }>
             <View style={{backgroundColor: "lightblue", padding: 10, borderRadius: 10, alignItems: "center", margin:10}}>
                 <Ionicons name="ios-save" size={24} color="black" />
             </View>
@@ -465,6 +472,28 @@ const Metronome = () => {
             </ScrollView>
 
           </View>
+
+          <Dialog.Container visible={isPresetDialogVisible}>
+            <Dialog.Title>Save preset</Dialog.Title>
+            <Dialog.Description>
+              Save this current settings as a new preset?
+            </Dialog.Description>
+            <Dialog.Input onChangeText={(v)=>setPresetName(v)} />
+            <Dialog.Button label="Cancel" 
+              onPress={() => {
+                setPresetDialogVisible(false)
+                setPresetName("")
+              }} />
+            <Dialog.Button
+              label="Save"
+              bold={true}
+              disabled={presetName ===  ""}
+              onPress={() => {
+                dispatch(actions.savePreset({name: presetName, tempo: tempo, vibrate: isVibrateEnabled}))
+                setPresetName("")
+                setPresetDialogVisible(false)
+              }}/>
+          </Dialog.Container>
           
         </View>
       </KeyboardAvoidingView>
