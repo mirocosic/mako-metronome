@@ -31,13 +31,16 @@ const Presets = ({navigation}) => {
               onPress={() => {
                 dispatch(actions.setVibrate(preset.vibrate ? true : false))
                 dispatch(actions.loadTempo(Number(preset.tempo)))
+                dispatch(actions.setVolume(preset.volume))
+                dispatch(actions.toggleSound(preset.sound ? true : false))
                 navigation.navigate("Metronome")
               }}
               style={{margin: 10, borderBottomColor: "lightgray", borderBottomWidth: 1, padding: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
                 <View>
                   <Copy style={{fontWeight: "bold"}} value={preset.name} />
-                  <Copy style={{fontSize: 11}} value={`Tempo: ${preset.tempo}, Vibrate: ${preset.vibrate ? "True" : "False"}`} />
-                  <Text style={{fontSize: 11}}>Tempo: {preset.tempo}, Vibrate: {preset.vibrate ? "True" : "False"}</Text>
+                  <Copy
+                    style={{fontSize: 11}}
+                    value={`Tempo: ${preset.tempo}, Vibrate: ${preset.vibrate ? "True" : "False"}, Sound: ${preset.sound ? "On" : "Off"}, Volume: ${Math.round(preset.volume * 100)}`} />
                 </View>
                 <View>
                   <TouchableOpacity onPress={() => {dispatch(actions.deletePreset(preset.id))}} >

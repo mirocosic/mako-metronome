@@ -489,7 +489,7 @@ const Metronome = () => {
               bold={true}
               disabled={presetName ===  ""}
               onPress={() => {
-                dispatch(actions.savePreset({name: presetName, tempo: tempo, vibrate: isVibrateEnabled}))
+                dispatch(actions.savePreset({name: presetName, tempo: tempo, vibrate: isVibrateEnabled, sound: isSoundEnabled, volume: volume}))
                 setPresetName("")
                 setPresetDialogVisible(false)
               }}/>

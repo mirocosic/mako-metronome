@@ -56,11 +56,13 @@ const presetSlice = createSlice({
   name: "presets",
   initialState: [],
   reducers: {
-    savePreset: (state, {payload: {name, tempo, vibrate}}) => {
+    savePreset: (state, {payload: {name, tempo, vibrate, sound, volume}}) => {
       state.push({id: uuid.v4(),
                   name: name,
                   tempo: tempo,
-                  vibrate: vibrate})
+                  vibrate: vibrate,
+                  sound: sound,
+                  volume: volume})
     }, 
     loadPreset: (state, action) => {
       console.log(action)
