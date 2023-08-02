@@ -97,7 +97,8 @@ const Metronome = () => {
   const dispatch = useDispatch()
 
   const backgroundStyle = {
-    flex: 1
+    flex: 1,
+    margin: 10
   };
 
   const ticks = [...Array(300).keys()];
@@ -110,6 +111,7 @@ const Metronome = () => {
   const isVibrateEnabled = useSelector(state => state.settings.vibrate)
   const isSoundEnabled = useSelector(state => state.settings.sound)
   const volume = useSelector(state => state.settings.volume)
+  const currentPresetName = useSelector(state => state.settings.currentPresetName)
 
   const [taps, setTaps] = useState([0])
   const [tapMessage, setTapMessage] = useState("")
@@ -256,17 +258,24 @@ const Metronome = () => {
         behavior="padding"
         style={{paddingBottom: 50, flex: 1}}>
 
-        <View style={{justifyContent: 'flex-end', alignItems: "flex-end"}}>
-          <TouchableOpacity onPress={() => 
-            setPresetDialogVisible(true)
-            //dispatch(actions.savePreset({name: "new preset", tempo: tempo, vibrate: isVibrateEnabled}))
-            }>
-            <View style={{backgroundColor: "lightblue", padding: 10, borderRadius: 10, alignItems: "center", margin:10}}>
-                <Ionicons name="ios-save" size={24} color="black" />
+        <View style={{justifyContent: 'space-evenly', alignItems: "flex-end", flexDirection: "row", alignItems: "center"}}>
+          <View style={{flex: 1}}></View>
+          <View style={{flex: 1}}>
+            {
+              currentPresetName !== ""
+              ?
+              <Copy value={`Preset: ${currentPresetName}`}></Copy>
+              : null
+            }
+            
+          </View>
+          
+          <TouchableOpacity style={{flex: 1, justifyContent: "flex-end", alignItems: "flex-end"}} onPress={() => setPresetDialogVisible(true)}>
+            <View style={{backgroundColor: "lightblue", width: 40, padding: 10, borderRadius: 10, alignItems: "center", margin:10}}>
+                <Ionicons name="ios-save" size={16} color="black" />
             </View>
           </TouchableOpacity> 
         </View>
-
 
         <View
           style={{
@@ -274,7 +283,6 @@ const Metronome = () => {
             alignItems: "center",
             justifyContent: "space-evenly",
           }}>
-            
 
           <View style={{flexDirection: "row"}}>
             {
@@ -318,8 +326,8 @@ const Metronome = () => {
               <TouchableOpacity onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
                 getTapTempo()
-                playSound()
-                }}>
+                playSound(false)
+              }}>
                 <View style={{backgroundColor: "lightblue", padding: 20, borderRadius: 10, alignItems: "center", margin: 10}}>
                   <MaterialCommunityIcons name="gesture-double-tap" size={24} color="black" />
                 </View>
@@ -331,11 +339,9 @@ const Metronome = () => {
                 <View style={{backgroundColor: "lightblue", padding: 10, borderRadius: 10, alignItems: "center", margin:10}}>
                   <Text style={{color: "black", fontSize: 14}}>
                   {isVibrateEnabled 
-                    ? 
-                    
+                    ?
                     <MaterialCommunityIcons name="vibrate" size={24} color="black" />
-                    : 
-                    
+                    :
                     <MaterialCommunityIcons name="vibrate-off" size={24} color="black" />
                   }
                   </Text>
@@ -489,7 +495,13 @@ const Metronome = () => {
               bold={true}
               disabled={presetName ===  ""}
               onPress={() => {
-                dispatch(actions.savePreset({name: presetName, tempo: tempo, vibrate: isVibrateEnabled, sound: isSoundEnabled, volume: volume}))
+                dispatch(actions.savePreset({
+                  name: presetName,
+                  tempo: tempo,
+                  vibrate: isVibrateEnabled,
+                  sound: isSoundEnabled,
+                  volume: volume,
+                  indicators: indicators}))
                 setPresetName("")
                 setPresetDialogVisible(false)
               }}/>

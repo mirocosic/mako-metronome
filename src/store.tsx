@@ -19,7 +19,8 @@ const settingsSlice = createSlice({
     vibrate: false,
     sound: true,
     theme: "dark",
-    volume: 0.5
+    volume: 0.5,
+    currentPresetName: ""
   },
   reducers: {
     setVibrate: (state, {payload}) => {
@@ -33,6 +34,9 @@ const settingsSlice = createSlice({
     },
     setVolume: (state, {payload}) => {
       state.volume = payload
+    },
+    setCurrentPresetName: (state, {payload}) => {
+      state.currentPresetName = payload
     }
   }
 })
@@ -56,13 +60,14 @@ const presetSlice = createSlice({
   name: "presets",
   initialState: [],
   reducers: {
-    savePreset: (state, {payload: {name, tempo, vibrate, sound, volume}}) => {
+    savePreset: (state, {payload: {name, tempo, vibrate, sound, volume, indicators}}) => {
       state.push({id: uuid.v4(),
-                  name: name,
-                  tempo: tempo,
-                  vibrate: vibrate,
-                  sound: sound,
-                  volume: volume})
+                  name,
+                  tempo,
+                  vibrate,
+                  sound,
+                  volume,
+                  indicators})
     }, 
     loadPreset: (state, action) => {
       console.log(action)
@@ -73,9 +78,8 @@ const presetSlice = createSlice({
 
     clearPresets: (state) => {
       state.length = 0
-    }
-  }
-})
+    },
+}})
 
 const indicatorsSlice = createSlice({
   name: "indicators",
@@ -92,23 +96,32 @@ const indicatorsSlice = createSlice({
       } else {
         state[payload.idx].levels = [{active: false}, {active: false}]
       }
-      
     },
+    loadIndicators: (state, {payload}) => {
+      return state = payload
+    }
   }
 })
 
 export const actions = {
+  // can I write this with ...? like this: ...tempoSlice.actions?
   saveTempo: tempoSlice.actions.saveTempo,
   loadTempo: tempoSlice.actions.loadTempo,
+
   savePreset: presetSlice.actions.savePreset,
   loadPreset: presetSlice.actions.loadPreset,
   clearPresets: presetSlice.actions.clearPresets,
+  deletePreset: presetSlice.actions.deletePreset,
+
+  toggleIndicator: indicatorsSlice.actions.toggleIndicator,
+  loadIndicators: indicatorsSlice.actions.loadIndicators,
+
   setVibrate: settingsSlice.actions.setVibrate,
   toggleSound: settingsSlice.actions.toggleSound,
-  toggleIndicator: indicatorsSlice.actions.toggleIndicator,
   setTheme: settingsSlice.actions.setTheme,
   setVolume: settingsSlice.actions.setVolume,
-  deletePreset: presetSlice.actions.deletePreset
+  setCurrentPresetName: settingsSlice.actions.setCurrentPresetName,
+  
 }
 
 const reducers = combineReducers({
