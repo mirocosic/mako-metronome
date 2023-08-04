@@ -26,6 +26,7 @@ import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolateColo
 
 import Slider from '@react-native-community/slider';
 import Dialog from "react-native-dialog";
+import ContextMenu from "react-native-context-menu-view";
 
 const styles = StyleSheet.create({
   sectionContainer: {
@@ -111,7 +112,7 @@ const Metronome = () => {
   const isVibrateEnabled = useSelector(state => state.settings.vibrate)
   const isSoundEnabled = useSelector(state => state.settings.sound)
   const volume = useSelector(state => state.settings.volume)
-  const currentPresetName = useSelector(state => state.settings.currentPresetName)
+  const currentPreset = useSelector(state => state.settings.currentPreset)
 
   const [taps, setTaps] = useState([0])
   const [tapMessage, setTapMessage] = useState("")
@@ -262,19 +263,40 @@ const Metronome = () => {
           <View style={{flex: 1}}></View>
           <View style={{flex: 1}}>
             {
-              currentPresetName !== ""
+              currentPreset.name !== ""
               ?
-              <Copy value={`Preset: ${currentPresetName}`}></Copy>
+              <Copy value={`Preset: ${currentPreset.name}`}></Copy>
               : null
             }
             
           </View>
-          
-          <TouchableOpacity style={{flex: 1, justifyContent: "flex-end", alignItems: "flex-end"}} onPress={() => setPresetDialogVisible(true)}>
+
+          <ContextMenu
+            dropdownMenuMode
+            actions={[{ title: "Save", subtitle: "Save current preset" }, { title: "Save As ", subtitle: "Save as a new preset" }, { title: "Cancel", destructive: true }]}
+            onPress={(e) => {
+              switch (e.nativeEvent.index) {
+                case 0:
+                  dispatch(actions.saveCurrentPreset({
+                    id: currentPreset.id,
+                    name: currentPreset.name,
+                    tempo: tempo,
+                    vibrate: isVibrateEnabled,
+                    sound: isSoundEnabled,
+                    volume: volume,
+                    indicators: indicators}))
+                  break;
+                case 1:
+                  setPresetDialogVisible(true)
+                  break;
+              }
+            }}
+
+          >
             <View style={{backgroundColor: "lightblue", width: 40, padding: 10, borderRadius: 10, alignItems: "center", margin:10}}>
                 <Ionicons name="ios-save" size={16} color="black" />
             </View>
-          </TouchableOpacity> 
+          </ContextMenu>
         </View>
 
         <View

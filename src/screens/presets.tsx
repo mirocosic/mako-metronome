@@ -34,7 +34,7 @@ const Presets = ({navigation}) => {
                 dispatch(actions.setVolume(preset.volume))
                 dispatch(actions.toggleSound(preset.sound ? true : false))
                 dispatch(actions.loadIndicators(preset.indicators))
-                dispatch(actions.setCurrentPresetName(preset.name))
+                dispatch(actions.setCurrentPreset(preset))
                 navigation.navigate("Metronome")
               }}
               style={{margin: 10, borderBottomColor: "lightgray", borderBottomWidth: 1, padding: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>

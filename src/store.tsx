@@ -20,7 +20,7 @@ const settingsSlice = createSlice({
     sound: true,
     theme: "dark",
     volume: 0.5,
-    currentPresetName: ""
+    currentPreset: {}
   },
   reducers: {
     setVibrate: (state, {payload}) => {
@@ -35,8 +35,8 @@ const settingsSlice = createSlice({
     setVolume: (state, {payload}) => {
       state.volume = payload
     },
-    setCurrentPresetName: (state, {payload}) => {
-      state.currentPresetName = payload
+    setCurrentPreset: (state, {payload}) => {
+      state.currentPreset = payload
     }
   }
 })
@@ -68,7 +68,16 @@ const presetSlice = createSlice({
                   sound,
                   volume,
                   indicators})
-    }, 
+    },
+    saveCurrentPreset: (state, action) => {
+       return state.map(preset => {
+        if (preset.id === action.payload.id) {
+          return preset = action.payload
+        } else {
+          return preset
+        }
+      })
+    },
     loadPreset: (state, action) => {
       console.log(action)
     },
@@ -109,6 +118,7 @@ export const actions = {
   loadTempo: tempoSlice.actions.loadTempo,
 
   savePreset: presetSlice.actions.savePreset,
+  saveCurrentPreset: presetSlice.actions.saveCurrentPreset,
   loadPreset: presetSlice.actions.loadPreset,
   clearPresets: presetSlice.actions.clearPresets,
   deletePreset: presetSlice.actions.deletePreset,
@@ -120,7 +130,7 @@ export const actions = {
   toggleSound: settingsSlice.actions.toggleSound,
   setTheme: settingsSlice.actions.setTheme,
   setVolume: settingsSlice.actions.setVolume,
-  setCurrentPresetName: settingsSlice.actions.setCurrentPresetName,
+  setCurrentPreset: settingsSlice.actions.setCurrentPreset,
   
 }
 
