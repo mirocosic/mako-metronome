@@ -2,14 +2,8 @@ import React from "react";
 import {
   SafeAreaView,
   ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
   View,
   TouchableOpacity,
-  TextInput,
-  KeyboardAvoidingView,
 } from 'react-native';
 import { useDispatch, useSelector } from "react-redux";
 import { actions } from "../store"
@@ -43,6 +37,17 @@ const Presets = ({navigation}) => {
                   <Copy
                     style={{fontSize: 11}}
                     value={`Tempo: ${preset.tempo}, Vibrate: ${preset.vibrate ? "True" : "False"}, Sound: ${preset.sound ? "On" : "Off"}, Volume: ${Math.round(preset.volume * 100)}`} />
+                  <View style={{flexDirection: "row"}}>
+                    { preset.indicators.map((indicator, idx) => {
+                      return (
+                        <View key={idx} style={{width: 20, height: 20, borderColor: "grey", borderWidth: 1, margin: 5, borderRadius: 5}}>
+                          <View style={[{flex: 1}, indicator.levels[1].active && {backgroundColor: "grey"}]}/>
+                          <View style={[{flex: 1}, indicator.levels[0].active && {backgroundColor: "grey"}]}/>
+                        </View>
+                      )
+                    })
+                    }
+                  </View>
                 </View>
                 <View>
                   <TouchableOpacity onPress={() => {dispatch(actions.deletePreset(preset.id))}} >

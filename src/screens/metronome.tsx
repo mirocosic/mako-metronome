@@ -14,6 +14,8 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 
+import uuid from 'react-native-uuid';
+
 import RNSound from "react-native-sound"
 import * as Haptics from 'expo-haptics'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
@@ -277,7 +279,7 @@ const Metronome = () => {
             onPress={(e) => {
               switch (e.nativeEvent.index) {
                 case 0:
-                  dispatch(actions.saveCurrentPreset({
+                  dispatch(actions.updatePreset({
                     id: currentPreset.id,
                     name: currentPreset.name,
                     tempo: tempo,
@@ -517,13 +519,17 @@ const Metronome = () => {
               bold={true}
               disabled={presetName ===  ""}
               onPress={() => {
-                dispatch(actions.savePreset({
+                const preset = {
+                  id: uuid.v4(),
                   name: presetName,
                   tempo: tempo,
                   vibrate: isVibrateEnabled,
                   sound: isSoundEnabled,
                   volume: volume,
-                  indicators: indicators}))
+                  indicators: indicators
+                } 
+                dispatch(actions.savePreset(preset))
+                dispatch(actions.setCurrentPreset(preset))
                 setPresetName("")
                 setPresetDialogVisible(false)
               }}/>

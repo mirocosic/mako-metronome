@@ -6,7 +6,6 @@ import { persistStore, persistReducer, FLUSH,
   PURGE,
   REGISTER, } from 'redux-persist'
 import { createSlice, configureStore, combineReducers } from '@reduxjs/toolkit'
-import uuid from 'react-native-uuid';
 
 const persistConfig = {
   key: 'root',
@@ -37,6 +36,9 @@ const settingsSlice = createSlice({
     },
     setCurrentPreset: (state, {payload}) => {
       state.currentPreset = payload
+    },
+    setCurrentPresetName: (state, {payload}) => {
+      state.currentPreset.name = payload
     }
   }
 })
@@ -60,16 +62,10 @@ const presetSlice = createSlice({
   name: "presets",
   initialState: [],
   reducers: {
-    savePreset: (state, {payload: {name, tempo, vibrate, sound, volume, indicators}}) => {
-      state.push({id: uuid.v4(),
-                  name,
-                  tempo,
-                  vibrate,
-                  sound,
-                  volume,
-                  indicators})
+    savePreset: (state, action) => {
+      state.push(action.payload)
     },
-    saveCurrentPreset: (state, action) => {
+    updatePreset: (state, action) => {
        return state.map(preset => {
         if (preset.id === action.payload.id) {
           return preset = action.payload
@@ -118,7 +114,7 @@ export const actions = {
   loadTempo: tempoSlice.actions.loadTempo,
 
   savePreset: presetSlice.actions.savePreset,
-  saveCurrentPreset: presetSlice.actions.saveCurrentPreset,
+  updatePreset: presetSlice.actions.updatePreset,
   loadPreset: presetSlice.actions.loadPreset,
   clearPresets: presetSlice.actions.clearPresets,
   deletePreset: presetSlice.actions.deletePreset,
@@ -131,6 +127,7 @@ export const actions = {
   setTheme: settingsSlice.actions.setTheme,
   setVolume: settingsSlice.actions.setVolume,
   setCurrentPreset: settingsSlice.actions.setCurrentPreset,
+  setCurrentPresetName: settingsSlice.actions.setCurrentPresetName,
   
 }
 
