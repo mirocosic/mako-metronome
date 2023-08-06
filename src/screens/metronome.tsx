@@ -16,7 +16,6 @@ import {
 
 import uuid from 'react-native-uuid';
 
-import RNSound from "react-native-sound"
 import * as Haptics from 'expo-haptics'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { Ionicons } from '@expo/vector-icons';
@@ -29,6 +28,8 @@ import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolateColo
 import Slider from '@react-native-community/slider';
 import Dialog from "react-native-dialog";
 import ContextMenu from "react-native-context-menu-view";
+
+import { Audio } from 'expo-av';
 
 const styles = StyleSheet.create({
   sectionContainer: {
@@ -67,22 +68,6 @@ const styles = StyleSheet.create({
   }
 });
 
-RNSound.setCategory('Playback')
-
-var sound = new RNSound('click3.mp3', RNSound.MAIN_BUNDLE, (error) => {
-  if (error) {
-    console.log('failed to load the sound', error)
-    return
-  }
-})
-
-var sound2 = new RNSound('click4.mp3', RNSound.MAIN_BUNDLE, (error) => {
-  if (error) {
-    console.log('failed to load the sound', error)
-    return
-  }
-})
-
 const bpmToMs = (bpm: number) => {
   return 1000 / (bpm / 60)
 }
@@ -90,7 +75,6 @@ const bpmToMs = (bpm: number) => {
 const msToBpm = (ms: number) => {
   return Math.round((1000 / ms ) * 60)
 }
-
 
 
 const Metronome = () => {
@@ -152,15 +136,6 @@ const Metronome = () => {
     }
   }
 
-  const playSound = (isAccented: boolean) => {
-    if (isAccented) {
-      sound2.play()
-    } else {
-      sound.play()
-    }
-  } 
-
-
   const rIndicators = [useSharedValue(0), useSharedValue(0), useSharedValue(0), useSharedValue(0)]
 
   const makeStyle = (idx: number) => {
@@ -190,6 +165,25 @@ const Metronome = () => {
     }, 100)
   }
 
+  const [sound, setSound] = React.useState();
+
+  async function playExpoSound(isAccented) {
+    await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+    
+    const click = isAccented ? require('../../assets/click4.mp3') : require('../../assets/click3.mp3')
+    const { sound } = await Audio.Sound.createAsync(click);
+    setSound(sound);
+    await sound.playAsync();
+  }
+
+  React.useEffect(() => {
+    return sound
+      ? () => {
+          console.log('Unloading Sound');
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
 
   useEffect(() => {
 
@@ -202,7 +196,7 @@ const Metronome = () => {
 
   if (isPlaying) {
     if (isSoundEnabled && isBeatEnabled) {
-      playSound(isAccented)
+      playExpoSound(isAccented)
     }
     if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
     
@@ -223,7 +217,7 @@ const Metronome = () => {
 
     if (isPlaying) {
       if (isSoundEnabled && isBeatEnabled) {
-        playSound(isAccented)
+        playExpoSound(isAccented)
       }
       if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
 
@@ -251,6 +245,7 @@ const Metronome = () => {
       scrollRef.current.scrollTo({x: tempo * 10, y: 0, animated: false})
     }, 0)
   }, [])
+
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -334,6 +329,9 @@ const Metronome = () => {
           <View style={{flexDirection: "column"}}>
 
             <View style={{flexDirection: "row"}}>
+
+            
+
               <TouchableOpacity onPress={() => togglePlaying(!isPlaying)}>
                 <View style={{backgroundColor: "lightblue", padding: 20, borderRadius: 10, alignItems: "center", margin:10}}>
                   <Text style={{color: "black", fontSize: 20}}>
