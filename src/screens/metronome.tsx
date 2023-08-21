@@ -172,7 +172,8 @@ const Metronome = () => {
     
     const click = isAccented ? require('../../assets/click4.mp3') : require('../../assets/click3.mp3')
     const { sound } = await Audio.Sound.createAsync(click);
-    setSound(sound);
+    setSound(sound)
+    await sound.setVolumeAsync(volume)
     await sound.playAsync();
   }
 
@@ -183,7 +184,7 @@ const Metronome = () => {
           sound.unloadAsync();
         }
       : undefined;
-  }, [sound]);
+  }, [sound])
 
   useEffect(() => {
 
@@ -236,7 +237,7 @@ const Metronome = () => {
     clearInterval(interval)
   }
 
-  }, [tempo, isPlaying, isVibrateEnabled, isSoundEnabled, indicators])
+  }, [tempo, isPlaying, isVibrateEnabled, isSoundEnabled, indicators, volume])
 
 
   // set initial scroll position to initial tempo
@@ -245,7 +246,6 @@ const Metronome = () => {
       scrollRef.current.scrollTo({x: tempo * 10, y: 0, animated: false})
     }, 0)
   }, [])
-
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -459,10 +459,7 @@ const Metronome = () => {
             value={volume}
             minimumTrackTintColor="#FFFFFF"
             maximumTrackTintColor="darkgray"
-            onSlidingComplete={(v) => {
-              sound.setVolume(v)
-              dispatch(actions.setVolume(v))
-            }}
+            onSlidingComplete={ v => dispatch(actions.setVolume(v)) }
           />
 
           <View style={{height: 50, flexDirection: "row", alignItems: "center", justifyContent: "space-evenly"}}>
