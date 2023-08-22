@@ -19,7 +19,8 @@ const settingsSlice = createSlice({
     sound: true,
     theme: "dark",
     volume: 0.5,
-    currentPreset: {}
+    currentPreset: {},
+    beats: 4,
   },
   reducers: {
     setVibrate: (state, {payload}) => {
@@ -39,6 +40,9 @@ const settingsSlice = createSlice({
     },
     setCurrentPresetName: (state, {payload}) => {
       state.currentPreset.name = payload
+    },
+    setBeats: (state, {payload}) => {
+      state.beats = payload
     }
   }
 })
@@ -104,6 +108,10 @@ const indicatorsSlice = createSlice({
     },
     loadIndicators: (state, {payload}) => {
       return state = payload
+    },
+    setIndicators: (state, {payload}) => {
+      console.log(payload)
+      return state = Array(payload).fill({levels: [{active: true}, {active: true}]})
     }
   }
 })
@@ -121,6 +129,7 @@ export const actions = {
 
   toggleIndicator: indicatorsSlice.actions.toggleIndicator,
   loadIndicators: indicatorsSlice.actions.loadIndicators,
+  setIndicators: indicatorsSlice.actions.setIndicators,
 
   setVibrate: settingsSlice.actions.setVibrate,
   toggleSound: settingsSlice.actions.toggleSound,
@@ -128,6 +137,7 @@ export const actions = {
   setVolume: settingsSlice.actions.setVolume,
   setCurrentPreset: settingsSlice.actions.setCurrentPreset,
   setCurrentPresetName: settingsSlice.actions.setCurrentPresetName,
+  setBeats: settingsSlice.actions.setBeats,
   
 }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { actions } from '../store'
 
@@ -6,76 +6,29 @@ import {
   SafeAreaView,
   ScrollView,
   StatusBar,
-  StyleSheet,
   Text,
   View,
   TouchableOpacity,
   TextInput,
   KeyboardAvoidingView,
-} from 'react-native';
-
-import uuid from 'react-native-uuid';
+} from 'react-native'
 
 import * as Haptics from 'expo-haptics'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons'
 
 import { useDarkTheme } from '../utils/ui-utils'
+import { msToBpm, bpmToMs } from '../utils/common'
 import Copy from "../components/copy"
+import SaveDialog from '../components/save-dialog'
+import styles from './styles'
 
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolateColor } from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolateColor } from 'react-native-reanimated'
 
-import Slider from '@react-native-community/slider';
-import Dialog from "react-native-dialog";
-import ContextMenu from "react-native-context-menu-view";
+import Slider from '@react-native-community/slider'
+import ContextMenu from "react-native-context-menu-view"
 
-import { Audio } from 'expo-av';
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-
-  indicatorBox: {
-    width: 50, height: 50, 
-    borderRadius: 6,
-    borderColor: "lightgray", 
-    borderWidth: 1,
-    margin: 10
-  },
-  indicatorLevelTop: {
-    flex: 1,
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
-  },
-  indicatorLevelBottom: {
-    flex: 1,
-    borderBottomLeftRadius: 5,
-    borderBottomRightRadius: 5,
-  }
-});
-
-const bpmToMs = (bpm: number) => {
-  return 1000 / (bpm / 60)
-}
-
-const msToBpm = (ms: number) => {
-  return Math.round((1000 / ms ) * 60)
-}
-
+import { Audio } from 'expo-av'
 
 const Metronome = () => {
   const isDarkMode = useDarkTheme()
@@ -103,10 +56,10 @@ const Metronome = () => {
   const [taps, setTaps] = useState([0])
   const [tapMessage, setTapMessage] = useState("")
 
-  const indicators = useSelector(state => state.indicators)
-
   const [isPresetDialogVisible, setPresetDialogVisible] = useState(false)
-  const [presetName, setPresetName] = useState("")
+
+  const indicators = useSelector(state => state.indicators)
+  const beats = useSelector(state => state.settings.beats)
 
   const getTapTempo = () => {
 
@@ -136,27 +89,26 @@ const Metronome = () => {
     }
   }
 
-  const rIndicators = [useSharedValue(0), useSharedValue(0), useSharedValue(0), useSharedValue(0)]
+  const rIndicators = indicators.map((indicator, idx: number) => {
+    return useSharedValue(0)
+  })
 
   const makeStyle = (idx: number) => {
-
     return useAnimatedStyle(() => {
-
       const backgroundColor = interpolateColor(
         rIndicators[idx].value,
         [0, 1],
         ["gray", "red"]
-      );
-
+      )
       return {
         backgroundColor,
       }
-
     })
-
   }
 
-  const rStyles = [makeStyle(0), makeStyle(1), makeStyle(2), makeStyle(3)]
+  const rStyles = indicators.map((indicator, idx: number) => {
+    return makeStyle(idx)
+  })
   
   const toggleIndicator = (idx: number) => {
     rIndicators[idx].value = withTiming(1, {duration: 50})
@@ -188,54 +140,54 @@ const Metronome = () => {
 
   useEffect(() => {
 
-  if (!isPlaying) return
+    if (!isPlaying) return
 
-  let currentIndicatorIdx = 0
-  const isBeatEnabled = indicators[currentIndicatorIdx].levels[0].active
-  const isAccented = indicators[currentIndicatorIdx].levels[1].active
-
-
-  if (isPlaying) {
-    if (isSoundEnabled && isBeatEnabled) {
-      playExpoSound(isAccented)
-    }
-    if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
-    
-    toggleIndicator(currentIndicatorIdx)
-
-    if(currentIndicatorIdx === 3) {
-      currentIndicatorIdx = 0
-    } else {
-      currentIndicatorIdx = currentIndicatorIdx + 1
-    }
-  }
-
-  // run interval fn
-  const interval = setInterval(() => {
-
+    let currentIndicatorIdx = 0
     const isBeatEnabled = indicators[currentIndicatorIdx].levels[0].active
     const isAccented = indicators[currentIndicatorIdx].levels[1].active
+
 
     if (isPlaying) {
       if (isSoundEnabled && isBeatEnabled) {
         playExpoSound(isAccented)
       }
       if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
-
+      
       toggleIndicator(currentIndicatorIdx)
 
-      if(currentIndicatorIdx === 3) {
+      if(currentIndicatorIdx === indicators.length - 1) {
         currentIndicatorIdx = 0
       } else {
         currentIndicatorIdx = currentIndicatorIdx + 1
       }
     }
 
-  }, bpmToMs(tempo))
+    // run interval fn
+    const interval = setInterval(() => {
 
-  return () => {
-    clearInterval(interval)
-  }
+      const isBeatEnabled = indicators[currentIndicatorIdx].levels[0].active
+      const isAccented = indicators[currentIndicatorIdx].levels[1].active
+
+      if (isPlaying) {
+        if (isSoundEnabled && isBeatEnabled) {
+          playExpoSound(isAccented)
+        }
+        if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
+
+        toggleIndicator(currentIndicatorIdx)
+
+        if(currentIndicatorIdx === indicators.length - 1) {
+          currentIndicatorIdx = 0
+        } else {
+          currentIndicatorIdx = currentIndicatorIdx + 1
+        }
+      }
+
+    }, bpmToMs(tempo))
+
+    return () => {
+      clearInterval(interval)
+    }
 
   }, [tempo, isPlaying, isVibrateEnabled, isSoundEnabled, indicators, volume])
 
@@ -249,9 +201,7 @@ const Metronome = () => {
 
   return (
     <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-      />
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <KeyboardAvoidingView
         behavior="padding"
         style={{paddingBottom: 50, flex: 1}}>
@@ -309,7 +259,10 @@ const Metronome = () => {
                 return (
                   <TouchableOpacity
                     key={idx}
-                    style={[styles.indicatorBox, indicator.indicating && {borderColor: "teal"}]}
+                    style={[styles.indicatorBox,
+                            indicator.indicating && {borderColor: "teal"},
+                            {marginHorizontal: 20 / indicators.length}
+                          ]}
                     onPress={() => dispatch(actions.toggleIndicator({idx}))}>
                       
                     <Animated.View style={[styles.indicatorLevelTop,
@@ -329,8 +282,6 @@ const Metronome = () => {
           <View style={{flexDirection: "column"}}>
 
             <View style={{flexDirection: "row"}}>
-
-            
 
               <TouchableOpacity onPress={() => togglePlaying(!isPlaying)}>
                 <View style={{backgroundColor: "lightblue", padding: 20, borderRadius: 10, alignItems: "center", margin:10}}>
@@ -381,7 +332,20 @@ const Metronome = () => {
                     }
                   </Text>
                 </View>
-              </TouchableOpacity> 
+              </TouchableOpacity>
+
+              <TextInput
+                style={{color: isDarkMode ? "white" : "black", fontSize: 20, padding: 10, borderWidth: 1, borderColor: "gray", borderRadius: 10, width: 50, height: 50, alignItems:"center", justifyContent: "center", textAlign: "center"}}
+                keyboardType="number-pad"
+                returnKeyType={ 'done' }
+                value={beats}
+                onChangeText={ v => {
+                  dispatch(actions.setBeats(v))
+                }}
+                onSubmitEditing={(v)=>{
+                  dispatch(actions.setIndicators(Number(beats)))
+                }}
+              />
             </View>
           </View>
 
@@ -498,37 +462,7 @@ const Metronome = () => {
 
           </View>
 
-          <Dialog.Container visible={isPresetDialogVisible}>
-            <Dialog.Title>Save preset</Dialog.Title>
-            <Dialog.Description>
-              Save this current settings as a new preset?
-            </Dialog.Description>
-            <Dialog.Input onChangeText={(v)=>setPresetName(v)} />
-            <Dialog.Button label="Cancel" 
-              onPress={() => {
-                setPresetDialogVisible(false)
-                setPresetName("")
-              }} />
-            <Dialog.Button
-              label="Save"
-              bold={true}
-              disabled={presetName ===  ""}
-              onPress={() => {
-                const preset = {
-                  id: uuid.v4(),
-                  name: presetName,
-                  tempo: tempo,
-                  vibrate: isVibrateEnabled,
-                  sound: isSoundEnabled,
-                  volume: volume,
-                  indicators: indicators
-                } 
-                dispatch(actions.savePreset(preset))
-                dispatch(actions.setCurrentPreset(preset))
-                setPresetName("")
-                setPresetDialogVisible(false)
-              }}/>
-          </Dialog.Container>
+          <SaveDialog isPresetDialogVisible={isPresetDialogVisible} setPresetDialogVisible={setPresetDialogVisible}/>
           
         </View>
       </KeyboardAvoidingView>
