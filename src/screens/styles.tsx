@@ -16,25 +16,6 @@ const styles = StyleSheet.create({
   },
   highlight: {
     fontWeight: '700',
-  },
-
-  indicatorBox: {
-    flex: 1,
-    maxWidth: 50,
-    height: 50, 
-    borderRadius: 6,
-    borderColor: "lightgray", 
-    borderWidth: 1,
-  },
-  indicatorLevelTop: {
-    flex: 1,
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
-  },
-  indicatorLevelBottom: {
-    flex: 1,
-    borderBottomLeftRadius: 5,
-    borderBottomRightRadius: 5,
   }
 })
 

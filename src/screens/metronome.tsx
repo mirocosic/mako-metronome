@@ -21,14 +21,13 @@ import { useDarkTheme } from '../utils/ui-utils'
 import { msToBpm, bpmToMs } from '../utils/common'
 import Copy from "../components/copy"
 import SaveDialog from '../components/save-dialog'
-import styles from './styles'
-
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolateColor } from 'react-native-reanimated'
+import Indicators from '../components/indicators'
 
 import Slider from '@react-native-community/slider'
 import ContextMenu from "react-native-context-menu-view"
 
 import { Audio } from 'expo-av'
+import { current } from '@reduxjs/toolkit'
 
 const Metronome = () => {
   const isDarkMode = useDarkTheme()
@@ -61,6 +60,8 @@ const Metronome = () => {
   const indicators = useSelector(state => state.indicators)
   const beats = useSelector(state => state.settings.beats)
 
+  const [currentIndicatorIdx , setCurrentIndicatorIdx] = useState(0)
+
   const getTapTempo = () => {
 
     const lastTap = taps[taps.length - 1]
@@ -88,35 +89,7 @@ const Metronome = () => {
       }
     }
   }
-
-  const rIndicators = indicators.map((indicator, idx: number) => {
-    return useSharedValue(0)
-  })
-
-  const makeStyle = (idx: number) => {
-    return useAnimatedStyle(() => {
-      const backgroundColor = interpolateColor(
-        rIndicators[idx].value,
-        [0, 1],
-        ["gray", "red"]
-      )
-      return {
-        backgroundColor,
-      }
-    })
-  }
-
-  const rStyles = indicators.map((indicator, idx: number) => {
-    return makeStyle(idx)
-  })
   
-  const toggleIndicator = (idx: number) => {
-    rIndicators[idx].value = withTiming(1, {duration: 50})
-    setTimeout(() => {
-      rIndicators[idx].value = withTiming(0, {duration: 50})
-    }, 100)
-  }
-
   const [sound, setSound] = React.useState();
 
   async function playExpoSound(isAccented) {
@@ -152,13 +125,13 @@ const Metronome = () => {
         playExpoSound(isAccented)
       }
       if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
-      
-      toggleIndicator(currentIndicatorIdx)
 
       if(currentIndicatorIdx === indicators.length - 1) {
         currentIndicatorIdx = 0
+        setCurrentIndicatorIdx(0)
       } else {
         currentIndicatorIdx = currentIndicatorIdx + 1
+        setCurrentIndicatorIdx(currentIndicatorIdx)
       }
     }
 
@@ -174,12 +147,12 @@ const Metronome = () => {
         }
         if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
 
-        toggleIndicator(currentIndicatorIdx)
-
         if(currentIndicatorIdx === indicators.length - 1) {
           currentIndicatorIdx = 0
+          setCurrentIndicatorIdx(0)
         } else {
           currentIndicatorIdx = currentIndicatorIdx + 1
+          setCurrentIndicatorIdx(currentIndicatorIdx)
         }
       }
 
@@ -209,13 +182,7 @@ const Metronome = () => {
         <View style={{justifyContent: 'space-evenly', alignItems: "flex-end", flexDirection: "row", alignItems: "center"}}>
           <View style={{flex: 1}}></View>
           <View style={{flex: 1}}>
-            {
-              currentPreset.name !== ""
-              ?
-              <Copy value={`Preset: ${currentPreset.name}`}></Copy>
-              : null
-            }
-            
+            { currentPreset.name !== "" ? <Copy value={`Preset: ${currentPreset.name}`}></Copy> : null }
           </View>
 
           <ContextMenu
@@ -246,38 +213,9 @@ const Metronome = () => {
           </ContextMenu>
         </View>
 
-        <View
-          style={{
-            flex: 1,
-            alignItems: "center",
-            justifyContent: "space-evenly",
-          }}>
+        <View style={{flex: 1,alignItems: "center", justifyContent: "space-evenly"}}>
 
-          <View style={{flexDirection: "row"}}>
-            {
-              indicators.map((indicator, idx: number) => {
-                return (
-                  <TouchableOpacity
-                    key={idx}
-                    style={[styles.indicatorBox,
-                            indicator.indicating && {borderColor: "teal"},
-                            {marginHorizontal: 20 / indicators.length}
-                          ]}
-                    onPress={() => dispatch(actions.toggleIndicator({idx}))}>
-                      
-                    <Animated.View style={[styles.indicatorLevelTop,
-                                           indicator.levels[1].active && {backgroundColor: "gray"},
-                                           indicator.levels[1].active && rStyles[idx],
-                                           ]}/>
-                    <Animated.View style={[styles.indicatorLevelBottom,
-                                           indicator.levels[0].active && {backgroundColor: "gray"},
-                                           indicator.levels[0].active && rStyles[idx],
-                                   ]}/>
-                  </TouchableOpacity>
-                )
-              })
-            }
-          </View>
+          <Indicators currentIndicatorIdx={currentIndicatorIdx} isPlaying={isPlaying} />
 
           <View style={{flexDirection: "column"}}>
 
