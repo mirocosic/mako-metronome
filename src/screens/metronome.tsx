@@ -22,12 +22,12 @@ import { msToBpm, bpmToMs } from '../utils/common'
 import Copy from "../components/copy"
 import SaveDialog from '../components/save-dialog'
 import Indicators from '../components/indicators'
+import TempoControls from '../components/tempo-controls'
 
 import Slider from '@react-native-community/slider'
 import ContextMenu from "react-native-context-menu-view"
 
 import { Audio } from 'expo-av'
-import { current } from '@reduxjs/toolkit'
 
 const Metronome = () => {
   const isDarkMode = useDarkTheme()
@@ -45,7 +45,7 @@ const Metronome = () => {
   const scrollRef = useRef()
   const inputRef = useRef()
 
-  const [input, setInput] = useState(100)
+  
   const [isPlaying, togglePlaying] = useState(false)
   const isVibrateEnabled = useSelector(state => state.settings.vibrate)
   const isSoundEnabled = useSelector(state => state.settings.sound)
@@ -211,6 +211,7 @@ const Metronome = () => {
                 <Ionicons name="ios-save" size={16} color="black" />
             </View>
           </ContextMenu>
+
         </View>
 
         <View style={{flex: 1,alignItems: "center", justifyContent: "space-evenly"}}>
@@ -291,68 +292,7 @@ const Metronome = () => {
             <Text style={{color:"white"}}>{tapMessage}</Text>
           </View>
 
-
-          <View style={{margin: 20, flexDirection: "row", alignItems: "center", justifyContent: "space-evenly"}}>
-
-           <TouchableOpacity
-              style={{paddingHorizontal: 10}}
-              onPress={() => {
-                scrollRef.current.scrollTo({x: (tempo - 5) * 10, y: 0, animated: true})
-                
-              }}>
-              <Copy style={{fontSize: 25}} value="-5" />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={{paddingHorizontal: 10}}
-              onPress={() => {
-                scrollRef.current.scrollTo({x: (tempo - 1) * 10, y: 0, animated: true})
-              }}>
-              <Copy style={{fontSize: 35}} value="-1" />
-            </TouchableOpacity>
-
-            
-            <TextInput
-              ref={inputRef}
-              value={ inputRef.current && inputRef.current.isFocused() ? String(input) : String(tempo)}
-              style={{color: isDarkMode ? "white" : "black", fontSize: 40, padding: 10, borderWidth: 1, borderColor: "gray", borderRadius: 10, width: 100, height: 60, alignItems:"center", justifyContent: "center", textAlign: "center"}}
-              keyboardType="number-pad"
-              returnKeyType={ 'done' }
-              onFocus={() => setInput("")}
-              onChangeText={(v) => {
-                setInput(v)
-              }}
-              onSubmitEditing={()=>{
-                if (Number(input) > 0 && Number(input) < 400) {
-                  dispatch(actions.saveTempo(Number(input)))
-                  scrollRef.current.scrollTo({x: Number(input) * 10, y: 0, animated: true})
-                } else {
-                  setInput(String(tempo))
-                }
-                  
-              }}
-            />
-
-            <TouchableOpacity
-              style={{paddingHorizontal: 10}}
-              onPress={() => {
-                scrollRef.current.scrollTo({x: (tempo + 1) * 10, y: 0, animated: true})
-                
-              }}>
-              <Copy style={{fontSize: 35}} value="+1" />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={{paddingHorizontal: 10}}
-              onPress={() => {
-                scrollRef.current.scrollTo({x: (tempo + 5) * 10, y: 0, animated: true})
-                
-              }}>
-              <Copy style={{fontSize: 25}} value="+5" />
-
-            </TouchableOpacity>  
-
-          </View>
+          <TempoControls scrollRef={scrollRef} inputRef={inputRef} />
 
           <Slider
             style={{width: 200, height: 40}}
@@ -361,8 +301,7 @@ const Metronome = () => {
             value={volume}
             minimumTrackTintColor="#FFFFFF"
             maximumTrackTintColor="darkgray"
-            onSlidingComplete={ v => dispatch(actions.setVolume(v)) }
-          />
+            onSlidingComplete={ v => dispatch(actions.setVolume(v)) }/>
 
           <View style={{height: 50, flexDirection: "row", alignItems: "center", justifyContent: "space-evenly"}}>
 
