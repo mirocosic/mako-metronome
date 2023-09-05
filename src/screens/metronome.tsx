@@ -8,60 +8,44 @@ import {
   StatusBar,
   Text,
   View,
-  TouchableOpacity,
-  TextInput,
   KeyboardAvoidingView,
+  StyleSheet,
 } from 'react-native'
 
 import * as Haptics from 'expo-haptics'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
-import { Ionicons } from '@expo/vector-icons'
-
 import { useDarkTheme } from '../utils/ui-utils'
 import { msToBpm, bpmToMs } from '../utils/common'
-import Copy from "../components/copy"
 import SaveDialog from '../components/save-dialog'
 import Indicators from '../components/indicators'
 import TempoControls from '../components/tempo-controls'
-
+import Controls from '../components/controls'
+import MetronomeHeader from "../components/metronome-header"
 import Slider from '@react-native-community/slider'
-import ContextMenu from "react-native-context-menu-view"
-
 import { Audio } from 'expo-av'
 
 const Metronome = () => {
   const isDarkMode = useDarkTheme()
-
-  const tempo = useSelector((state) => state.tempo.value)
   const dispatch = useDispatch()
-
-  const backgroundStyle = {
-    flex: 1,
-    margin: 10
-  };
 
   const ticks = [...Array(300).keys()];
 
   const scrollRef = useRef()
   const inputRef = useRef()
 
-  
+  const tempo = useSelector((state) => state.tempo.value)
   const [isPlaying, togglePlaying] = useState(false)
   const isVibrateEnabled = useSelector(state => state.settings.vibrate)
   const isSoundEnabled = useSelector(state => state.settings.sound)
   const volume = useSelector(state => state.settings.volume)
-  const currentPreset = useSelector(state => state.settings.currentPreset)
-
+  
   const [taps, setTaps] = useState([0])
   const [tapMessage, setTapMessage] = useState("")
-
   const [isPresetDialogVisible, setPresetDialogVisible] = useState(false)
-
   const indicators = useSelector(state => state.indicators)
-  const beats = useSelector(state => state.settings.beats)
 
   const [currentIndicatorIdx , setCurrentIndicatorIdx] = useState(0)
 
+  // todo: maybe move to controls component
   const getTapTempo = () => {
 
     const lastTap = taps[taps.length - 1]
@@ -173,126 +157,32 @@ const Metronome = () => {
   }, [])
 
   return (
-    <SafeAreaView style={backgroundStyle}>
+    <SafeAreaView style={styles.backgroundStyle}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+
       <KeyboardAvoidingView
         behavior="padding"
         style={{paddingBottom: 50, flex: 1}}>
 
-        <View style={{justifyContent: 'space-evenly', alignItems: "flex-end", flexDirection: "row", alignItems: "center"}}>
-          <View style={{flex: 1}}></View>
-          <View style={{flex: 1}}>
-            { currentPreset.name !== "" ? <Copy value={`Preset: ${currentPreset.name}`}></Copy> : null }
-          </View>
-
-          <ContextMenu
-            dropdownMenuMode
-            actions={[{ title: "Save", subtitle: "Save current preset" }, { title: "Save As ", subtitle: "Save as a new preset" }, { title: "Cancel", destructive: true }]}
-            onPress={(e) => {
-              switch (e.nativeEvent.index) {
-                case 0:
-                  dispatch(actions.updatePreset({
-                    id: currentPreset.id,
-                    name: currentPreset.name,
-                    tempo: tempo,
-                    vibrate: isVibrateEnabled,
-                    sound: isSoundEnabled,
-                    volume: volume,
-                    indicators: indicators}))
-                  break;
-                case 1:
-                  setPresetDialogVisible(true)
-                  break;
-              }
-            }}
-
-          >
-            <View style={{backgroundColor: "lightblue", width: 40, padding: 10, borderRadius: 10, alignItems: "center", margin:10}}>
-                <Ionicons name="ios-save" size={16} color="black" />
-            </View>
-          </ContextMenu>
-
-        </View>
+        <MetronomeHeader setPresetDialogVisible={setPresetDialogVisible}/>
 
         <View style={{flex: 1,alignItems: "center", justifyContent: "space-evenly"}}>
 
-          <Indicators currentIndicatorIdx={currentIndicatorIdx} isPlaying={isPlaying} />
+          <Indicators
+            currentIndicatorIdx={currentIndicatorIdx}
+            isPlaying={isPlaying} />
 
-          <View style={{flexDirection: "column"}}>
+          <Controls
+            togglePlaying={togglePlaying}
+            isPlaying={isPlaying}
+            getTapTempo={getTapTempo} 
+            playExpoSound={playExpoSound} />
 
-            <View style={{flexDirection: "row"}}>
+          <Text style={{color:"white"}}>{tapMessage}</Text>
 
-              <TouchableOpacity onPress={() => togglePlaying(!isPlaying)}>
-                <View style={{backgroundColor: "lightblue", padding: 20, borderRadius: 10, alignItems: "center", margin:10}}>
-                  <Text style={{color: "black", fontSize: 20}}>
-                  {isPlaying
-                    ?
-                    <Ionicons name="pause" size={24} color="black" />
-                    :
-                    <Ionicons name="play" size={24} color="black" />
-                    }
-                  </Text>
-                </View>
-              </TouchableOpacity> 
-
-              <TouchableOpacity onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-                getTapTempo()
-                playSound(false)
-              }}>
-                <View style={{backgroundColor: "lightblue", padding: 20, borderRadius: 10, alignItems: "center", margin: 10}}>
-                  <MaterialCommunityIcons name="gesture-double-tap" size={24} color="black" />
-                </View>
-              </TouchableOpacity> 
-            </View>
-
-            <View style={{flexDirection: "row", justifyContent: "center"}}>
-              <TouchableOpacity onPress={() => dispatch(actions.setVibrate(!isVibrateEnabled))}>
-                <View style={{backgroundColor: "lightblue", padding: 10, borderRadius: 10, alignItems: "center", margin:10}}>
-                  <Text style={{color: "black", fontSize: 14}}>
-                  {isVibrateEnabled 
-                    ?
-                    <MaterialCommunityIcons name="vibrate" size={24} color="black" />
-                    :
-                    <MaterialCommunityIcons name="vibrate-off" size={24} color="black" />
-                  }
-                  </Text>
-                </View>
-              </TouchableOpacity> 
-
-              <TouchableOpacity onPress={() => dispatch(actions.toggleSound(!isSoundEnabled))}>
-                <View style={{backgroundColor: "lightblue", padding: 10, borderRadius: 10, alignItems: "center", margin:10}}>
-                  <Text style={{color: "black", fontSize: 14}}>
-                  {isSoundEnabled 
-                    ?
-                    <Ionicons name="volume-high" size={24} color="black" />
-                    :
-                    <Ionicons name="volume-mute" size={24} color="black" />
-                    }
-                  </Text>
-                </View>
-              </TouchableOpacity>
-
-              <TextInput
-                style={{color: isDarkMode ? "white" : "black", fontSize: 20, padding: 10, borderWidth: 1, borderColor: "gray", borderRadius: 10, width: 50, height: 50, alignItems:"center", justifyContent: "center", textAlign: "center"}}
-                keyboardType="number-pad"
-                returnKeyType={ 'done' }
-                value={beats}
-                onChangeText={ v => {
-                  dispatch(actions.setBeats(v))
-                }}
-                onSubmitEditing={(v)=>{
-                  dispatch(actions.setIndicators(Number(beats)))
-                }}
-              />
-            </View>
-          </View>
-
-          <View>
-            <Text style={{color:"white"}}>{tapMessage}</Text>
-          </View>
-
-          <TempoControls scrollRef={scrollRef} inputRef={inputRef} />
+          <TempoControls
+            scrollRef={scrollRef}
+            inputRef={inputRef} />
 
           <Slider
             style={{width: 200, height: 40}}
@@ -321,22 +211,15 @@ const Metronome = () => {
                 if ((bpm !== tempo) && (bpm > 0) && (bpm <= 400)) {
                   Haptics.selectionAsync()
                 }
-
-              }}
-            >
-
+              }}>
               { ticks.map((item, idx)=>{
                 return(
                   <View key={idx}
                         style={{backgroundColor: isDarkMode ? "white" : "black",
-                                width: 5, height: 50, margin: 5}}></View>
+                                width: 5, height: 50, margin: 5}} />
                 )
-              })
-
-              }
-
+              })}
             </ScrollView>
-
           </View>
 
           <SaveDialog isPresetDialogVisible={isPresetDialogVisible} setPresetDialogVisible={setPresetDialogVisible}/>
@@ -344,8 +227,15 @@ const Metronome = () => {
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
-  );
+  )
 }
+
+const styles = StyleSheet.create({
+  backgroundStyle: {
+    flex: 1,
+    margin: 10
+  }
+})
 
 
 export default Metronome
