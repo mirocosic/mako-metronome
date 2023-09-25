@@ -9,7 +9,6 @@ import {
   Text,
   View,
   KeyboardAvoidingView,
-  StyleSheet,
 } from 'react-native'
 
 import * as Haptics from 'expo-haptics'
@@ -22,6 +21,7 @@ import Controls from '../components/controls'
 import MetronomeHeader from "../components/metronome-header"
 import Slider from '@react-native-community/slider'
 import { Audio } from 'expo-av'
+import styles from './styles'
 
 const Metronome = () => {
   const isDarkMode = useDarkTheme()
@@ -229,13 +229,5 @@ const Metronome = () => {
     </SafeAreaView>
   )
 }
-
-const styles = StyleSheet.create({
-  backgroundStyle: {
-    flex: 1,
-    margin: 10
-  }
-})
-
 
 export default Metronome

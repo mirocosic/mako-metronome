@@ -16,6 +16,10 @@ const styles = StyleSheet.create({
   },
   highlight: {
     fontWeight: '700',
+  },
+  backgroundStyle: {
+    flex: 1,
+    margin: 10
   }
 })
 
