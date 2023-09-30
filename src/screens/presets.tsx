@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { useDispatch, useSelector } from "react-redux";
 import { actions } from "../store"
-
+import { Ionicons } from '@expo/vector-icons'
 import Copy from "../components/copy"
 
 const Presets = ({navigation}) => {
@@ -15,8 +15,8 @@ const Presets = ({navigation}) => {
   const dispatch = useDispatch()
 
   return (
-    <SafeAreaView>
-      <ScrollView>
+    <SafeAreaView style={{flex: 1}}>
+      <ScrollView style={{flex: 1}}>
       {
         presets.map((preset, idx) => {
           return (
@@ -50,8 +50,8 @@ const Presets = ({navigation}) => {
                   </View>
                 </View>
                 <View>
-                  <TouchableOpacity onPress={() => {dispatch(actions.deletePreset(preset.id))}} >
-                    <Copy style={{color: "red"}} value="Delete" />
+                  <TouchableOpacity onPress={() => {dispatch(actions.deletePreset(preset.id))}}>
+                    <Ionicons name="trash" size={24} color="#be4d25" />
                   </TouchableOpacity>
                 </View>
                 
@@ -62,7 +62,7 @@ const Presets = ({navigation}) => {
 
       <TouchableOpacity
         onPress={() => {
-          dispatch(actions.clearPresets())
+          dispatch(actions.clearPresets({}))
         }}
         style={{margin: 10, borderBottomColor: "lightgray", borderBottomWidth: 1, padding: 10}}>
         <Copy style={{fontWeight: "bold"}} value="Clear all presets" />
