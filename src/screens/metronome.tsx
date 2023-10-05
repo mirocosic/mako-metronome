@@ -13,14 +13,13 @@ import {
 
 import * as Haptics from 'expo-haptics'
 import { useDarkTheme } from '../utils/ui-utils'
-import { msToBpm, bpmToMs } from '../utils/common'
+import { msToBpm } from '../utils/common'
 import SaveDialog from '../components/save-dialog'
 import Indicators from '../components/indicators'
 import TempoControls from '../components/tempo-controls'
+import VolumeControls from '../components/volume-controls'
 import Controls from '../components/controls'
 import MetronomeHeader from "../components/metronome-header"
-import Slider from '@react-native-community/slider'
-import { Audio } from 'expo-av'
 import styles from './styles'
 
 const Metronome = () => {
@@ -34,120 +33,9 @@ const Metronome = () => {
 
   const tempo = useSelector((state) => state.tempo.value)
   const [isPlaying, togglePlaying] = useState(false)
-  const isVibrateEnabled = useSelector(state => state.settings.vibrate)
-  const isSoundEnabled = useSelector(state => state.settings.sound)
-  const volume = useSelector(state => state.settings.volume)
-  
-  const [taps, setTaps] = useState([0])
-  const [tapMessage, setTapMessage] = useState("")
   const [isPresetDialogVisible, setPresetDialogVisible] = useState(false)
   const indicators = useSelector(state => state.indicators)
-
   const [currentIndicatorIdx , setCurrentIndicatorIdx] = useState(0)
-
-  // todo: maybe move to controls component
-  const getTapTempo = () => {
-
-    const lastTap = taps[taps.length - 1]
-
-    if (lastTap === 0) {
-      setTaps([Date.now()])
-      setTapMessage("Keep tapping")
-      return;
-    } else if ( (Date.now() - lastTap) > 3000 ) {
-      setTaps([Date.now()])
-      setTapMessage("Keep tapping")
-      return;
-    } else {
-      const diff1 = Date.now() - lastTap
-      const diff2 = lastTap - taps[taps.length - 2]
-      const diff3 = taps[taps.length - 2] - taps[taps.length - 3]
-
-      const avgTaps = (diff1 + diff2 + diff3) / 3
-
-      setTaps([...taps, Date.now()])
-    
-      if (avgTaps) {
-        setTapMessage("")  
-        dispatch(actions.saveTempo(msToBpm(avgTaps)))
-      }
-    }
-  }
-  
-  const [sound, setSound] = React.useState();
-
-  async function playExpoSound(isAccented) {
-    await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
-    
-    const click = isAccented ? require('../../assets/click4.mp3') : require('../../assets/click3.mp3')
-    const { sound } = await Audio.Sound.createAsync(click);
-    setSound(sound)
-    await sound.setVolumeAsync(volume)
-    await sound.playAsync();
-  }
-
-  React.useEffect(() => {
-    return sound
-      ? () => {
-          console.log('Unloading Sound');
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound])
-
-  useEffect(() => {
-
-    if (!isPlaying) return
-
-    let currentIndicatorIdx = 0
-    const isBeatEnabled = indicators[currentIndicatorIdx].levels[0].active
-    const isAccented = indicators[currentIndicatorIdx].levels[1].active
-
-
-    if (isPlaying) {
-      if (isSoundEnabled && isBeatEnabled) {
-        playExpoSound(isAccented)
-      }
-      if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
-
-      if(currentIndicatorIdx === indicators.length - 1) {
-        currentIndicatorIdx = 0
-        setCurrentIndicatorIdx(0)
-      } else {
-        currentIndicatorIdx = currentIndicatorIdx + 1
-        setCurrentIndicatorIdx(currentIndicatorIdx)
-      }
-    }
-
-    // run interval fn
-    const interval = setInterval(() => {
-
-      const isBeatEnabled = indicators[currentIndicatorIdx].levels[0].active
-      const isAccented = indicators[currentIndicatorIdx].levels[1].active
-
-      if (isPlaying) {
-        if (isSoundEnabled && isBeatEnabled) {
-          playExpoSound(isAccented)
-        }
-        if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
-
-        if(currentIndicatorIdx === indicators.length - 1) {
-          currentIndicatorIdx = 0
-          setCurrentIndicatorIdx(0)
-        } else {
-          currentIndicatorIdx = currentIndicatorIdx + 1
-          setCurrentIndicatorIdx(currentIndicatorIdx)
-        }
-      }
-
-    }, bpmToMs(tempo))
-
-    return () => {
-      clearInterval(interval)
-    }
-
-  }, [tempo, isPlaying, isVibrateEnabled, isSoundEnabled, indicators, volume])
-
 
   // set initial scroll position to initial tempo
   useEffect(() => {
@@ -175,23 +63,15 @@ const Metronome = () => {
           <Controls
             togglePlaying={togglePlaying}
             isPlaying={isPlaying}
-            getTapTempo={getTapTempo} 
-            playExpoSound={playExpoSound} />
-
-          <Text style={{color:"white"}}>{tapMessage}</Text>
+            tempo={tempo}
+            indicators={indicators}
+            setCurrentIndicatorIdx={setCurrentIndicatorIdx} />
 
           <TempoControls
             scrollRef={scrollRef}
             inputRef={inputRef} />
 
-          <Slider
-            style={{width: 200, height: 40}}
-            minimumValue={0}
-            maximumValue={1}
-            value={volume}
-            minimumTrackTintColor="#FFFFFF"
-            maximumTrackTintColor="darkgray"
-            onSlidingComplete={ v => dispatch(actions.setVolume(v)) }/>
+          <VolumeControls />
 
           <View style={{height: 50, flexDirection: "row", alignItems: "center", justifyContent: "space-evenly"}}>
 
