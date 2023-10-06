@@ -4,6 +4,12 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
+import {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+} from '@gorhom/bottom-sheet';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -67,12 +73,16 @@ const AppNavigator = () => {
 export default function Main() {
 
   return (
-    <Provider store={store}>
-      <PersistGate loading={<Text>Loading...</Text>} persistor={persistor}>
-        <ActionSheetProvider>
-          <AppNavigator />
-        </ActionSheetProvider>
-      </PersistGate>
-    </Provider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Provider store={store}>
+        <PersistGate loading={<Text>Loading...</Text>} persistor={persistor}>
+          <ActionSheetProvider>
+            <BottomSheetModalProvider>
+              <AppNavigator />
+            </BottomSheetModalProvider>
+          </ActionSheetProvider>
+        </PersistGate>
+      </Provider>
+    </GestureHandlerRootView>
   )
 }

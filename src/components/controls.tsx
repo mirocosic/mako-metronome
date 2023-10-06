@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { View, TouchableOpacity, StyleSheet, Text, TextInput } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons, Fontisto } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
 import { useSelector, useDispatch } from 'react-redux'
 import { Audio } from 'expo-av'
@@ -9,7 +9,7 @@ import { actions } from '../store'
 import { useDarkTheme } from '../utils/ui-utils'
 import { msToBpm, bpmToMs } from '../utils/common'
 
-const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndicatorIdx}) => {
+const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndicatorIdx, bottomSheetModalRef}) => {
   const dispatch = useDispatch()
   const isDarkMode = useDarkTheme()
   const isVibrateEnabled = useSelector(state => state.settings.vibrate)
@@ -193,30 +193,15 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           </View>
         </TouchableOpacity>
 
-        <TextInput
-          style={{
-            color: isDarkMode ? 'white' : 'black',
-            fontSize: 20,
-            padding: 10,
-            borderWidth: 1,
-            borderColor: 'gray',
-            borderRadius: 10,
-            width: 50,
-            height: 50,
-            alignItems: 'center',
-            justifyContent: 'center',
-            textAlign: 'center'
-          }}
-          keyboardType="number-pad"
-          returnKeyType={'done'}
-          value={beats}
-          onChangeText={v => {
-            dispatch(actions.setBeats(v));
-          }}
-          onSubmitEditing={v => {
-            dispatch(actions.setIndicators(Number(beats)));
-          }}
-        />
+        <TouchableOpacity
+          onPress={() => bottomSheetModalRef.current.present()}>
+          <View style={styles.buttonSmall}>
+            <Text style={{ color: 'black', fontSize: 14 }}>
+              <Fontisto name="heartbeat-alt" size={24} color="black" />
+            </Text>
+          </View>
+        </TouchableOpacity>
+
       </View>
 
       <Text style={{color:"white", textAlign: "center"}}>{tapMessage}</Text>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { actions } from '../store'
+import { BottomSheetModal,  BottomSheetBackdrop } from '@gorhom/bottom-sheet'
+import {Picker} from '@react-native-picker/picker';
 
 import {
   SafeAreaView,
@@ -37,6 +39,8 @@ const Metronome = () => {
   const indicators = useSelector(state => state.indicators)
   const [currentIndicatorIdx , setCurrentIndicatorIdx] = useState(0)
 
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
   // set initial scroll position to initial tempo
   useEffect(() => {
     setTimeout(() => {
@@ -65,7 +69,9 @@ const Metronome = () => {
             isPlaying={isPlaying}
             tempo={tempo}
             indicators={indicators}
-            setCurrentIndicatorIdx={setCurrentIndicatorIdx} />
+            setCurrentIndicatorIdx={setCurrentIndicatorIdx}
+            bottomSheetModalRef={bottomSheetModalRef}
+            />
 
           <TempoControls
             scrollRef={scrollRef}
@@ -104,6 +110,32 @@ const Metronome = () => {
 
           <SaveDialog isPresetDialogVisible={isPresetDialogVisible} setPresetDialogVisible={setPresetDialogVisible}/>
           
+          
+          <BottomSheetModal
+              ref={bottomSheetModalRef}
+              index={0}
+              enablePanDownToClose={true}
+              snapPoints={[250]}
+              backdropComponent={(props) => (<BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1}/> )}
+              backgroundStyle={{backgroundColor: "white"}}
+            >
+              <View>
+                <Picker
+                  selectedValue={indicators.length}
+                  onValueChange={(value) => dispatch(actions.setIndicators(value))}
+                  >
+                  <Picker.Item label="1 beat" value={1} />
+                  <Picker.Item label="2 beats" value={2} />
+                  <Picker.Item label="3 beats" value={3} />
+                  <Picker.Item label="4 beats" value={4} />
+                  <Picker.Item label="5 beats" value={5} />
+                  <Picker.Item label="6 beats" value={6} />
+                  <Picker.Item label="7 beats" value={7} />
+                  <Picker.Item label="8 beats" value={8} />
+                </Picker>
+              </View>
+            </BottomSheetModal>
+
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
