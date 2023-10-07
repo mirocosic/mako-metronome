@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { View, TouchableOpacity, StyleSheet, Text, TextInput } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { Ionicons, Fontisto } from '@expo/vector-icons'
@@ -8,6 +8,8 @@ import { Audio } from 'expo-av'
 import { actions } from '../store'
 import { useDarkTheme } from '../utils/ui-utils'
 import { msToBpm, bpmToMs } from '../utils/common'
+import { BottomSheetModal,  BottomSheetBackdrop } from '@gorhom/bottom-sheet'
+import Slider from '@react-native-community/slider'
 
 const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndicatorIdx, bottomSheetModalRef}) => {
   const dispatch = useDispatch()
@@ -19,7 +21,9 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const [sound, setSound] = React.useState()
   const [taps, setTaps] = useState([0])
   const [tapMessage, setTapMessage] = useState("")
+  const [volumeIndicator, setVolumeIndicator] = useState(volume)
 
+  const volumeSheetRef = useRef<BottomSheetModal>(null)
 
   const getTapTempo = () => {
 
@@ -181,7 +185,8 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => dispatch(actions.toggleSound(!isSoundEnabled))}>
+          onPress={() => dispatch(actions.toggleSound(!isSoundEnabled))}
+          onLongPress={() => volumeSheetRef.current?.present()}>
           <View style={styles.buttonSmall}>
             <Text style={{ color: 'black', fontSize: 14 }}>
               {isSoundEnabled ? (
@@ -190,6 +195,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
                 <Ionicons name="volume-mute" size={24} color="black" />
               )}
             </Text>
+            <Text style={{fontSize: 10}}>{Math.round(volumeIndicator * 100)}% </Text>
           </View>
         </TouchableOpacity>
 
@@ -205,6 +211,37 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
       </View>
 
       <Text style={{color:"white", textAlign: "center"}}>{tapMessage}</Text>
+
+      <BottomSheetModal
+        ref={volumeSheetRef}
+        index={0}
+        enablePanDownToClose={true}
+        snapPoints={[150]}
+        backdropComponent={(props) => (<BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1}/> )}
+        handleIndicatorStyle={{backgroundColor: isDarkMode ? "white" : "black"}}
+        backgroundStyle={{backgroundColor: isDarkMode ? "#1f1f1f" : "#f1f1f1"}}>
+        <View style={{flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1}}>
+          <Text style={{color: isDarkMode ? "white" : "black" }}>Volume</Text>
+          <View>
+            <Text style={{color: isDarkMode ? "white" : "black" }}>{Math.round(volumeIndicator * 100)}%</Text>
+          </View>
+          <View style={{flexDirection: "row", alignItems: "center"}}>
+            <Text style={{color: isDarkMode ? "white" : "black" }}>0%</Text>
+            <Slider
+              style={{width: 250, height: 60}}
+              minimumValue={0}
+              maximumValue={1}
+              value={volume}
+              thumbTintColor="lightblue"
+              minimumTrackTintColor="lightblue"
+              maximumTrackTintColor="darkgray"
+              onValueChange={(v) => setVolumeIndicator(v)}
+              onSlidingComplete={ v => dispatch(actions.setVolume(v)) }/>
+            <Text style={{color: isDarkMode ? "white" : "black" }}>100%</Text>
+          </View>
+          
+        </View>
+      </BottomSheetModal>
     </View>
   )
 }

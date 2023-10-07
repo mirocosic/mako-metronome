@@ -19,7 +19,6 @@ import { msToBpm } from '../utils/common'
 import SaveDialog from '../components/save-dialog'
 import Indicators from '../components/indicators'
 import TempoControls from '../components/tempo-controls'
-import VolumeControls from '../components/volume-controls'
 import Controls from '../components/controls'
 import MetronomeHeader from "../components/metronome-header"
 import styles from './styles'
@@ -77,8 +76,6 @@ const Metronome = () => {
             scrollRef={scrollRef}
             inputRef={inputRef} />
 
-          <VolumeControls />
-
           <View style={{height: 50, flexDirection: "row", alignItems: "center", justifyContent: "space-evenly"}}>
 
             <ScrollView
@@ -117,12 +114,15 @@ const Metronome = () => {
               enablePanDownToClose={true}
               snapPoints={[250]}
               backdropComponent={(props) => (<BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1}/> )}
-              backgroundStyle={{backgroundColor: "white"}}
+              handleIndicatorStyle={{backgroundColor: isDarkMode ? "white" : "black"}}
+              backgroundStyle={{backgroundColor: isDarkMode ? "#1f1f1f" : "white"}}
             >
               <View>
                 <Picker
                   selectedValue={indicators.length}
                   onValueChange={(value) => dispatch(actions.setIndicators(value))}
+                  
+                  itemStyle={{color: isDarkMode? "white" : "black"}}
                   >
                   <Picker.Item label="1 beat" value={1} />
                   <Picker.Item label="2 beats" value={2} />

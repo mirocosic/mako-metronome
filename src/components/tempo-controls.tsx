@@ -22,7 +22,7 @@ const TempoControls = ({scrollRef, inputRef}) => {
             animated: true
           });
         }}>
-        <Copy style={{fontSize: 25, color: "lightgray"}} value="-5" />
+        <Copy style={{fontSize: 25, color: isDarkMode ? "lightgray" : "black"}} value="-5" />
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -34,7 +34,7 @@ const TempoControls = ({scrollRef, inputRef}) => {
             animated: true
           });
         }}>
-        <Copy style={{fontSize: 35, color: "lightgray"}} value="-1" />
+        <Copy style={{fontSize: 30, color: isDarkMode ? "lightgray" : "black"}} value="-1" />
       </TouchableOpacity>
 
       <TextInput
@@ -74,7 +74,7 @@ const TempoControls = ({scrollRef, inputRef}) => {
             animated: true
           });
         }}>
-        <Copy style={{fontSize: 35, color: "lightgray"}} value="+1" />
+        <Copy style={{fontSize: 30, color: isDarkMode ? "lightgray" : "black"}} value="+1" />
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -86,7 +86,7 @@ const TempoControls = ({scrollRef, inputRef}) => {
             animated: true
           });
         }}>
-        <Copy style={{fontSize: 25, color: "lightgray"}} value="+5" />
+        <Copy style={{fontSize: 25, color: isDarkMode ? "lightgray" : "black"}} value="+5" />
       </TouchableOpacity>
     </View>
   );
