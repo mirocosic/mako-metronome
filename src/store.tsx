@@ -17,6 +17,7 @@ const settingsSlice = createSlice({
   initialState: {
     vibrate: false,
     sound: true,
+    voice: "click",
     theme: "dark",
     volume: 0.5,
     currentPreset: {},
@@ -43,6 +44,9 @@ const settingsSlice = createSlice({
     },
     setBeats: (state, {payload}) => {
       state.beats = payload
+    },
+    setVoice: (state, {payload}) => {
+      state.voice = payload
     }
   }
 })
@@ -138,7 +142,7 @@ export const actions = {
   setCurrentPreset: settingsSlice.actions.setCurrentPreset,
   setCurrentPresetName: settingsSlice.actions.setCurrentPresetName,
   setBeats: settingsSlice.actions.setBeats,
-  
+  setVoice: settingsSlice.actions.setVoice
 }
 
 const reducers = combineReducers({

@@ -18,6 +18,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const isSoundEnabled = useSelector(state => state.settings.sound)
   const beats = useSelector(state => state.settings.beats)
   const volume = useSelector(state => state.settings.volume)
+  const voice = useSelector(state => state.settings.voice)
   const [sound, setSound] = React.useState()
   const [taps, setTaps] = useState([0])
   const [tapMessage, setTapMessage] = useState("")
@@ -57,8 +58,21 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   async function playExpoSound(isAccented) {
     await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
     
-    const click = isAccented ? require('../../assets/click4.mp3') : require('../../assets/click3.mp3')
-    const { sound } = await Audio.Sound.createAsync(click);
+    
+    let soundAsset = null
+
+    switch(voice) {
+      case "click":
+        soundAsset = isAccented ? require('../../assets/click4.mp3') : require('../../assets/click3.mp3')
+        break;
+      case "clave":
+        soundAsset = isAccented ? require('../../assets/clave.mp3') : require('../../assets/clave.mp3')
+        break;
+      default:
+        soundAsset = isAccented ? require('../../assets/click4.mp3') : require('../../assets/click3.mp3')
+    }
+
+    const { sound } = await Audio.Sound.createAsync(soundAsset)
     setSound(sound)
     await sound.setVolumeAsync(volume)
     await sound.playAsync();
@@ -128,7 +142,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
       clearInterval(interval)
     }
 
-  }, [tempo, isPlaying, isVibrateEnabled, isSoundEnabled, indicators, volume])
+  }, [tempo, isPlaying, isVibrateEnabled, isSoundEnabled, indicators, volume, voice])
 
 
   return (
@@ -186,7 +200,10 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
         <TouchableOpacity
           onPress={() => dispatch(actions.toggleSound(!isSoundEnabled))}
-          onLongPress={() => volumeSheetRef.current?.present()}>
+          onLongPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+            volumeSheetRef.current?.present()
+          }}>
           <View style={styles.buttonSmall}>
             <Text style={{ color: 'black', fontSize: 14 }}>
               {isSoundEnabled ? (
@@ -216,16 +233,14 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
         ref={volumeSheetRef}
         index={0}
         enablePanDownToClose={true}
-        snapPoints={[150]}
+        snapPoints={[200]}
         backdropComponent={(props) => (<BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1}/> )}
         handleIndicatorStyle={{backgroundColor: isDarkMode ? "white" : "black"}}
         backgroundStyle={{backgroundColor: isDarkMode ? "#1f1f1f" : "#f1f1f1"}}>
         <View style={{flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1}}>
-          <Text style={{color: isDarkMode ? "white" : "black" }}>Volume</Text>
-          <View>
-            <Text style={{color: isDarkMode ? "white" : "black" }}>{Math.round(volumeIndicator * 100)}%</Text>
-          </View>
-          <View style={{flexDirection: "row", alignItems: "center"}}>
+          <Text style={{color: isDarkMode ? "white" : "black" }}>Volume {Math.round(volumeIndicator * 100)}% </Text>
+          
+          <View style={{flexDirection: "row", alignItems: "center", marginTop: 10}}>
             <Text style={{color: isDarkMode ? "white" : "black" }}>0%</Text>
             <Slider
               style={{width: 250, height: 60}}

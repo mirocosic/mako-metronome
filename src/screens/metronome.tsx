@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { actions } from '../store'
 import { BottomSheetModal,  BottomSheetBackdrop } from '@gorhom/bottom-sheet'
-import {Picker} from '@react-native-picker/picker';
+import {Picker} from '@react-native-picker/picker'
 
 import {
   SafeAreaView,

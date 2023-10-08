@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { connectActionSheet } from '@expo/react-native-action-sheet'
+import { BottomSheetModal,  BottomSheetBackdrop } from '@gorhom/bottom-sheet'
+import {Picker} from '@react-native-picker/picker'
 import {
   SafeAreaView,
   Text,
@@ -14,9 +16,12 @@ import { actions } from '../store'
 import Copy from '../components/copy'
 
 const Settings = props => {
-  const dispatch = useDispatch();
-  const darkMode = useDarkTheme();
-  const theme = useSelector(state => state.settings.theme);
+  const dispatch = useDispatch()
+  const isDarkMode = useDarkTheme()
+  const theme = useSelector(state => state.settings.theme)
+  const voice = useSelector(state => state.settings.voice)
+
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   const selectTheme = () => {
     props.showActionSheetWithOptions(
@@ -26,10 +31,10 @@ const Settings = props => {
         title: 'Select app theme',
         userInterfaceStyle: theme,
         containerStyle: {
-          backgroundColor: darkMode ? palette.dark : palette.light
+          backgroundColor: isDarkMode ? palette.dark : palette.light
         },
-        textStyle: { color: darkMode ? palette.light : palette.dark },
-        titleTextStyle: { color: darkMode ? palette.lightGray : palette.gray }
+        textStyle: { color: isDarkMode ? palette.light : palette.dark },
+        titleTextStyle: { color: isDarkMode ? palette.lightGray : palette.gray }
       },
       btnIdx => {
         switch (btnIdx) {
@@ -62,13 +67,49 @@ const Settings = props => {
         }}>
         <Copy value="Theme" />
         <TouchableOpacity onPress={selectTheme}>
-          <Text style={{ textTransform: 'capitalize', color: 'gray' }}>
+          <Text style={{ textTransform: 'capitalize', color: 'lightgray' }}>
             {theme}
           </Text>
         </TouchableOpacity>
       </View>
+
+      <View
+        style={{
+          marginTop: 10,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
+        <Copy value="Sound" />
+        <TouchableOpacity onPress={() => bottomSheetModalRef.current?.present()}>
+          <Text style={{ textTransform: 'capitalize', color: 'lightgray' }}>
+            {voice || "click"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        index={0}
+        enablePanDownToClose={true}
+        snapPoints={[250]}
+        backdropComponent={(props) => (<BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1}/> )}
+        handleIndicatorStyle={{backgroundColor: isDarkMode ? "white" : "black"}}
+        backgroundStyle={{backgroundColor: isDarkMode ? "#1f1f1f" : "white"}}
+      >
+        <View>
+          <Picker
+            selectedValue={voice || "click"}
+            onValueChange={val => dispatch(actions.setVoice(val))}
+            itemStyle={{color: isDarkMode? "white" : "black"}}>
+            <Picker.Item label="Click" value="click" />
+            <Picker.Item label="Clave" value="clave" />
+          </Picker>
+        </View>
+      </BottomSheetModal>
+
     </SafeAreaView>
-  );
-};
+  )
+}
 
 export default connectActionSheet(Settings);
