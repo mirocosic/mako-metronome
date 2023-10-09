@@ -146,19 +146,9 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
 
   return (
-    <View style={{ flexDirection: 'column' }}>
-      <View style={{ flexDirection: 'row' }}>
-        <TouchableOpacity onPress={() => togglePlaying(!isPlaying)}>
-          <View style={styles.buttonLarge}>
-            <Text style={{ color: 'black', fontSize: 20 }}>
-              {isPlaying ? (
-                <Ionicons name="pause" size={24} color="black" />
-              ) : (
-                <Ionicons name="play" size={24} color="black" />
-              )}
-            </Text>
-          </View>
-        </TouchableOpacity>
+    <View>
+
+      <View style={{ marginVertical: 20, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
 
         <TouchableOpacity
           onPress={() => {
@@ -166,7 +156,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
             getTapTempo()
             playExpoSound(false)
           }}>
-          <View style={styles.buttonLarge}>
+          <View style={styles.buttonSmall}>
             <MaterialCommunityIcons
               name="gesture-double-tap"
               size={24}
@@ -174,9 +164,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
             />
           </View>
         </TouchableOpacity>
-      </View>
 
-      <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
         <TouchableOpacity
           onPress={() => dispatch(actions.setVibrate(!isVibrateEnabled))}>
           <View style={styles.buttonSmall}>
@@ -198,6 +186,18 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           </View>
         </TouchableOpacity>
 
+        <TouchableOpacity onPress={() => togglePlaying(!isPlaying)}>
+          <View style={styles.buttonLarge}>
+            <Text style={{ color: 'black', fontSize: 20 }}>
+              {isPlaying ? (
+                <Ionicons name="pause" size={24} color="black" />
+              ) : (
+                <Ionicons name="play" size={24} color="black" />
+              )}
+            </Text>
+          </View>
+        </TouchableOpacity>
+
         <TouchableOpacity
           onPress={() => dispatch(actions.toggleSound(!isSoundEnabled))}
           onLongPress={() => {
@@ -212,7 +212,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
                 <Ionicons name="volume-mute" size={24} color="black" />
               )}
             </Text>
-            <Text style={{fontSize: 10}}>{Math.round(volumeIndicator * 100)}% </Text>
+            {/* <Text style={{fontSize: 10}}>{Math.round(volumeIndicator * 100)}% </Text> */}
           </View>
         </TouchableOpacity>
 
@@ -227,7 +227,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
       </View>
 
-      <Text style={{color:"white", textAlign: "center"}}>{tapMessage}</Text>
+      <Text style={{color:"black", textAlign: "center"}}>{tapMessage}</Text>
 
       <BottomSheetModal
         ref={volumeSheetRef}
@@ -235,13 +235,13 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
         enablePanDownToClose={true}
         snapPoints={[200]}
         backdropComponent={(props) => (<BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1}/> )}
-        handleIndicatorStyle={{backgroundColor: isDarkMode ? "white" : "black"}}
+        handleIndicatorStyle={{backgroundColor: isDarkMode ? "black" : "black"}}
         backgroundStyle={{backgroundColor: isDarkMode ? "#1f1f1f" : "#f1f1f1"}}>
         <View style={{flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1}}>
-          <Text style={{color: isDarkMode ? "white" : "black" }}>Volume {Math.round(volumeIndicator * 100)}% </Text>
+          <Text style={{color: isDarkMode ? "black" : "black" }}>Volume {Math.round(volumeIndicator * 100)}% </Text>
           
           <View style={{flexDirection: "row", alignItems: "center", marginTop: 10}}>
-            <Text style={{color: isDarkMode ? "white" : "black" }}>0%</Text>
+            <Text style={{color: isDarkMode ? "black" : "black" }}>0%</Text>
             <Slider
               style={{width: 250, height: 60}}
               minimumValue={0}
@@ -252,7 +252,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
               maximumTrackTintColor="darkgray"
               onValueChange={(v) => setVolumeIndicator(v)}
               onSlidingComplete={ v => dispatch(actions.setVolume(v)) }/>
-            <Text style={{color: isDarkMode ? "white" : "black" }}>100%</Text>
+            <Text style={{color: isDarkMode ? "black" : "black" }}>100%</Text>
           </View>
           
         </View>
@@ -264,18 +264,24 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 const styles = StyleSheet.create({
   buttonLarge: {
     backgroundColor: 'lightblue',
-    padding: 20,
-    borderRadius: 10,
+    width: 60,
+    height: 60,
+    padding: 10,
+    borderRadius: 100,
     alignItems: 'center',
-    margin: 10
+    justifyContent: 'center',
+    margin: 5
   },
 
   buttonSmall: {
       backgroundColor: 'lightblue',
-      padding: 10,
-      borderRadius: 10,
+      width: 40,
+      height: 40,
+      //padding: 10,
+      borderRadius: 100,
       alignItems: 'center',
-      margin: 10
+      justifyContent: 'center',
+      margin: 5
   }
 })
 

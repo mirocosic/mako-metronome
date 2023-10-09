@@ -57,32 +57,27 @@ const Metronome = () => {
 
         <MetronomeHeader setPresetDialogVisible={setPresetDialogVisible}/>
 
-        <View style={{flex: 1,alignItems: "center", justifyContent: "space-evenly"}}>
+        <View style={{flex: 1,alignItems: "center", justifyContent: "flex-end"}}>
 
           <Indicators
             currentIndicatorIdx={currentIndicatorIdx}
             isPlaying={isPlaying} />
 
-          <Controls
-            togglePlaying={togglePlaying}
-            isPlaying={isPlaying}
-            tempo={tempo}
-            indicators={indicators}
-            setCurrentIndicatorIdx={setCurrentIndicatorIdx}
-            bottomSheetModalRef={bottomSheetModalRef}
-            />
+        
+
+          
+
+          <View style={{width: "100%", marginVertical: 50, justifyContent: 'flex-end', alignItems: "center"}}>
 
           <TempoControls
             scrollRef={scrollRef}
             inputRef={inputRef} />
 
-          <View style={{height: 50, flexDirection: "row", alignItems: "center", justifyContent: "space-evenly"}}>
-
             <ScrollView
               ref={scrollRef}
-              style={{width: 100, flex: 1, height: 50, marginHorizontal: 20}}
+              style={{marginHorizontal: 20, height: 50}}
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{height: 40}}
+              contentContainerStyle={{height: 40, width: 400}}
               horizontal={true}
               scrollEventThrottle={16}
               onScroll={(ev) => {
@@ -104,6 +99,15 @@ const Metronome = () => {
               })}
             </ScrollView>
           </View>
+
+          <Controls
+            togglePlaying={togglePlaying}
+            isPlaying={isPlaying}
+            tempo={tempo}
+            indicators={indicators}
+            setCurrentIndicatorIdx={setCurrentIndicatorIdx}
+            bottomSheetModalRef={bottomSheetModalRef}
+          />
 
           <SaveDialog isPresetDialogVisible={isPresetDialogVisible} setPresetDialogVisible={setPresetDialogVisible}/>
           
