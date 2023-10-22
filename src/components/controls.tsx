@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { View, TouchableOpacity, StyleSheet, Text, TextInput } from 'react-native'
+import { View, TouchableOpacity, StyleSheet, Text, TextInput, NativeModules } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { Ionicons, Fontisto } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
@@ -54,6 +54,10 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
     }
   }
 
+  function playNativeSound() {
+    const { SoundModule } = NativeModules
+    SoundModule.playSound("miro", "pero")
+  }
 
   async function playExpoSound(isAccented) {
     await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
@@ -100,7 +104,8 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
     if (isPlaying) {
       if (isSoundEnabled && isBeatEnabled) {
-        playExpoSound(isAccented)
+        //playExpoSound(isAccented)
+        playNativeSound()
       }
       if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
 
@@ -122,7 +127,8 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
       if (isPlaying) {
         if (isSoundEnabled && isBeatEnabled) {
-          playExpoSound(isAccented)
+          //playExpoSound(isAccented)
+          playNativeSound()
         }
         if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
 
@@ -154,7 +160,8 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
             getTapTempo()
-            playExpoSound(false)
+            //playExpoSound(false)
+            playNativeSound()
           }}>
           <View style={styles.buttonSmall}>
             <MaterialCommunityIcons

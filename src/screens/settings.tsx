@@ -6,7 +6,9 @@ import {
   SafeAreaView,
   Text,
   View,
-  TouchableOpacity
+  TouchableOpacity,
+  NativeModules,
+  Button
 } from 'react-native';
 
 import { useDarkTheme } from '../utils/ui-utils'
@@ -21,7 +23,9 @@ const Settings = props => {
   const theme = useSelector(state => state.settings.theme)
   const voice = useSelector(state => state.settings.voice)
 
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null)
+
+  const { SoundModule } = NativeModules
 
   const selectTheme = () => {
     props.showActionSheetWithOptions(
@@ -87,6 +91,12 @@ const Settings = props => {
           </Text>
         </TouchableOpacity>
       </View>
+
+      <Button
+        title="Click to invoke your native module!"
+        color="#841584"
+        onPress={() => SoundModule.playSound("Miro", "Zagreb")}
+      />
 
       <BottomSheetModal
         ref={bottomSheetModalRef}
