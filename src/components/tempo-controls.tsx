@@ -60,7 +60,7 @@ const TempoControls = ({scrollRef, inputRef}) => {
               animated: true
             });
           } else {
-            setInput(String(tempo));
+            setInput(String(tempo))
           }
         }}
       />
@@ -95,9 +95,10 @@ const TempoControls = ({scrollRef, inputRef}) => {
 const styles = StyleSheet.create({
   container: {
     margin: 20,
+    //flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-evenly'
+    justifyContent: 'space-evenly',
   },
   inputStyle: {
     fontSize: 40,

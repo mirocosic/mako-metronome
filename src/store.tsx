@@ -58,6 +58,7 @@ const tempoSlice = createSlice({
   },
   reducers: {
     saveTempo: (state, action) => {
+      console.log(action)
       state.value = action.payload
     },
     loadTempo: (state, action) => {

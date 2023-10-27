@@ -41,11 +41,13 @@ const Metronome = () => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   // set initial scroll position to initial tempo
-  useEffect(() => {
-    setTimeout(() => {
-      scrollRef.current.scrollTo({x: tempo * 10, y: 0, animated: false})
-    }, 0)
-  }, [])
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     scrollRef.current.scrollTo({x: tempo * 10, y: 0, animated: false})
+  //   }, 0)
+  // }, [])
+
+  //console.log(tempo)
 
   return (
     <SafeAreaView style={styles.backgroundStyle}>
@@ -57,7 +59,7 @@ const Metronome = () => {
 
         <MetronomeHeader setPresetDialogVisible={setPresetDialogVisible}/>
 
-        <View style={{flex: 1,alignItems: "center", justifyContent: "flex-end"}}>
+        <View style={{flex: 1, alignItems: "center", justifyContent: "flex-end"}}>
 
           <Indicators
             currentIndicatorIdx={currentIndicatorIdx}
@@ -65,24 +67,21 @@ const Metronome = () => {
 
         
 
-          
+          <View style={{ marginVertical: 50, flex: 1, justifyContent: "flex-end", alignItems: "center"}}>
 
-          <View style={{width: "100%", marginVertical: 50, justifyContent: 'flex-end', alignItems: "center"}}>
+            <TempoControls scrollRef={scrollRef} inputRef={inputRef} />
 
-          <TempoControls
-            scrollRef={scrollRef}
-            inputRef={inputRef} />
-
+            <View style={{height: 60}}>
             <ScrollView
               ref={scrollRef}
-              style={{marginHorizontal: 20, height: 50}}
+              style={{marginHorizontal: 0, height: 0}}
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{height: 40, width: 400}}
               horizontal={true}
               scrollEventThrottle={16}
               onScroll={(ev) => {
-                const bpm = Math.round (ev.nativeEvent.contentOffset.x / 10)
+                const bpm = Math.round(ev.nativeEvent.contentOffset.x / 10)
                 if (bpm > 0 && bpm <= 400) {
+                  dispatch(actions.saveTempo(50))
                   dispatch(actions.saveTempo(bpm))
                 }
 
@@ -98,6 +97,8 @@ const Metronome = () => {
                 )
               })}
             </ScrollView>
+            </View>
+            
           </View>
 
           <Controls
