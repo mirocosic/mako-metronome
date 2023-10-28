@@ -1226,6 +1226,22 @@ PODS:
     - React-Codegen
     - React-RCTFabric
     - ReactCommon/turbomodule/core
+  - rtn-calculator (0.0.1):
+    - hermes-engine
+    - RCT-Folly (= 2021.07.22.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-graphics
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - SocketRocket (0.6.1)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -1315,6 +1331,7 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - rtn-calculator (from `../node_modules/rtn-calculator`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -1452,6 +1469,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  rtn-calculator:
+    :path: "../node_modules/rtn-calculator"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -1526,6 +1545,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: 06e73ca8453c97847aa1988666d8046c22ebe7f7
   RNReanimated: 0643b65384721180721a0a726a3b9233e9c4da09
   RNScreens: cfd9491b1c7cac6a46bfb8c0326a5e79ca3e6286
+  rtn-calculator: 112dcd0c75be933d1979591039c9cf0665ce22eb
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: b76f1acfda8212aa16b7e26bcce3983230c82603
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a

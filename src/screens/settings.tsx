@@ -8,7 +8,8 @@ import {
   View,
   TouchableOpacity,
   NativeModules,
-  Button
+  Button,
+  Alert
 } from 'react-native';
 
 import { useDarkTheme } from '../utils/ui-utils'
@@ -16,6 +17,8 @@ import palette from '../utils/palette'
 import { useSelector, useDispatch } from 'react-redux'
 import { actions } from '../store'
 import Copy from '../components/copy'
+
+import RTNCalculator from 'rtn-calculator/js/NativeCalculator'
 
 const Settings = props => {
   const dispatch = useDispatch()
@@ -96,6 +99,14 @@ const Settings = props => {
         title="Click to invoke your native module!"
         color="#841584"
         onPress={() => SoundModule.playSound("Miro", "Zagreb")}
+      />
+
+      <Button
+        title="Compute"
+        onPress={async () => {
+          const value = await RTNCalculator?.add(3, 7)
+          Alert.alert('Result', `The result is ${value}`)
+        }}
       />
 
       <BottomSheetModal
