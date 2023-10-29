@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   NativeModules,
   Button,
-  Alert
 } from 'react-native';
 
 import { useDarkTheme } from '../utils/ui-utils'
@@ -18,7 +17,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { actions } from '../store'
 import Copy from '../components/copy'
 
-import RTNCalculator from 'rtn-calculator/js/NativeCalculator'
+import RTNSoundmodule from 'rtn-soundmodule/js/NativeSoundmodule'
 
 const Settings = props => {
   const dispatch = useDispatch()
@@ -102,10 +101,9 @@ const Settings = props => {
       />
 
       <Button
-        title="Compute"
-        onPress={async () => {
-          const value = await RTNCalculator?.add(3, 7)
-          Alert.alert('Result', `The result is ${value}`)
+        title="Play turbomodule sound"
+        onPress={() => {
+          RTNSoundmodule?.playSound("playing from JS")
         }}
       />
 

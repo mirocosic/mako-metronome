@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { View, TouchableOpacity, StyleSheet, Text, TextInput, NativeModules } from 'react-native'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
-import { Ionicons, Fontisto } from '@expo/vector-icons'
+import Ionicons from 'react-native-vector-icons/Ionicons'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import Fontisto from 'react-native-vector-icons/Fontisto'
 import * as Haptics from 'expo-haptics'
 import { useSelector, useDispatch } from 'react-redux'
 import { Audio } from 'expo-av'
@@ -10,6 +11,8 @@ import { useDarkTheme } from '../utils/ui-utils'
 import { msToBpm, bpmToMs } from '../utils/common'
 import { BottomSheetModal,  BottomSheetBackdrop } from '@gorhom/bottom-sheet'
 import Slider from '@react-native-community/slider'
+
+import RTNSoundmodule from 'rtn-soundmodule/js/NativeSoundmodule'
 
 const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndicatorIdx, bottomSheetModalRef}) => {
   const dispatch = useDispatch()
@@ -55,8 +58,12 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   }
 
   function playNativeSound() {
-    const { SoundModule } = NativeModules
-    SoundModule.playSound("miro", "pero")
+    // old bridge native module
+    // const { SoundModule } = NativeModules
+    // SoundModule.playSound("miro", "pero")
+
+    //new turbo module
+    RTNSoundmodule.playSound("miro")
   }
 
   async function playExpoSound(isAccented) {
@@ -82,13 +89,13 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
     await sound.playAsync();
   }
 
-  React.useEffect(() => {
-    return sound
-      ? () => {
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound])
+  // React.useEffect(() => {
+  //   return sound
+  //     ? () => {
+  //         sound.unloadAsync();
+  //       }
+  //     : undefined;
+  // }, [sound])
 
   useEffect(() => {
 
