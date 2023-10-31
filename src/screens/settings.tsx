@@ -27,8 +27,6 @@ const Settings = props => {
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
 
-  const { SoundModule } = NativeModules
-
   const selectTheme = () => {
     props.showActionSheetWithOptions(
       {
@@ -93,12 +91,6 @@ const Settings = props => {
           </Text>
         </TouchableOpacity>
       </View>
-
-      <Button
-        title="Click to invoke your native module!"
-        color="#841584"
-        onPress={() => SoundModule.playSound("Miro", "Zagreb")}
-      />
 
       <Button
         title="Play turbomodule sound"

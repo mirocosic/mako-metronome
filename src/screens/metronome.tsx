@@ -78,7 +78,8 @@ const Metronome = () => {
               showsHorizontalScrollIndicator={false}
               horizontal={true}
               scrollEventThrottle={16}
-              onScroll={(ev) => {
+              onMomentumScrollEnd={(ev) => {
+                console.log("scroll end")
                 const bpm = Math.round(ev.nativeEvent.contentOffset.x / 10)
                 if (bpm > 0 && bpm <= 400) {
                   dispatch(actions.saveTempo(50))
@@ -88,6 +89,29 @@ const Metronome = () => {
                 if ((bpm !== tempo) && (bpm > 0) && (bpm <= 400)) {
                   Haptics.selectionAsync()
                 }
+              }}
+              onScrollEndDrag={(ev) => {
+                console.log("scroll end drag")
+                const bpm = Math.round(ev.nativeEvent.contentOffset.x / 10)
+                if (bpm > 0 && bpm <= 400) {
+                  dispatch(actions.saveTempo(50))
+                  dispatch(actions.saveTempo(bpm))
+                }
+
+                if ((bpm !== tempo) && (bpm > 0) && (bpm <= 400)) {
+                  Haptics.selectionAsync()
+                }
+              }}
+              onScroll={(ev) => {
+                // const bpm = Math.round(ev.nativeEvent.contentOffset.x / 10)
+                // if (bpm > 0 && bpm <= 400) {
+                //   dispatch(actions.saveTempo(50))
+                //   dispatch(actions.saveTempo(bpm))
+                // }
+
+                // if ((bpm !== tempo) && (bpm > 0) && (bpm <= 400)) {
+                //   Haptics.selectionAsync()
+                // }
               }}>
               { ticks.map((item, idx)=>{
                 return(

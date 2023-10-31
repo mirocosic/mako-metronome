@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { View, TouchableOpacity, StyleSheet, Text, TextInput, NativeModules } from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -16,6 +16,7 @@ import RTNSoundmodule from 'rtn-soundmodule/js/NativeSoundmodule'
 
 const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndicatorIdx, bottomSheetModalRef}) => {
   const dispatch = useDispatch()
+  const tempRef = useRef(tempo)
   const isDarkMode = useDarkTheme()
   const isVibrateEnabled = useSelector(state => state.settings.vibrate)
   const isSoundEnabled = useSelector(state => state.settings.sound)
@@ -23,11 +24,46 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const volume = useSelector(state => state.settings.volume)
   const voice = useSelector(state => state.settings.voice)
   const [sound, setSound] = React.useState()
+  const [intervalObj, setIntervalObj] = useState(null)
   const [taps, setTaps] = useState([0])
   const [tapMessage, setTapMessage] = useState("")
   const [volumeIndicator, setVolumeIndicator] = useState(volume)
 
   const volumeSheetRef = useRef<BottomSheetModal>(null)
+
+  const loop = useCallback((setIntervalObj) => {
+    console.log("loop started")
+
+    console.log("ref = ", tempRef.current)
+
+    togglePlaying(true)
+
+    // first sound
+    RTNSoundmodule.playSound("JSI call")
+
+    // and then the rest
+    const interval = setInterval(() => {
+      RTNSoundmodule.playSound("JSI call")
+      console.log("ref = ", tempRef.current)
+    }, bpmToMs(tempo))
+
+    setIntervalObj(interval)
+
+
+    while (true) {
+      setTimeout(() => {
+        console.log("fake play sound")
+      }, bpmToMs(tempRef.current))
+    }
+    
+
+  }, [tempo])
+
+  const stopLoop = useCallback((interval) => {
+    console.log("loop stooped")
+    togglePlaying(false)
+    clearInterval(interval)
+  }, [])
 
   const getTapTempo = () => {
 
@@ -63,31 +99,31 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
     // SoundModule.playSound("miro", "pero")
 
     //new turbo module
-    RTNSoundmodule.playSound("miro")
+    RTNSoundmodule?.playSound("JSI call")
   }
 
-  async function playExpoSound(isAccented) {
-    await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+  // async function playExpoSound(isAccented) {
+  //   await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
     
     
-    let soundAsset = null
+  //   let soundAsset = null
 
-    switch(voice) {
-      case "click":
-        soundAsset = isAccented ? require('../../assets/click4.mp3') : require('../../assets/click3.mp3')
-        break;
-      case "clave":
-        soundAsset = isAccented ? require('../../assets/clave.mp3') : require('../../assets/clave.mp3')
-        break;
-      default:
-        soundAsset = isAccented ? require('../../assets/click4.mp3') : require('../../assets/click3.mp3')
-    }
+  //   switch(voice) {
+  //     case "click":
+  //       soundAsset = isAccented ? require('../../assets/click4.mp3') : require('../../assets/click3.mp3')
+  //       break;
+  //     case "clave":
+  //       soundAsset = isAccented ? require('../../assets/clave.mp3') : require('../../assets/clave.mp3')
+  //       break;
+  //     default:
+  //       soundAsset = isAccented ? require('../../assets/click4.mp3') : require('../../assets/click3.mp3')
+  //   }
 
-    const { sound } = await Audio.Sound.createAsync(soundAsset)
-    setSound(sound)
-    await sound.setVolumeAsync(volume)
-    await sound.playAsync();
-  }
+  //   const { sound } = await Audio.Sound.createAsync(soundAsset)
+  //   setSound(sound)
+  //   await sound.setVolumeAsync(volume)
+  //   await sound.playAsync();
+  // }
 
   // React.useEffect(() => {
   //   return sound
@@ -97,11 +133,23 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   //     : undefined;
   // }, [sound])
 
+  // restart the loop when relevant props change (tempo)
+  useEffect(() => {
+
+    //stopLoop(intervalObj)
+    //clearInterval(intervalObj)
+
+    //if (isPlaying) {loop(setIntervalObj)}
+
+    tempRef.current = tempo
+
+  }, [tempo])
+
   useEffect(() => {
 
     // clear indicators on play / pause
     let currentIndicatorIdx = 0
-    setCurrentIndicatorIdx(0)
+    //setCurrentIndicatorIdx(0)
 
     if (!isPlaying) return
     
@@ -111,7 +159,6 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
     if (isPlaying) {
       if (isSoundEnabled && isBeatEnabled) {
-        //playExpoSound(isAccented)
         playNativeSound()
       }
       if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
@@ -128,7 +175,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
     // run interval fn
     const interval = setInterval(() => {
-      console.log("interval running")
+      //console.log("interval running")
       const isBeatEnabled = indicators[currentIndicatorIdx].levels[0].active
       const isAccented = indicators[currentIndicatorIdx].levels[1].active
 
@@ -139,24 +186,25 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
         }
         if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
 
-        if(currentIndicatorIdx === indicators.length - 1) {
-          currentIndicatorIdx = 0
-          setCurrentIndicatorIdx(0)
-        } else {
-          currentIndicatorIdx = currentIndicatorIdx + 1
-          setCurrentIndicatorIdx(currentIndicatorIdx)
-         }
+        // if(currentIndicatorIdx === indicators.length - 1) {
+        //   currentIndicatorIdx = 0
+        //   setCurrentIndicatorIdx(0)
+        // } else {
+        //   currentIndicatorIdx = currentIndicatorIdx + 1
+        //   setCurrentIndicatorIdx(currentIndicatorIdx)
+        //  }
       }
 
     }, bpmToMs(tempo))
 
     return () => {
-      console.log("clearing interval")
+      //console.log("clearing interval")
       clearInterval(interval)
     }
 
   }, [tempo, isPlaying, isVibrateEnabled, isSoundEnabled, indicators, volume, voice])
 
+  console.log("render controls")
 
   return (
     <View>
@@ -167,7 +215,6 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
             getTapTempo()
-            //playExpoSound(false)
             playNativeSound()
           }}>
           <View style={styles.buttonSmall}>
@@ -200,7 +247,11 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => togglePlaying(!isPlaying)}>
+        <TouchableOpacity onPress={() => {
+          if (!isPlaying) 
+            {loop(setIntervalObj)} 
+            else 
+            { stopLoop(intervalObj)}}}>
           <View style={styles.buttonLarge}>
             <Text style={{ color: 'black', fontSize: 20 }}>
               {isPlaying ? (
@@ -291,7 +342,6 @@ const styles = StyleSheet.create({
       backgroundColor: 'lightblue',
       width: 40,
       height: 40,
-      //padding: 10,
       borderRadius: 100,
       alignItems: 'center',
       justifyContent: 'center',
