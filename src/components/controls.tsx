@@ -32,30 +32,26 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const volumeSheetRef = useRef<BottomSheetModal>(null)
 
   const loop = useCallback((setIntervalObj) => {
-    console.log("loop started")
-
-    console.log("ref = ", tempRef.current)
-
     togglePlaying(true)
 
     // first sound
     RTNSoundmodule.playSound("JSI call")
 
     // and then the rest
+    let startTime = new Date().getTime();
+
     const interval = setInterval(() => {
-      RTNSoundmodule.playSound("JSI call")
-      console.log("ref = ", tempRef.current)
-    }, bpmToMs(tempo))
+      const diffMs = new Date().getTime() - startTime;
+
+      if (diffMs > bpmToMs(tempRef.current)) {
+        RTNSoundmodule.playSound("JSI call")
+        startTime = new Date().getTime();
+      }
+
+    }, 1)
 
     setIntervalObj(interval)
 
-
-    while (true) {
-      setTimeout(() => {
-        console.log("fake play sound")
-      }, bpmToMs(tempRef.current))
-    }
-    
 
   }, [tempo])
 
@@ -215,7 +211,9 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
             getTapTempo()
-            playNativeSound()
+            if (!isPlaying) {
+              playNativeSound()
+            }
           }}>
           <View style={styles.buttonSmall}>
             <MaterialCommunityIcons
