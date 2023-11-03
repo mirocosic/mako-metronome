@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { actions } from '../store'
 import { BottomSheetModal,  BottomSheetBackdrop } from '@gorhom/bottom-sheet'
 import {Picker} from '@react-native-picker/picker'
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolateColor } from 'react-native-reanimated'
 
 import {
   SafeAreaView,
@@ -38,14 +39,18 @@ const Metronome = () => {
   const indicators = useSelector(state => state.indicators)
   const [currentIndicatorIdx , setCurrentIndicatorIdx] = useState(0)
 
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null)
+
+  //const sharedValues = useMemo(() => {[useSharedValue(0), useSharedValue(0), useSharedValue(0), useSharedValue(0)]}, [])
+
+  const sharedValues = [useSharedValue(0), useSharedValue(0), useSharedValue(0), useSharedValue(0)]
 
   // set initial scroll position to initial tempo
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     scrollRef.current.scrollTo({x: tempo * 10, y: 0, animated: false})
-  //   }, 0)
-  // }, [])
+  useEffect(() => {
+    setTimeout(() => {
+      scrollRef.current.scrollTo({x: tempo * 10, y: 0, animated: false})
+    }, 0)
+  }, [])
 
   //console.log(tempo)
 
@@ -63,9 +68,9 @@ const Metronome = () => {
 
           <Indicators
             currentIndicatorIdx={currentIndicatorIdx}
-            isPlaying={isPlaying} />
-
-        
+            isPlaying={isPlaying}
+            sharedValues={sharedValues}
+          />
 
           <View style={{ marginVertical: 50, flex: 1, justifyContent: "flex-end", alignItems: "center"}}>
 
@@ -82,7 +87,6 @@ const Metronome = () => {
                 console.log("scroll end")
                 const bpm = Math.round(ev.nativeEvent.contentOffset.x / 10)
                 if (bpm > 0 && bpm <= 400) {
-                  dispatch(actions.saveTempo(50))
                   dispatch(actions.saveTempo(bpm))
                 }
 
@@ -94,7 +98,6 @@ const Metronome = () => {
                 console.log("scroll end drag")
                 const bpm = Math.round(ev.nativeEvent.contentOffset.x / 10)
                 if (bpm > 0 && bpm <= 400) {
-                  dispatch(actions.saveTempo(50))
                   dispatch(actions.saveTempo(bpm))
                 }
 
@@ -103,15 +106,14 @@ const Metronome = () => {
                 }
               }}
               onScroll={(ev) => {
-                // const bpm = Math.round(ev.nativeEvent.contentOffset.x / 10)
-                // if (bpm > 0 && bpm <= 400) {
-                //   dispatch(actions.saveTempo(50))
-                //   dispatch(actions.saveTempo(bpm))
-                // }
+                const bpm = Math.round(ev.nativeEvent.contentOffset.x / 10)
+                if (bpm > 0 && bpm <= 400) {
+                  dispatch(actions.saveTempo(bpm))
+                }
 
-                // if ((bpm !== tempo) && (bpm > 0) && (bpm <= 400)) {
-                //   Haptics.selectionAsync()
-                // }
+                if ((bpm !== tempo) && (bpm > 0) && (bpm <= 400)) {
+                  Haptics.selectionAsync()
+                }
               }}>
               { ticks.map((item, idx)=>{
                 return(
@@ -131,6 +133,7 @@ const Metronome = () => {
             tempo={tempo}
             indicators={indicators}
             setCurrentIndicatorIdx={setCurrentIndicatorIdx}
+            sharedValues={sharedValues}
             bottomSheetModalRef={bottomSheetModalRef}
           />
 

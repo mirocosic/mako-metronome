@@ -21,7 +21,7 @@ const settingsSlice = createSlice({
     theme: "dark",
     volume: 0.5,
     currentPreset: {},
-    beats: 4,
+    beats: 5,
   },
   reducers: {
     setVibrate: (state, {payload}) => {

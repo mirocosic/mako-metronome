@@ -25,12 +25,12 @@ const styles = StyleSheet.create({
   }
 })
 
-const Indicator = ({idx, indicator, currentIndicatorIdx, isPlaying}) => {
+const Indicator = ({idx, indicator, currentIndicatorIdx, isPlaying, sharedValue}) => {
 
   const dispatch = useDispatch()
   const indicators = useSelector(state => state.indicators)
 
-  const sharedValue = useSharedValue(0)
+  //const sharedValue = useSharedValue(0)
 
   const rStyle = useAnimatedStyle(() => {
     const backgroundColor = interpolateColor(
@@ -43,18 +43,18 @@ const Indicator = ({idx, indicator, currentIndicatorIdx, isPlaying}) => {
     }
   })
 
-  const toggleIndicator = () => {
-    sharedValue.value = withTiming(1, {duration: 50})
-    setTimeout(() => {
-      sharedValue.value = withTiming(0, {duration: 50})
-    }, 100)
-  }
+  // const toggleIndicator = () => {
+  //   sharedValue.value = withTiming(1, {duration: 50})
+  //   setTimeout(() => {
+  //     sharedValue.value = withTiming(0, {duration: 50})
+  //   }, 100)
+  // }
 
-  useEffect(() => {
-    if ((currentIndicatorIdx === idx) && isPlaying) {
-      toggleIndicator()
-    }
-  })
+  // useEffect(() => {
+  //   if ((currentIndicatorIdx === idx) && isPlaying) {
+  //     toggleIndicator()
+  //   }
+  // })
 
   return (
     <TouchableOpacity
