@@ -22,6 +22,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const isVibrateEnabled = useSelector(state => state.settings.vibrate)
   const isSoundEnabled = useSelector(state => state.settings.sound)
   const soundEnabledRef = useRef(isSoundEnabled)
+  const indicatorsRef = useRef(indicators)
 
   const beats = useSelector(state => state.settings.beats)
   const volume = useSelector(state => state.settings.volume)
@@ -35,10 +36,24 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const volumeSheetRef = useRef<BottomSheetModal>(null)
 
   const toggleIndicator = (currentIndicatorIdx) => {
-    sharedValues[currentIndicatorIdx].value = withTiming(1, {duration: 50})
+
+    const newValues = sharedValues.value.map((v, idx) => {
+      if (idx === currentIndicatorIdx) {
+        return 1
+      } else {
+        return 0
+      }
+    })
+
+    sharedValues.value = withTiming(newValues, {duration: 50})
+
     setTimeout(() => {
-      sharedValues[currentIndicatorIdx].value = withTiming(0, {duration: 50})
+      const clearValues = sharedValues.value.map((v, idx) => {
+        return 0
+      })
+      sharedValues.value = withTiming(clearValues, {duration: 50})
     }, 100)
+
   }
 
   const loop = useCallback((setIntervalObj) => {
@@ -46,8 +61,6 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
     let currentIndicatorIdx = 0
 
     //trigger first indicator
-    console.log(currentIndicatorIdx)
-    //setCurrentIndicatorIdx(currentIndicatorIdx)
     toggleIndicator(currentIndicatorIdx)
 
     // first sound
@@ -66,7 +79,6 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
       if (diffMs > bpmToMs(tempoRef.current)) {
 
         console.log(currentIndicatorIdx)
-        //setCurrentIndicatorIdx(currentIndicatorIdx)
         toggleIndicator(currentIndicatorIdx)
 
         if (soundEnabledRef.current) {
@@ -77,7 +89,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
         startTime = new Date().getTime() // reset start time
 
-        if (currentIndicatorIdx >= beats) {
+        if (currentIndicatorIdx >= indicatorsRef.current.length) {
           currentIndicatorIdx = 0 // reset indicator
         }
       }
@@ -131,9 +143,11 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   useEffect(() => {
     tempoRef.current = tempo
     soundEnabledRef.current = isSoundEnabled
-  }, [tempo, isSoundEnabled])
+    indicatorsRef.current = indicators
+  }, [tempo, isSoundEnabled, indicators])
 
   console.log("render controls")
+  //console.log(sharedValues.length)
 
   return (
     <View>

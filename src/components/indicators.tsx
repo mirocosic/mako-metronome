@@ -6,7 +6,7 @@ import Indicator from "./indicator"
 
 const Indicators = ({currentIndicatorIdx, isPlaying, sharedValues}) => {
   const indicators = useSelector(state => state.indicators)
-  console.log("rendering indicators")
+
   return (
     <View style={{flexDirection: "row"}}>
             {
@@ -18,7 +18,7 @@ const Indicators = ({currentIndicatorIdx, isPlaying, sharedValues}) => {
                     indicator={indicator}
                     currentIndicatorIdx={currentIndicatorIdx} 
                     isPlaying={isPlaying}
-                    sharedValue={sharedValues[idx]}
+                    sharedValues={sharedValues}
                   />
                 )
               })

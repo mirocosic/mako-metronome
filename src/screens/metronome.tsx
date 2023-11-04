@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { actions } from '../store'
 import { BottomSheetModal,  BottomSheetBackdrop } from '@gorhom/bottom-sheet'
-import {Picker} from '@react-native-picker/picker'
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolateColor } from 'react-native-reanimated'
 
 import {
@@ -12,6 +11,7 @@ import {
   Text,
   View,
   KeyboardAvoidingView,
+  Button
 } from 'react-native'
 
 import * as Haptics from 'expo-haptics'
@@ -40,10 +40,11 @@ const Metronome = () => {
   const [currentIndicatorIdx , setCurrentIndicatorIdx] = useState(0)
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
+  const sharedValues = useSharedValue(Array(indicators.length).fill(0))
 
-  //const sharedValues = useMemo(() => {[useSharedValue(0), useSharedValue(0), useSharedValue(0), useSharedValue(0)]}, [])
-
-  const sharedValues = [useSharedValue(0), useSharedValue(0), useSharedValue(0), useSharedValue(0)]
+  useEffect(() => {
+    sharedValues.value = Array(indicators.length).fill(0)
+  }, [indicators])
 
   // set initial scroll position to initial tempo
   useEffect(() => {
@@ -51,8 +52,6 @@ const Metronome = () => {
       scrollRef.current.scrollTo({x: tempo * 10, y: 0, animated: false})
     }, 0)
   }, [])
-
-  //console.log(tempo)
 
   return (
     <SafeAreaView style={styles.backgroundStyle}>
@@ -150,21 +149,17 @@ const Metronome = () => {
               backgroundStyle={{backgroundColor: isDarkMode ? "#1f1f1f" : "white"}}
             >
               <View>
-                <Picker
-                  selectedValue={indicators.length}
-                  onValueChange={(value) => dispatch(actions.setIndicators(value))}
-                  
-                  itemStyle={{color: isDarkMode? "white" : "black"}}
-                  >
-                  <Picker.Item label="1 beat" value={1} />
-                  <Picker.Item label="2 beats" value={2} />
-                  <Picker.Item label="3 beats" value={3} />
-                  <Picker.Item label="4 beats" value={4} />
-                  <Picker.Item label="5 beats" value={5} />
-                  <Picker.Item label="6 beats" value={6} />
-                  <Picker.Item label="7 beats" value={7} />
-                  <Picker.Item label="8 beats" value={8} />
-                </Picker>
+                <Button title="1 Beat" onPress={() => dispatch(actions.setIndicators(1))} />
+                <Button title="2 Beats" onPress={() => dispatch(actions.setIndicators(2))} />
+                <Button title="3 Beats" onPress={() => dispatch(actions.setIndicators(3))} />
+                <Button title="4 Beats" onPress={() => dispatch(actions.setIndicators(4))} />
+                <Button title="5 Beats" onPress={() => dispatch(actions.setIndicators(5))} />
+                <Button title="6 Beats" onPress={() => dispatch(actions.setIndicators(6))} />
+                <Button title="7 Beats" onPress={() => dispatch(actions.setIndicators(7))} />
+                <Button title="8 Beats" onPress={() => dispatch(actions.setIndicators(8))} />
+
+                
+                
               </View>
             </BottomSheetModal>
 

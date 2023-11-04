@@ -1,7 +1,6 @@
 import React, { useRef } from 'react'
 import { connectActionSheet } from '@expo/react-native-action-sheet'
 import { BottomSheetModal,  BottomSheetBackdrop } from '@gorhom/bottom-sheet'
-import {Picker} from '@react-native-picker/picker'
 import {
   SafeAreaView,
   Text,
@@ -109,13 +108,8 @@ const Settings = props => {
         backgroundStyle={{backgroundColor: isDarkMode ? "#1f1f1f" : "white"}}
       >
         <View>
-          <Picker
-            selectedValue={voice || "click"}
-            onValueChange={val => dispatch(actions.setVoice(val))}
-            itemStyle={{color: isDarkMode? "white" : "black"}}>
-            <Picker.Item label="Click" value="click" />
-            <Picker.Item label="Clave" value="clave" />
-          </Picker>
+          <Text>"To be implemented</Text>
+          
         </View>
       </BottomSheetModal>
 
