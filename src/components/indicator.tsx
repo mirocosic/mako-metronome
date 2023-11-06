@@ -5,23 +5,27 @@ import { useSelector, useDispatch } from 'react-redux'
 import { actions } from '../store'
 
 const styles = StyleSheet.create({
-  indicatorBox: {
-    flex: 1,
-    maxWidth: 50,
+  outerCircle: {
+    //flex: 1,
+    // maxWidth: 50,
+    width: 50,
     height: 50, 
-    borderRadius: 6,
-    borderColor: "lightgray", 
-    borderWidth: 1,
+    borderRadius: 100,
+    borderColor: "lightgray",
+    borderStyle: "dashed",
+    borderWidth: 3,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  indicatorLevelTop: {
-    flex: 1,
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
-  },
-  indicatorLevelBottom: {
-    flex: 1,
-    borderBottomLeftRadius: 5,
-    borderBottomRightRadius: 5,
+  
+  innerCircle: {
+    opacity: 0,
+    width: 35,
+    height: 35,
+    borderRadius: 100,
+    borderColor: "lightgray",
+    backgroundColor: "lightgray",
+  
   }
 })
 
@@ -30,34 +34,47 @@ const Indicator = ({idx, indicator, currentIndicatorIdx, isPlaying, sharedValues
   const dispatch = useDispatch()
   const indicators = useSelector(state => state.indicators)
 
-  const rStyle = useAnimatedStyle(() => {
+  const backgroundStyle = useAnimatedStyle(() => {
     const backgroundColor = interpolateColor(
       sharedValues.value[idx],
       [0, 1],
-      ["gray", "red"]
+      ["lightgray", "blue"]
     )
     return {
       backgroundColor,
     }
   })
 
+  const borderStyle = useAnimatedStyle(() => {
+    const borderColor = interpolateColor(
+      sharedValues.value[idx],
+      [0, 1],
+      ["lightgray", "blue"]
+    )
+    return {
+      borderColor,
+    }
+  })
+
   return (
     <TouchableOpacity
       key={idx}
-      style={[styles.indicatorBox,
-              indicator.indicating && {borderColor: "teal"},
-              {marginHorizontal: 20 / indicators.length}
-            ]}
       onPress={() => dispatch(actions.toggleIndicator({idx}))}>
-        
-      <Animated.View style={[styles.indicatorLevelTop,
-                              indicator.levels[1].active && {backgroundColor: "gray"},
-                              indicator.levels[1].active && rStyle,
-                              ]}/>
-      <Animated.View style={[styles.indicatorLevelBottom,
-                              indicator.levels[0].active && {backgroundColor: "gray"},
-                              indicator.levels[0].active && rStyle,
-                      ]}/>
+
+      <Animated.View 
+        style={[styles.outerCircle,
+                !indicator.levels[0].active && {opacity: 0.5},
+                indicator.levels[0].active && {borderStyle: "solid"},
+                indicator.levels[0].active && borderStyle,
+                {marginHorizontal: 20 / indicators.length}]}>
+
+        <Animated.View
+          style={[styles.innerCircle,
+                  indicator.levels[1].active && {opacity: 1},
+                  indicator.levels[1].active && backgroundStyle]}/>
+
+      </Animated.View>
+
     </TouchableOpacity>
   )
 }
