@@ -1,14 +1,13 @@
 import React, { useRef } from 'react'
 import { connectActionSheet } from '@expo/react-native-action-sheet'
 import { BottomSheetModal,  BottomSheetBackdrop } from '@gorhom/bottom-sheet'
-import {Picker} from '@react-native-picker/picker'
 import {
   SafeAreaView,
   Text,
   View,
   TouchableOpacity,
   NativeModules,
-  Button
+  Button,
 } from 'react-native';
 
 import { useDarkTheme } from '../utils/ui-utils'
@@ -17,6 +16,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import { actions } from '../store'
 import Copy from '../components/copy'
 
+import RTNSoundmodule from 'rtn-soundmodule/js/NativeSoundmodule'
+
 const Settings = props => {
   const dispatch = useDispatch()
   const isDarkMode = useDarkTheme()
@@ -24,8 +25,6 @@ const Settings = props => {
   const voice = useSelector(state => state.settings.voice)
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
-
-  const { SoundModule } = NativeModules
 
   const selectTheme = () => {
     props.showActionSheetWithOptions(
@@ -93,9 +92,10 @@ const Settings = props => {
       </View>
 
       <Button
-        title="Click to invoke your native module!"
-        color="#841584"
-        onPress={() => SoundModule.playSound("Miro", "Zagreb")}
+        title="Play turbomodule sound"
+        onPress={() => {
+          RTNSoundmodule?.playSound("playing from JS")
+        }}
       />
 
       <BottomSheetModal
@@ -108,13 +108,8 @@ const Settings = props => {
         backgroundStyle={{backgroundColor: isDarkMode ? "#1f1f1f" : "white"}}
       >
         <View>
-          <Picker
-            selectedValue={voice || "click"}
-            onValueChange={val => dispatch(actions.setVoice(val))}
-            itemStyle={{color: isDarkMode? "white" : "black"}}>
-            <Picker.Item label="Click" value="click" />
-            <Picker.Item label="Clave" value="clave" />
-          </Picker>
+          <Text>"To be implemented</Text>
+          
         </View>
       </BottomSheetModal>
 

@@ -18,7 +18,13 @@ RCT_EXPORT_METHOD(playSound:(NSString *)name location:(NSString *)location)
                          pathForResource:@"click" ofType:@"mp3"];
   AudioServicesCreateSystemSoundID((__bridge  CFURLRef)
                                    [NSURL fileURLWithPath:soundFile], & soundID);
-  AudioServicesPlaySystemSound(soundID);
+  
+  for (int i = 1; i <= 10; i++)
+    {
+        AudioServicesPlaySystemSound(soundID);
+    }
+
+  
 }
 
 @end

@@ -21,7 +21,7 @@ const settingsSlice = createSlice({
     theme: "dark",
     volume: 0.5,
     currentPreset: {},
-    beats: 4,
+    beats: 5,
   },
   reducers: {
     setVibrate: (state, {payload}) => {
@@ -83,7 +83,7 @@ const presetSlice = createSlice({
       })
     },
     loadPreset: (state, action) => {
-      console.log(action)
+      
     },
     deletePreset: (state, action) => {
       return state.filter(preset => preset.id !== action.payload)
@@ -114,7 +114,6 @@ const indicatorsSlice = createSlice({
       return state = payload
     },
     setIndicators: (state, {payload}) => {
-      console.log(payload)
       return state = Array(payload).fill({levels: [{active: true}, {active: true}]})
     }
   }

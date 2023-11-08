@@ -1,7 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { View, TouchableOpacity, StyleSheet, Text, TextInput, NativeModules } from 'react-native'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
-import { Ionicons, Fontisto } from '@expo/vector-icons'
+import Ionicons from 'react-native-vector-icons/Ionicons'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import Fontisto from 'react-native-vector-icons/Fontisto'
 import * as Haptics from 'expo-haptics'
 import { useSelector, useDispatch } from 'react-redux'
 import { Audio } from 'expo-av'
@@ -10,21 +11,105 @@ import { useDarkTheme } from '../utils/ui-utils'
 import { msToBpm, bpmToMs } from '../utils/common'
 import { BottomSheetModal,  BottomSheetBackdrop } from '@gorhom/bottom-sheet'
 import Slider from '@react-native-community/slider'
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolateColor } from 'react-native-reanimated'
 
-const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndicatorIdx, bottomSheetModalRef}) => {
+import RTNSoundmodule from 'rtn-soundmodule/js/NativeSoundmodule'
+
+const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndicatorIdx, sharedValues, bottomSheetModalRef}) => {
   const dispatch = useDispatch()
+  const tempoRef = useRef(tempo)
   const isDarkMode = useDarkTheme()
   const isVibrateEnabled = useSelector(state => state.settings.vibrate)
   const isSoundEnabled = useSelector(state => state.settings.sound)
+  const soundEnabledRef = useRef(isSoundEnabled)
+  const indicatorsRef = useRef(indicators)
+
   const beats = useSelector(state => state.settings.beats)
   const volume = useSelector(state => state.settings.volume)
   const voice = useSelector(state => state.settings.voice)
-  const [sound, setSound] = React.useState()
+
+  const [intervalObj, setIntervalObj] = useState(null)
   const [taps, setTaps] = useState([0])
   const [tapMessage, setTapMessage] = useState("")
   const [volumeIndicator, setVolumeIndicator] = useState(volume)
 
   const volumeSheetRef = useRef<BottomSheetModal>(null)
+
+  const toggleIndicator = (currentIndicatorIdx) => {
+
+    const newValues = sharedValues.value.map((v, idx) => {
+      if (idx === currentIndicatorIdx) {
+        return 1
+      } else {
+        return 0
+      }
+    })
+
+    sharedValues.value = withTiming(newValues, {duration: 50})
+
+    setTimeout(() => {
+      const clearValues = sharedValues.value.map((v, idx) => {
+        return 0
+      })
+      sharedValues.value = withTiming(clearValues, {duration: 50})
+    }, 100)
+
+  }
+
+  const loop = useCallback((setIntervalObj) => {
+    togglePlaying(true)
+    let currentIndicatorIdx = 0
+
+    //trigger first indicator
+    toggleIndicator(currentIndicatorIdx)
+
+    let indicatorLevel0Active = indicatorsRef.current[currentIndicatorIdx].levels[0].active
+    let indicatorLevel1Active = indicatorsRef.current[currentIndicatorIdx].levels[1].active
+
+    // first sound
+    if (soundEnabledRef.current && indicatorLevel0Active) {
+      RTNSoundmodule?.playSound("JSI call")
+    }
+
+    currentIndicatorIdx = currentIndicatorIdx + 1 // increment indicator after first sound
+
+    // and then the rest
+    let startTime = new Date().getTime();
+
+    const interval = setInterval(() => {
+      const diffMs = new Date().getTime() - startTime;
+
+      if (diffMs > bpmToMs(tempoRef.current)) {
+
+        toggleIndicator(currentIndicatorIdx)
+
+        let indicatorLevel0Active = indicatorsRef.current[currentIndicatorIdx].levels[0].active
+        let indicatorLevel1Active = indicatorsRef.current[currentIndicatorIdx].levels[1].active
+
+        if (soundEnabledRef.current && indicatorLevel0Active) {
+          RTNSoundmodule?.playSound("JSI call")
+        }
+
+        currentIndicatorIdx = currentIndicatorIdx + 1 // increment indicator after sound
+
+        startTime = new Date().getTime() // reset start time
+
+        if (currentIndicatorIdx >= indicatorsRef.current.length) {
+          currentIndicatorIdx = 0 // reset indicator
+        }
+      }
+
+    }, 1)
+
+    setIntervalObj(interval)
+
+
+  }, [tempo])
+
+  const stopLoop = useCallback((interval) => {
+    togglePlaying(false)
+    clearInterval(interval)
+  }, [])
 
   const getTapTempo = () => {
 
@@ -55,101 +140,15 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   }
 
   function playNativeSound() {
-    const { SoundModule } = NativeModules
-    SoundModule.playSound("miro", "pero")
+    RTNSoundmodule?.playSound("JSI call")
   }
 
-  async function playExpoSound(isAccented) {
-    await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
-    
-    
-    let soundAsset = null
-
-    switch(voice) {
-      case "click":
-        soundAsset = isAccented ? require('../../assets/click4.mp3') : require('../../assets/click3.mp3')
-        break;
-      case "clave":
-        soundAsset = isAccented ? require('../../assets/clave.mp3') : require('../../assets/clave.mp3')
-        break;
-      default:
-        soundAsset = isAccented ? require('../../assets/click4.mp3') : require('../../assets/click3.mp3')
-    }
-
-    const { sound } = await Audio.Sound.createAsync(soundAsset)
-    setSound(sound)
-    await sound.setVolumeAsync(volume)
-    await sound.playAsync();
-  }
-
-  React.useEffect(() => {
-    return sound
-      ? () => {
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound])
-
+  // update relevant props
   useEffect(() => {
-
-    // clear indicators on play / pause
-    let currentIndicatorIdx = 0
-    setCurrentIndicatorIdx(0)
-
-    if (!isPlaying) return
-    
-    const isBeatEnabled = indicators[currentIndicatorIdx].levels[0].active
-    const isAccented = indicators[currentIndicatorIdx].levels[1].active
-
-
-    if (isPlaying) {
-      if (isSoundEnabled && isBeatEnabled) {
-        //playExpoSound(isAccented)
-        playNativeSound()
-      }
-      if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
-
-      // if(currentIndicatorIdx === indicators.length - 1) {
-      //   console.log("resetting to 0")
-      //   currentIndicatorIdx = 0
-      //   setCurrentIndicatorIdx(0)
-      // } else {
-      //   currentIndicatorIdx = currentIndicatorIdx + 1
-      //   setCurrentIndicatorIdx(currentIndicatorIdx)
-      // }
-    }
-
-    // run interval fn
-    const interval = setInterval(() => {
-      console.log("interval running")
-      const isBeatEnabled = indicators[currentIndicatorIdx].levels[0].active
-      const isAccented = indicators[currentIndicatorIdx].levels[1].active
-
-      if (isPlaying) {
-        if (isSoundEnabled && isBeatEnabled) {
-          //playExpoSound(isAccented)
-          playNativeSound()
-        }
-        if (isVibrateEnabled) {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}
-
-        if(currentIndicatorIdx === indicators.length - 1) {
-          currentIndicatorIdx = 0
-          setCurrentIndicatorIdx(0)
-        } else {
-          currentIndicatorIdx = currentIndicatorIdx + 1
-          setCurrentIndicatorIdx(currentIndicatorIdx)
-         }
-      }
-
-    }, bpmToMs(tempo))
-
-    return () => {
-      console.log("clearing interval")
-      clearInterval(interval)
-    }
-
-  }, [tempo, isPlaying, isVibrateEnabled, isSoundEnabled, indicators, volume, voice])
-
+    tempoRef.current = tempo
+    soundEnabledRef.current = isSoundEnabled
+    indicatorsRef.current = indicators
+  }, [tempo, isSoundEnabled, indicators])
 
   return (
     <View>
@@ -160,8 +159,9 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
             getTapTempo()
-            //playExpoSound(false)
-            playNativeSound()
+            if (!isPlaying) {
+              playNativeSound()
+            }
           }}>
           <View style={styles.buttonSmall}>
             <MaterialCommunityIcons
@@ -193,7 +193,11 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => togglePlaying(!isPlaying)}>
+        <TouchableOpacity onPress={() => {
+          if (!isPlaying) 
+            {loop(setIntervalObj)} 
+            else 
+            { stopLoop(intervalObj)}}}>
           <View style={styles.buttonLarge}>
             <Text style={{ color: 'black', fontSize: 20 }}>
               {isPlaying ? (
@@ -284,7 +288,6 @@ const styles = StyleSheet.create({
       backgroundColor: 'lightblue',
       width: 40,
       height: 40,
-      //padding: 10,
       borderRadius: 100,
       alignItems: 'center',
       justifyContent: 'center',

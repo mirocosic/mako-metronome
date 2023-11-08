@@ -53,6 +53,25 @@
 		4EE177AA2A76697C004B24EB /* click4.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = click4.mp3; path = ../assets/click4.mp3; sourceTree = "<group>"; };
 		4EE177AC2A76699C004B24EB /* click3.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = click3.mp3; path = ../assets/click3.mp3; sourceTree = "<group>"; };
 		4EE24B6D2A336F8200777921 /* click2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = click2.mp3; path = ../assets/click2.mp3; sourceTree = "<group>"; };
+		4EFADE3B2AEE7DCB0069DEF5 /* Fontisto.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Fontisto.ttf; sourceTree = "<group>"; };
+		4EFADE3C2AEE7DCB0069DEF5 /* Octicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Octicons.ttf; sourceTree = "<group>"; };
+		4EFADE3D2AEE7DCB0069DEF5 /* Feather.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Feather.ttf; sourceTree = "<group>"; };
+		4EFADE3E2AEE7DCB0069DEF5 /* FontAwesome6_Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome6_Regular.ttf; sourceTree = "<group>"; };
+		4EFADE3F2AEE7DCB0069DEF5 /* Entypo.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Entypo.ttf; sourceTree = "<group>"; };
+		4EFADE402AEE7DCB0069DEF5 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome5_Brands.ttf; sourceTree = "<group>"; };
+		4EFADE412AEE7DCB0069DEF5 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MaterialCommunityIcons.ttf; sourceTree = "<group>"; };
+		4EFADE422AEE7DCB0069DEF5 /* AntDesign.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = AntDesign.ttf; sourceTree = "<group>"; };
+		4EFADE432AEE7DCB0069DEF5 /* Foundation.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Foundation.ttf; sourceTree = "<group>"; };
+		4EFADE442AEE7DCB0069DEF5 /* Ionicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Ionicons.ttf; sourceTree = "<group>"; };
+		4EFADE452AEE7DCB0069DEF5 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome5_Solid.ttf; sourceTree = "<group>"; };
+		4EFADE462AEE7DCB0069DEF5 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome5_Regular.ttf; sourceTree = "<group>"; };
+		4EFADE472AEE7DCB0069DEF5 /* FontAwesome.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome.ttf; sourceTree = "<group>"; };
+		4EFADE482AEE7DCB0069DEF5 /* Zocial.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Zocial.ttf; sourceTree = "<group>"; };
+		4EFADE492AEE7DCB0069DEF5 /* EvilIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = EvilIcons.ttf; sourceTree = "<group>"; };
+		4EFADE4A2AEE7DCB0069DEF5 /* FontAwesome6_Solid.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome6_Solid.ttf; sourceTree = "<group>"; };
+		4EFADE4B2AEE7DCB0069DEF5 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SimpleLineIcons.ttf; sourceTree = "<group>"; };
+		4EFADE4C2AEE7DCB0069DEF5 /* FontAwesome6_Brands.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome6_Brands.ttf; sourceTree = "<group>"; };
+		4EFADE4D2AEE7DCB0069DEF5 /* MaterialIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MaterialIcons.ttf; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-metronome.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-metronome.release.xcconfig"; path = "Target Support Files/Pods-metronome/Pods-metronome.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-metronome-metronomeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-metronome-metronomeTests.debug.xcconfig"; path = "Target Support Files/Pods-metronome-metronomeTests/Pods-metronome-metronomeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-metronome.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-metronome.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -102,6 +121,7 @@
 		13B07FAE1A68108700A75B9A /* metronome */ = {
 			isa = PBXGroup;
 			children = (
+				4EFADE3A2AEE7DCB0069DEF5 /* Fonts */,
 				4ED5BC832AC8264F00191B22 /* metronome.entitlements */,
 				4EE177AC2A76699C004B24EB /* click3.mp3 */,
 				4EE177AA2A76697C004B24EB /* click4.mp3 */,
@@ -127,6 +147,33 @@
 				19F6CBCC0A4E27FBF8BF4A61 /* libPods-metronome-metronomeTests.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4EFADE3A2AEE7DCB0069DEF5 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				4EFADE3B2AEE7DCB0069DEF5 /* Fontisto.ttf */,
+				4EFADE3C2AEE7DCB0069DEF5 /* Octicons.ttf */,
+				4EFADE3D2AEE7DCB0069DEF5 /* Feather.ttf */,
+				4EFADE3E2AEE7DCB0069DEF5 /* FontAwesome6_Regular.ttf */,
+				4EFADE3F2AEE7DCB0069DEF5 /* Entypo.ttf */,
+				4EFADE402AEE7DCB0069DEF5 /* FontAwesome5_Brands.ttf */,
+				4EFADE412AEE7DCB0069DEF5 /* MaterialCommunityIcons.ttf */,
+				4EFADE422AEE7DCB0069DEF5 /* AntDesign.ttf */,
+				4EFADE432AEE7DCB0069DEF5 /* Foundation.ttf */,
+				4EFADE442AEE7DCB0069DEF5 /* Ionicons.ttf */,
+				4EFADE452AEE7DCB0069DEF5 /* FontAwesome5_Solid.ttf */,
+				4EFADE462AEE7DCB0069DEF5 /* FontAwesome5_Regular.ttf */,
+				4EFADE472AEE7DCB0069DEF5 /* FontAwesome.ttf */,
+				4EFADE482AEE7DCB0069DEF5 /* Zocial.ttf */,
+				4EFADE492AEE7DCB0069DEF5 /* EvilIcons.ttf */,
+				4EFADE4A2AEE7DCB0069DEF5 /* FontAwesome6_Solid.ttf */,
+				4EFADE4B2AEE7DCB0069DEF5 /* SimpleLineIcons.ttf */,
+				4EFADE4C2AEE7DCB0069DEF5 /* FontAwesome6_Brands.ttf */,
+				4EFADE4D2AEE7DCB0069DEF5 /* MaterialIcons.ttf */,
+			);
+			name = Fonts;
+			path = "../node_modules/react-native-vector-icons/Fonts";
 			sourceTree = "<group>";
 		};
 		71AAF7ED8E3464587ED6DC9C /* ExpoModulesProviders */ = {
@@ -205,6 +252,7 @@
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "metronomeTests" */;
 			buildPhases = (
 				A55EABD7B0C7F3A422A6CC61 /* [CP] Check Pods Manifest.lock */,
+				E62CC203DCF6A465D3C152E9 /* [Expo] Configure project */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
@@ -227,6 +275,7 @@
 			buildPhases = (
 				C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
+				CD4E51B723022A4F56D53188 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
@@ -397,6 +446,25 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-metronome-metronomeTests/Pods-metronome-metronomeTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		CD4E51B723022A4F56D53188 /* [Expo] Configure project */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-metronome/expo-configure-project.sh\"\n";
+		};
 		E235C05ADACE081382539298 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -413,6 +481,25 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-metronome/Pods-metronome-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		E62CC203DCF6A465D3C152E9 /* [Expo] Configure project */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-metronome-metronomeTests/expo-configure-project.sh\"\n";
 		};
 		F6A41C54EA430FDDC6A6ED99 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -544,7 +631,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = metronome/metronome.entitlements;
-				CURRENT_PROJECT_VERSION = 46;
+				CURRENT_PROJECT_VERSION = 50;
 				DEVELOPMENT_TEAM = QDRTVHPM2W;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = metronome/Info.plist;
@@ -576,7 +663,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = metronome/metronome.entitlements;
-				CURRENT_PROJECT_VERSION = 46;
+				CURRENT_PROJECT_VERSION = 50;
 				DEVELOPMENT_TEAM = QDRTVHPM2W;
 				INFOPLIST_FILE = metronome/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = BeatMaster;
@@ -661,12 +748,16 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "$(inherited)";
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DRN_FABRIC_ENABLED",
+				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DFOLLY_NO_CONFIG",
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
+					"-DRN_FABRIC_ENABLED",
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -735,12 +826,16 @@
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CFLAGS = "$(inherited)";
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DRN_FABRIC_ENABLED",
+				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DFOLLY_NO_CONFIG",
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
+					"-DRN_FABRIC_ENABLED",
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",

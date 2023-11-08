@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { actions } from '../store'
 import { BottomSheetModal,  BottomSheetBackdrop } from '@gorhom/bottom-sheet'
-import {Picker} from '@react-native-picker/picker'
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolateColor } from 'react-native-reanimated'
 
 import {
   SafeAreaView,
@@ -11,6 +11,7 @@ import {
   Text,
   View,
   KeyboardAvoidingView,
+  Button
 } from 'react-native'
 
 import * as Haptics from 'expo-haptics'
@@ -38,7 +39,12 @@ const Metronome = () => {
   const indicators = useSelector(state => state.indicators)
   const [currentIndicatorIdx , setCurrentIndicatorIdx] = useState(0)
 
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null)
+  const sharedValues = useSharedValue(Array(indicators.length).fill(0))
+
+  useEffect(() => {
+    sharedValues.value = Array(indicators.length).fill(0)
+  }, [indicators])
 
   // set initial scroll position to initial tempo
   useEffect(() => {
@@ -57,31 +63,47 @@ const Metronome = () => {
 
         <MetronomeHeader setPresetDialogVisible={setPresetDialogVisible}/>
 
-        <View style={{flex: 1,alignItems: "center", justifyContent: "flex-end"}}>
+        <View style={{flex: 1, alignItems: "center", justifyContent: "flex-end"}}>
 
           <Indicators
             currentIndicatorIdx={currentIndicatorIdx}
-            isPlaying={isPlaying} />
+            isPlaying={isPlaying}
+            sharedValues={sharedValues}
+          />
 
-        
+          <View style={{ marginVertical: 50, flex: 1, justifyContent: "flex-end", alignItems: "center"}}>
 
-          
+            <TempoControls scrollRef={scrollRef} inputRef={inputRef} />
 
-          <View style={{width: "100%", marginVertical: 50, justifyContent: 'flex-end', alignItems: "center"}}>
-
-          <TempoControls
-            scrollRef={scrollRef}
-            inputRef={inputRef} />
-
+            <View style={{height: 60}}>
             <ScrollView
               ref={scrollRef}
-              style={{marginHorizontal: 20, height: 50}}
+              style={{marginHorizontal: 0, height: 0}}
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{height: 40, width: 400}}
               horizontal={true}
               scrollEventThrottle={16}
+              onMomentumScrollEnd={(ev) => {
+                const bpm = Math.round(ev.nativeEvent.contentOffset.x / 10)
+                if (bpm > 0 && bpm <= 400) {
+                  dispatch(actions.saveTempo(bpm))
+                }
+
+                if ((bpm !== tempo) && (bpm > 0) && (bpm <= 400)) {
+                  Haptics.selectionAsync()
+                }
+              }}
+              onScrollEndDrag={(ev) => {
+                const bpm = Math.round(ev.nativeEvent.contentOffset.x / 10)
+                if (bpm > 0 && bpm <= 400) {
+                  dispatch(actions.saveTempo(bpm))
+                }
+
+                if ((bpm !== tempo) && (bpm > 0) && (bpm <= 400)) {
+                  Haptics.selectionAsync()
+                }
+              }}
               onScroll={(ev) => {
-                const bpm = Math.round (ev.nativeEvent.contentOffset.x / 10)
+                const bpm = Math.round(ev.nativeEvent.contentOffset.x / 10)
                 if (bpm > 0 && bpm <= 400) {
                   dispatch(actions.saveTempo(bpm))
                 }
@@ -98,6 +120,8 @@ const Metronome = () => {
                 )
               })}
             </ScrollView>
+            </View>
+            
           </View>
 
           <Controls
@@ -106,6 +130,7 @@ const Metronome = () => {
             tempo={tempo}
             indicators={indicators}
             setCurrentIndicatorIdx={setCurrentIndicatorIdx}
+            sharedValues={sharedValues}
             bottomSheetModalRef={bottomSheetModalRef}
           />
 
@@ -121,23 +146,27 @@ const Metronome = () => {
               handleIndicatorStyle={{backgroundColor: isDarkMode ? "white" : "black"}}
               backgroundStyle={{backgroundColor: isDarkMode ? "#1f1f1f" : "white"}}
             >
-              <View>
-                <Picker
-                  selectedValue={indicators.length}
-                  onValueChange={(value) => dispatch(actions.setIndicators(value))}
-                  
-                  itemStyle={{color: isDarkMode? "white" : "black"}}
-                  >
-                  <Picker.Item label="1 beat" value={1} />
-                  <Picker.Item label="2 beats" value={2} />
-                  <Picker.Item label="3 beats" value={3} />
-                  <Picker.Item label="4 beats" value={4} />
-                  <Picker.Item label="5 beats" value={5} />
-                  <Picker.Item label="6 beats" value={6} />
-                  <Picker.Item label="7 beats" value={7} />
-                  <Picker.Item label="8 beats" value={8} />
-                </Picker>
-              </View>
+              <ScrollView contentContainerStyle={{paddingBottom: 40}}>
+                <Button title="1 Beat" onPress={() => dispatch(actions.setIndicators(1))} />
+                <Button title="2 Beats" onPress={() => dispatch(actions.setIndicators(2))} />
+                <Button title="3 Beats" onPress={() => dispatch(actions.setIndicators(3))} />
+                <Button title="4 Beats" onPress={() => dispatch(actions.setIndicators(4))} />
+                <Button title="5 Beats" onPress={() => dispatch(actions.setIndicators(5))} />
+                <Button title="6 Beats" onPress={() => dispatch(actions.setIndicators(6))} />
+                <Button title="7 Beats" onPress={() => dispatch(actions.setIndicators(7))} />
+                <Button title="8 Beats" onPress={() => dispatch(actions.setIndicators(8))} />
+                {/* <Button title="9 Beats" onPress={() => dispatch(actions.setIndicators(9))} />
+                <Button title="10 Beats" onPress={() => dispatch(actions.setIndicators(10))} />
+                <Button title="11 Beats" onPress={() => dispatch(actions.setIndicators(11))} />
+                <Button title="12 Beats" onPress={() => dispatch(actions.setIndicators(12))} />
+                <Button title="13 Beats" onPress={() => dispatch(actions.setIndicators(13))} />
+                <Button title="14 Beats" onPress={() => dispatch(actions.setIndicators(14))} />
+                <Button title="15 Beats" onPress={() => dispatch(actions.setIndicators(15))} />
+                <Button title="16 Beats" onPress={() => dispatch(actions.setIndicators(16))} /> */}
+
+                
+                
+              </ScrollView>
             </BottomSheetModal>
 
         </View>

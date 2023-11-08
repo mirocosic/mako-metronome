@@ -1,7 +1,7 @@
 import React from 'react'
 import {Text} from 'react-native'
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -57,7 +57,7 @@ const AppNavigator = () => {
         <Tabs.Screen
           name="Presets"
           component={Presets}
-          options={{tabBarIcon: ({focused}) => <Ionicons name="md-list" size={24} color={getColor(focused, useDarkTheme())} />}}/>
+          options={{tabBarIcon: ({focused}) => <Ionicons name="list-outline" size={24} color={getColor(focused, useDarkTheme())} />}}/>
         <Tabs.Screen 
           name="Metronome"
           component={Metronome}
@@ -65,7 +65,7 @@ const AppNavigator = () => {
         <Tabs.Screen
           name="Settings" 
           component={Settings}
-          options={{tabBarIcon: ({focused}) => <Ionicons name="ios-settings" size={24} color={getColor(focused, useDarkTheme())} />}}/>
+          options={{tabBarIcon: ({focused}) => <Ionicons name="cog-outline" size={24} color={getColor(focused, useDarkTheme())} />}}/>
       </Tabs.Navigator>
     </NavigationContainer>
 )}
