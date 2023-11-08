@@ -115,7 +115,7 @@ const Metronome = () => {
               { ticks.map((item, idx)=>{
                 return(
                   <View key={idx}
-                        style={{backgroundColor: isDarkMode ? "lightgrey" : "black",
+                        style={{backgroundColor: isDarkMode ? "grey" : "grey",
                                 width: 5, height: 50, margin: 5}} />
                 )
               })}

@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { View, TouchableOpacity, StyleSheet, useWindowDimensions } from "react-native"
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolateColor } from 'react-native-reanimated'
 import { useSelector, useDispatch } from 'react-redux'
+import { useDarkTheme } from '../utils/ui-utils'
 import { actions } from '../store'
 
 const styles = StyleSheet.create({
@@ -33,6 +34,7 @@ const styles = StyleSheet.create({
 
 const Indicator = ({idx, indicator, currentIndicatorIdx, isPlaying, sharedValues}) => {
 
+  const isDarkMode = useDarkTheme()
   const dispatch = useDispatch()
   const indicators = useSelector(state => state.indicators)
 
@@ -43,7 +45,7 @@ const Indicator = ({idx, indicator, currentIndicatorIdx, isPlaying, sharedValues
     const backgroundColor = interpolateColor(
       sharedValues.value[idx],
       [0, 1],
-      ["lightgray", "teal"]
+      [isDarkMode ? "gray" : "lightgray", "teal"]
     )
     return {
       backgroundColor,
@@ -54,7 +56,7 @@ const Indicator = ({idx, indicator, currentIndicatorIdx, isPlaying, sharedValues
     const borderColor = interpolateColor(
       sharedValues.value[idx],
       [0, 1],
-      ["lightgray", "teal"]
+      [isDarkMode ? "gray" : "lightgray", "teal"]
     )
     return {
       borderColor,
