@@ -58,7 +58,6 @@ const tempoSlice = createSlice({
   },
   reducers: {
     saveTempo: (state, action) => {
-      console.log(action)
       state.value = action.payload
     },
     loadTempo: (state, action) => {
@@ -84,7 +83,7 @@ const presetSlice = createSlice({
       })
     },
     loadPreset: (state, action) => {
-      console.log(action)
+      
     },
     deletePreset: (state, action) => {
       return state.filter(preset => preset.id !== action.payload)
@@ -115,7 +114,6 @@ const indicatorsSlice = createSlice({
       return state = payload
     },
     setIndicators: (state, {payload}) => {
-      console.log(payload)
       return state = Array(payload).fill({levels: [{active: true}, {active: true}]})
     }
   }

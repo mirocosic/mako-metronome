@@ -63,8 +63,11 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
     //trigger first indicator
     toggleIndicator(currentIndicatorIdx)
 
+    let indicatorLevel0Active = indicatorsRef.current[currentIndicatorIdx].levels[0].active
+    let indicatorLevel1Active = indicatorsRef.current[currentIndicatorIdx].levels[1].active
+
     // first sound
-    if (soundEnabledRef.current) {
+    if (soundEnabledRef.current && indicatorLevel0Active) {
       RTNSoundmodule?.playSound("JSI call")
     }
 
@@ -78,10 +81,12 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
       if (diffMs > bpmToMs(tempoRef.current)) {
 
-        console.log(currentIndicatorIdx)
         toggleIndicator(currentIndicatorIdx)
 
-        if (soundEnabledRef.current) {
+        let indicatorLevel0Active = indicatorsRef.current[currentIndicatorIdx].levels[0].active
+        let indicatorLevel1Active = indicatorsRef.current[currentIndicatorIdx].levels[1].active
+
+        if (soundEnabledRef.current && indicatorLevel0Active) {
           RTNSoundmodule?.playSound("JSI call")
         }
 
@@ -102,7 +107,6 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   }, [tempo])
 
   const stopLoop = useCallback((interval) => {
-    console.log("loop stooped")
     togglePlaying(false)
     clearInterval(interval)
   }, [])
@@ -145,9 +149,6 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
     soundEnabledRef.current = isSoundEnabled
     indicatorsRef.current = indicators
   }, [tempo, isSoundEnabled, indicators])
-
-  console.log("render controls")
-  //console.log(sharedValues.length)
 
   return (
     <View>
