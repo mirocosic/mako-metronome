@@ -167,7 +167,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
             <MaterialCommunityIcons
               name="gesture-double-tap"
               size={24}
-              color="black"
+              color="lightgray"
             />
           </View>
         </TouchableOpacity>
@@ -180,13 +180,13 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
                 <MaterialCommunityIcons
                   name="vibrate"
                   size={24}
-                  color="black"
+                  color="lightgray"
                 />
               ) : (
                 <MaterialCommunityIcons
                   name="vibrate-off"
                   size={24}
-                  color="black"
+                  color="lightgray"
                 />
               )}
             </Text>
@@ -201,9 +201,9 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           <View style={styles.buttonLarge}>
             <Text style={{ color: 'black', fontSize: 20 }}>
               {isPlaying ? (
-                <Ionicons name="pause" size={24} color="black" />
+                <Ionicons name="pause" size={24} color="teal" />
               ) : (
-                <Ionicons name="play" size={24} color="black" />
+                <Ionicons name="play" size={24} color="teal" />
               )}
             </Text>
           </View>
@@ -218,9 +218,9 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           <View style={styles.buttonSmall}>
             <Text style={{ color: 'black', fontSize: 14 }}>
               {isSoundEnabled ? (
-                <Ionicons name="volume-high" size={24} color="black" />
+                <Ionicons name="volume-high" size={24} color="lightgray" />
               ) : (
-                <Ionicons name="volume-mute" size={24} color="black" />
+                <Ionicons name="volume-mute" size={24} color="lightgray" />
               )}
             </Text>
             {/* <Text style={{fontSize: 10}}>{Math.round(volumeIndicator * 100)}% </Text> */}
@@ -231,7 +231,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           onPress={() => bottomSheetModalRef.current.present()}>
           <View style={styles.buttonSmall}>
             <Text style={{ color: 'black', fontSize: 14 }}>
-              <Fontisto name="heartbeat-alt" size={24} color="black" />
+              <Fontisto name="heartbeat-alt" size={24} color="lightgray" />
             </Text>
           </View>
         </TouchableOpacity>
@@ -274,7 +274,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
 const styles = StyleSheet.create({
   buttonLarge: {
-    backgroundColor: 'lightblue',
+    backgroundColor: 'lightgray',
     width: 60,
     height: 60,
     padding: 10,
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
   },
 
   buttonSmall: {
-      backgroundColor: 'lightblue',
+      backgroundColor: 'teal',
       width: 40,
       height: 40,
       borderRadius: 100,

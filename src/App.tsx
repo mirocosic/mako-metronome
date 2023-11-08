@@ -30,10 +30,10 @@ const Stack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
 
 const getColor = (isFocused, isDarkTheme) => {
-  if (isFocused && isDarkTheme) { return "lightgray"}
-  if (isFocused && !isDarkTheme) { return "blue"}
+  if (isFocused && isDarkTheme) { return "teal"}
+  if (isFocused && !isDarkTheme) { return "teal"}
   if (!isFocused && isDarkTheme) { return "gray"}
-  if (!isFocused && !isDarkTheme) { return "black"}
+  if (!isFocused && !isDarkTheme) { return "gray"}
 }
 
 const MyDarkTheme = {
@@ -52,7 +52,7 @@ const AppNavigator = () => {
         initialRouteName="Metronome"
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: useDarkTheme() ? "lightgray" : "blue"
+          tabBarActiveTintColor: useDarkTheme() ? "teal" : "teal"
         }}>
         <Tabs.Screen
           name="Presets"

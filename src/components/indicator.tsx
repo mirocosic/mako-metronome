@@ -43,7 +43,7 @@ const Indicator = ({idx, indicator, currentIndicatorIdx, isPlaying, sharedValues
     const backgroundColor = interpolateColor(
       sharedValues.value[idx],
       [0, 1],
-      ["lightgray", "blue"]
+      ["lightgray", "teal"]
     )
     return {
       backgroundColor,
@@ -54,7 +54,7 @@ const Indicator = ({idx, indicator, currentIndicatorIdx, isPlaying, sharedValues
     const borderColor = interpolateColor(
       sharedValues.value[idx],
       [0, 1],
-      ["lightgray", "blue"]
+      ["lightgray", "teal"]
     )
     return {
       borderColor,

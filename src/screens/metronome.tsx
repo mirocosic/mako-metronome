@@ -59,9 +59,9 @@ const Metronome = () => {
 
       <KeyboardAvoidingView
         behavior="padding"
-        style={{paddingBottom: 50, flex: 1}}>
+        style={{paddingBottom: 50, paddingTop: 50, flex: 1}}>
 
-        <MetronomeHeader setPresetDialogVisible={setPresetDialogVisible}/>
+        {/* <MetronomeHeader setPresetDialogVisible={setPresetDialogVisible}/> */}
 
         <View style={{flex: 1, alignItems: "center", justifyContent: "flex-end"}}>
 
@@ -147,14 +147,14 @@ const Metronome = () => {
               backgroundStyle={{backgroundColor: isDarkMode ? "#1f1f1f" : "white"}}
             >
               <ScrollView contentContainerStyle={{paddingBottom: 40}}>
-                <Button title="1 Beat" onPress={() => dispatch(actions.setIndicators(1))} />
-                <Button title="2 Beats" onPress={() => dispatch(actions.setIndicators(2))} />
-                <Button title="3 Beats" onPress={() => dispatch(actions.setIndicators(3))} />
-                <Button title="4 Beats" onPress={() => dispatch(actions.setIndicators(4))} />
-                <Button title="5 Beats" onPress={() => dispatch(actions.setIndicators(5))} />
-                <Button title="6 Beats" onPress={() => dispatch(actions.setIndicators(6))} />
-                <Button title="7 Beats" onPress={() => dispatch(actions.setIndicators(7))} />
-                <Button title="8 Beats" onPress={() => dispatch(actions.setIndicators(8))} />
+                <Button title="1 Beat" color="teal" onPress={() => dispatch(actions.setIndicators(1))} />
+                <Button title="2 Beats" color="teal" onPress={() => dispatch(actions.setIndicators(2))} />
+                <Button title="3 Beats" color="teal" onPress={() => dispatch(actions.setIndicators(3))} />
+                <Button title="4 Beats" color="teal" onPress={() => dispatch(actions.setIndicators(4))} />
+                <Button title="5 Beats" color="teal"  onPress={() => dispatch(actions.setIndicators(5))} />
+                <Button title="6 Beats" color="teal" onPress={() => dispatch(actions.setIndicators(6))} />
+                <Button title="7 Beats" color="teal" onPress={() => dispatch(actions.setIndicators(7))} />
+                <Button title="8 Beats" color="teal" onPress={() => dispatch(actions.setIndicators(8))} />
                 {/* <Button title="9 Beats" onPress={() => dispatch(actions.setIndicators(9))} />
                 <Button title="10 Beats" onPress={() => dispatch(actions.setIndicators(10))} />
                 <Button title="11 Beats" onPress={() => dispatch(actions.setIndicators(11))} />
