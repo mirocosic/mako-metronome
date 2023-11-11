@@ -5,17 +5,19 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Fontisto from 'react-native-vector-icons/Fontisto'
 import * as Haptics from 'expo-haptics'
 import { useSelector, useDispatch } from 'react-redux'
-import { Audio } from 'expo-av'
 import { actions } from '../store'
+import Copy from "../components/copy"
+import palette from '../utils/palette'
 import { useDarkTheme } from '../utils/ui-utils'
 import { msToBpm, bpmToMs } from '../utils/common'
 import { BottomSheetModal,  BottomSheetBackdrop } from '@gorhom/bottom-sheet'
 import Slider from '@react-native-community/slider'
+import { connectActionSheet } from '@expo/react-native-action-sheet'
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolateColor } from 'react-native-reanimated'
 
 import RTNSoundmodule from 'rtn-soundmodule/js/NativeSoundmodule'
 
-const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndicatorIdx, sharedValues, bottomSheetModalRef}) => {
+const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndicatorIdx, sharedValues, bottomSheetModalRef, showActionSheetWithOptions, setPresetDialogVisible}) => {
   const dispatch = useDispatch()
   const tempoRef = useRef(tempo)
   const isDarkMode = useDarkTheme()
@@ -24,6 +26,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const soundEnabledRef = useRef(isSoundEnabled)
   const indicatorsRef = useRef(indicators)
 
+  const currentPreset = useSelector(state => state.settings.currentPreset);
   const beats = useSelector(state => state.settings.beats)
   const volume = useSelector(state => state.settings.volume)
   const voice = useSelector(state => state.settings.voice)
@@ -32,6 +35,53 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const [taps, setTaps] = useState([0])
   const [tapMessage, setTapMessage] = useState("")
   const [volumeIndicator, setVolumeIndicator] = useState(volume)
+  const theme = useSelector(state => state.settings.theme)
+
+  const openPresetsMenu = () => {
+    showActionSheetWithOptions(
+      {
+        options: ['Save', 'Save as', 'Cancel'],
+        cancelButtonIndex: 2,
+        title: 'Save ',
+        userInterfaceStyle: theme,
+        containerStyle: {
+          backgroundColor: isDarkMode ? palette.dark : palette.light
+        },
+        tintColor: "teal",
+        textStyle: {color: "teal"},
+        //textStyle: { color: isDarkMode ? palette.light : palette.dark },
+        titleTextStyle: { color: isDarkMode ? palette.lightGray : palette.gray }
+      },
+      btnIdx => {
+        switch (btnIdx) {
+          case 0:
+            dispatch(
+              actions.updatePreset({
+                id: currentPreset.id,
+                name: currentPreset.name,
+                tempo: tempo,
+                vibrate: isVibrateEnabled,
+                sound: isSoundEnabled,
+                volume: volume,
+                indicators: indicators
+              })
+            );
+            break;
+          case 1:
+            setPresetDialogVisible(true);
+            //dispatch(actions.setTheme('dark'));
+            break;
+          // case 2:
+          //   dispatch(actions.setTheme('system'));
+          //   break;
+          default:
+            break;
+        }
+      }
+    );
+  };
+
+
 
   const volumeSheetRef = useRef<BottomSheetModal>(null)
 
@@ -172,7 +222,9 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity
+        
+
+        {/* <TouchableOpacity
           onPress={() => dispatch(actions.setVibrate(!isVibrateEnabled))}>
           <View style={styles.buttonSmall}>
             <Text style={{ color: 'black', fontSize: 14 }}>
@@ -189,6 +241,15 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
                   color="lightgray"
                 />
               )}
+            </Text>
+          </View>
+        </TouchableOpacity> */}
+
+        <TouchableOpacity
+          onPress={() => bottomSheetModalRef.current.present()}>
+          <View style={styles.buttonSmall}>
+            <Text style={{ color: 'black', fontSize: 14 }}>
+              <Fontisto name="heartbeat-alt" size={24} color="lightgray" />
             </Text>
           </View>
         </TouchableOpacity>
@@ -227,11 +288,13 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           </View>
         </TouchableOpacity>
 
+        
+
         <TouchableOpacity
-          onPress={() => bottomSheetModalRef.current.present()}>
+          onPress={() => openPresetsMenu()}>
           <View style={styles.buttonSmall}>
-            <Text style={{ color: 'black', fontSize: 14 }}>
-              <Fontisto name="heartbeat-alt" size={24} color="lightgray" />
+            <Text style={{ color: 'black', fontSize: 4 }}>
+              <MaterialCommunityIcons name="content-save-outline" size={24} color="lightgray" />
             </Text>
           </View>
         </TouchableOpacity>
@@ -239,6 +302,11 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
       </View>
 
       <Text style={{color:"black", textAlign: "center"}}>{tapMessage}</Text>
+      <View>
+        {currentPreset.name !== '' ? (
+          <Copy style={{textAlign: "center", color: isDarkMode ? "lightgray" : "gray"}} value={`Preset: ${currentPreset.name}`} />
+        ) : null}
+      </View>
 
       <BottomSheetModal
         ref={volumeSheetRef}
@@ -249,21 +317,21 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
         handleIndicatorStyle={{backgroundColor: isDarkMode ? "black" : "black"}}
         backgroundStyle={{backgroundColor: isDarkMode ? "#1f1f1f" : "#f1f1f1"}}>
         <View style={{flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1}}>
-          <Text style={{color: isDarkMode ? "black" : "black" }}>Volume {Math.round(volumeIndicator * 100)}% </Text>
+          <Text style={{color: isDarkMode ? "lightgray" : "black" }}>Volume {Math.round(volumeIndicator * 100)}% </Text>
           
           <View style={{flexDirection: "row", alignItems: "center", marginTop: 10}}>
-            <Text style={{color: isDarkMode ? "black" : "black" }}>0%</Text>
+            <Text style={{color: isDarkMode ? "lightgray" : "black" }}>0%</Text>
             <Slider
               style={{width: 250, height: 60}}
               minimumValue={0}
               maximumValue={1}
               value={volume}
-              thumbTintColor="lightblue"
-              minimumTrackTintColor="lightblue"
+              thumbTintColor="teal"
+              minimumTrackTintColor="teal"
               maximumTrackTintColor="darkgray"
               onValueChange={(v) => setVolumeIndicator(v)}
               onSlidingComplete={ v => dispatch(actions.setVolume(v)) }/>
-            <Text style={{color: isDarkMode ? "black" : "black" }}>100%</Text>
+            <Text style={{color: isDarkMode ? "lightgray" : "black" }}>100%</Text>
           </View>
           
         </View>
@@ -295,4 +363,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default Controls;
+export default connectActionSheet(Controls)

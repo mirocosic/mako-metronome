@@ -6,8 +6,6 @@ import {
   Text,
   View,
   TouchableOpacity,
-  NativeModules,
-  Button,
 } from 'react-native';
 
 import { useDarkTheme } from '../utils/ui-utils'
@@ -15,8 +13,6 @@ import palette from '../utils/palette'
 import { useSelector, useDispatch } from 'react-redux'
 import { actions } from '../store'
 import Copy from '../components/copy'
-
-import RTNSoundmodule from 'rtn-soundmodule/js/NativeSoundmodule'
 
 const Settings = props => {
   const dispatch = useDispatch()
@@ -36,6 +32,7 @@ const Settings = props => {
         containerStyle: {
           backgroundColor: isDarkMode ? palette.dark : palette.light
         },
+        tintColor: "teal",
         textStyle: { color: isDarkMode ? palette.light : palette.dark },
         titleTextStyle: { color: isDarkMode ? palette.lightGray : palette.gray }
       },
@@ -59,18 +56,21 @@ const Settings = props => {
 
   return (
     <SafeAreaView style={{ margin: 20 }}>
-      <Copy value="Settings" />
+      <Copy style={{textAlign: "center"}} value="Settings" />
 
       <View
         style={{
-          marginTop: 10,
+          paddingVertical: 10,
           flexDirection: 'row',
           alignItems: 'center',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
+          borderBottomWidth: 1,
+          borderColor: "gray"
+
         }}>
         <Copy value="Theme" />
         <TouchableOpacity onPress={selectTheme}>
-          <Text style={{ textTransform: 'capitalize', color: 'lightgray' }}>
+          <Text style={{ textTransform: 'capitalize', color: 'teal' }}>
             {theme}
           </Text>
         </TouchableOpacity>
@@ -78,25 +78,20 @@ const Settings = props => {
 
       <View
         style={{
-          marginTop: 10,
+          paddingVertical: 10,
           flexDirection: 'row',
           alignItems: 'center',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
+          borderBottomWidth: 1,
+          borderColor: "gray"
         }}>
         <Copy value="Sound" />
         <TouchableOpacity onPress={() => bottomSheetModalRef.current?.present()}>
-          <Text style={{ textTransform: 'capitalize', color: 'lightgray' }}>
+          <Text style={{ textTransform: 'capitalize', color: 'teal' }}>
             {voice || "click"}
           </Text>
         </TouchableOpacity>
       </View>
-
-      <Button
-        title="Play turbomodule sound"
-        onPress={() => {
-          RTNSoundmodule?.playSound("playing from JS")
-        }}
-      />
 
       <BottomSheetModal
         ref={bottomSheetModalRef}

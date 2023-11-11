@@ -132,6 +132,7 @@ const Metronome = () => {
             setCurrentIndicatorIdx={setCurrentIndicatorIdx}
             sharedValues={sharedValues}
             bottomSheetModalRef={bottomSheetModalRef}
+            setPresetDialogVisible={setPresetDialogVisible}
           />
 
           <SaveDialog isPresetDialogVisible={isPresetDialogVisible} setPresetDialogVisible={setPresetDialogVisible}/>
