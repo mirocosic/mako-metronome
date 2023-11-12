@@ -6,6 +6,7 @@ import {
   Text,
   View,
   TouchableOpacity,
+  Button
 } from 'react-native';
 
 import { useDarkTheme } from '../utils/ui-utils'
@@ -103,7 +104,8 @@ const Settings = props => {
         backgroundStyle={{backgroundColor: isDarkMode ? "#1f1f1f" : "white"}}
       >
         <View>
-          <Text>"To be implemented</Text>
+          <Button title="Click" color="teal" onPress={() => dispatch(actions.setVoice("click"))} />
+          <Button title="Clave" color="teal" onPress={() => dispatch(actions.setVoice("clave"))} />
           
         </View>
       </BottomSheetModal>

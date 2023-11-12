@@ -14,9 +14,9 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		4E21970E2AE59E28002EA55F /* RCTSoundModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E21970D2AE59E28002EA55F /* RCTSoundModule.m */; };
 		4E5841CC2A306C3800254337 /* click.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4E5841CB2A306C3800254337 /* click.mp3 */; };
-		4EE177AB2A76697C004B24EB /* click4.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4EE177AA2A76697C004B24EB /* click4.mp3 */; };
-		4EE177AD2A76699C004B24EB /* click3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4EE177AC2A76699C004B24EB /* click3.mp3 */; };
-		4EE24B6E2A336F8200777921 /* click2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4EE24B6D2A336F8200777921 /* click2.mp3 */; };
+		4EC6D2E42B00F05800842636 /* clave1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4EC6D2E32B00F05800842636 /* clave1.mp3 */; };
+		4EC6D2E62B00F06C00842636 /* click1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4EC6D2E52B00F06C00842636 /* click1.mp3 */; };
+		4EC6D2E82B00F0BA00842636 /* clave.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4EC6D2E72B00F0BA00842636 /* clave.mp3 */; };
 		60933BEB87868434D92B4001 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C26D73CF8B06B841D9ED9B03 /* ExpoModulesProvider.swift */; };
 		7699B88040F8A987B510C191 /* libPods-metronome-metronomeTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-metronome-metronomeTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
@@ -49,10 +49,10 @@
 		4E21970C2AE59D8F002EA55F /* RCTSoundModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCTSoundModule.h; sourceTree = "<group>"; };
 		4E21970D2AE59E28002EA55F /* RCTSoundModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RCTSoundModule.m; sourceTree = "<group>"; };
 		4E5841CB2A306C3800254337 /* click.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = click.mp3; path = ../assets/click.mp3; sourceTree = "<group>"; };
+		4EC6D2E32B00F05800842636 /* clave1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = clave1.mp3; path = ../assets/clave1.mp3; sourceTree = "<group>"; };
+		4EC6D2E52B00F06C00842636 /* click1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = click1.mp3; path = ../assets/click1.mp3; sourceTree = "<group>"; };
+		4EC6D2E72B00F0BA00842636 /* clave.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = clave.mp3; path = ../assets/clave.mp3; sourceTree = "<group>"; };
 		4ED5BC832AC8264F00191B22 /* metronome.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = metronome.entitlements; path = metronome/metronome.entitlements; sourceTree = "<group>"; };
-		4EE177AA2A76697C004B24EB /* click4.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = click4.mp3; path = ../assets/click4.mp3; sourceTree = "<group>"; };
-		4EE177AC2A76699C004B24EB /* click3.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = click3.mp3; path = ../assets/click3.mp3; sourceTree = "<group>"; };
-		4EE24B6D2A336F8200777921 /* click2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = click2.mp3; path = ../assets/click2.mp3; sourceTree = "<group>"; };
 		4EFADE3B2AEE7DCB0069DEF5 /* Fontisto.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Fontisto.ttf; sourceTree = "<group>"; };
 		4EFADE3C2AEE7DCB0069DEF5 /* Octicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Octicons.ttf; sourceTree = "<group>"; };
 		4EFADE3D2AEE7DCB0069DEF5 /* Feather.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Feather.ttf; sourceTree = "<group>"; };
@@ -121,12 +121,12 @@
 		13B07FAE1A68108700A75B9A /* metronome */ = {
 			isa = PBXGroup;
 			children = (
+				4EC6D2E72B00F0BA00842636 /* clave.mp3 */,
+				4EC6D2E32B00F05800842636 /* clave1.mp3 */,
+				4E5841CB2A306C3800254337 /* click.mp3 */,
+				4EC6D2E52B00F06C00842636 /* click1.mp3 */,
 				4EFADE3A2AEE7DCB0069DEF5 /* Fonts */,
 				4ED5BC832AC8264F00191B22 /* metronome.entitlements */,
-				4EE177AC2A76699C004B24EB /* click3.mp3 */,
-				4EE177AA2A76697C004B24EB /* click4.mp3 */,
-				4EE24B6D2A336F8200777921 /* click2.mp3 */,
-				4E5841CB2A306C3800254337 /* click.mp3 */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -340,12 +340,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4EE24B6E2A336F8200777921 /* click2.mp3 in Resources */,
-				4EE177AD2A76699C004B24EB /* click3.mp3 in Resources */,
+				4EC6D2E82B00F0BA00842636 /* clave.mp3 in Resources */,
 				4E5841CC2A306C3800254337 /* click.mp3 in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				4EC6D2E62B00F06C00842636 /* click1.mp3 in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				4EE177AB2A76697C004B24EB /* click4.mp3 in Resources */,
+				4EC6D2E42B00F05800842636 /* clave1.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -631,7 +631,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = metronome/metronome.entitlements;
-				CURRENT_PROJECT_VERSION = 52;
+				CURRENT_PROJECT_VERSION = 53;
 				DEVELOPMENT_TEAM = QDRTVHPM2W;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = metronome/Info.plist;
@@ -663,7 +663,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = metronome/metronome.entitlements;
-				CURRENT_PROJECT_VERSION = 52;
+				CURRENT_PROJECT_VERSION = 53;
 				DEVELOPMENT_TEAM = QDRTVHPM2W;
 				INFOPLIST_FILE = metronome/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = BeatMaster;

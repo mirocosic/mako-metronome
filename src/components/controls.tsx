@@ -30,6 +30,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const beats = useSelector(state => state.settings.beats)
   const volume = useSelector(state => state.settings.volume)
   const voice = useSelector(state => state.settings.voice)
+  const voiceRef = useRef(voice)
 
   const [intervalObj, setIntervalObj] = useState(null)
   const [taps, setTaps] = useState([0])
@@ -116,9 +117,11 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
     let indicatorLevel0Active = indicatorsRef.current[currentIndicatorIdx].levels[0].active
     let indicatorLevel1Active = indicatorsRef.current[currentIndicatorIdx].levels[1].active
 
+    const voice = indicatorLevel1Active ? voiceRef.current + "1" : voiceRef.current
+
     // first sound
     if (soundEnabledRef.current && indicatorLevel0Active) {
-      RTNSoundmodule?.playSound("JSI call")
+      RTNSoundmodule?.playSound(voice, false)
     }
 
     currentIndicatorIdx = currentIndicatorIdx + 1 // increment indicator after first sound
@@ -136,9 +139,13 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
         let indicatorLevel0Active = indicatorsRef.current[currentIndicatorIdx].levels[0].active
         let indicatorLevel1Active = indicatorsRef.current[currentIndicatorIdx].levels[1].active
 
+        const voice = indicatorLevel1Active ? voiceRef.current + "1" : voiceRef.current
+
         if (soundEnabledRef.current && indicatorLevel0Active) {
-          RTNSoundmodule?.playSound("JSI call")
+          RTNSoundmodule?.playSound(voice, false)
         }
+
+        console.log(voiceRef.current)
 
         currentIndicatorIdx = currentIndicatorIdx + 1 // increment indicator after sound
 
@@ -190,7 +197,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   }
 
   function playNativeSound() {
-    RTNSoundmodule?.playSound("JSI call")
+    RTNSoundmodule?.playSound(voiceRef.current, false)
   }
 
   // update relevant props
@@ -198,7 +205,8 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
     tempoRef.current = tempo
     soundEnabledRef.current = isSoundEnabled
     indicatorsRef.current = indicators
-  }, [tempo, isSoundEnabled, indicators])
+    voiceRef.current = voice
+  }, [tempo, isSoundEnabled, indicators, voice])
 
   return (
     <View>
