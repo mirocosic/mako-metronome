@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react'
-import { View, TouchableOpacity, StyleSheet, Text, TextInput, NativeModules } from 'react-native'
+import { View, TouchableOpacity, StyleSheet, Text, TextInput, NativeModules, Button } from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Fontisto from 'react-native-vector-icons/Fontisto'
@@ -10,10 +10,13 @@ import Copy from "../components/copy"
 import palette from '../utils/palette'
 import { useDarkTheme } from '../utils/ui-utils'
 import { msToBpm, bpmToMs } from '../utils/common'
-import { BottomSheetModal,  BottomSheetBackdrop } from '@gorhom/bottom-sheet'
+import { BottomSheetModal,  BottomSheetBackdrop, BottomSheetTextInput } from '@gorhom/bottom-sheet'
 import Slider from '@react-native-community/slider'
 import { connectActionSheet } from '@expo/react-native-action-sheet'
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolateColor } from 'react-native-reanimated'
+import uuid from 'react-native-uuid'
+
+import { useNavigation } from '@react-navigation/native';
 
 import RTNSoundmodule from 'rtn-soundmodule/js/NativeSoundmodule'
 
@@ -25,6 +28,8 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const isSoundEnabled = useSelector(state => state.settings.sound)
   const soundEnabledRef = useRef(isSoundEnabled)
   const indicatorsRef = useRef(indicators)
+
+  const [presetName, setPresetName] = useState("")
 
   const currentPreset = useSelector(state => state.settings.currentPreset);
   const beats = useSelector(state => state.settings.beats)
@@ -38,12 +43,14 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const [volumeIndicator, setVolumeIndicator] = useState(volume)
   const theme = useSelector(state => state.settings.theme)
 
+  const navigation = useNavigation();
+
   const openPresetsMenu = () => {
     showActionSheetWithOptions(
       {
         options: ['Save', 'Save as', 'Cancel'],
         cancelButtonIndex: 2,
-        title: 'Save ',
+        //title: 'Save ',
         userInterfaceStyle: theme,
         containerStyle: {
           backgroundColor: isDarkMode ? palette.dark : palette.light
@@ -69,7 +76,8 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
             );
             break;
           case 1:
-            setPresetDialogVisible(true);
+            //setPresetDialogVisible(true);
+            presetRef.current?.present()
             //dispatch(actions.setTheme('dark'));
             break;
           // case 2:
@@ -85,6 +93,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
 
   const volumeSheetRef = useRef<BottomSheetModal>(null)
+  const presetRef = useRef<BottomSheetModal>(null)
 
   const toggleIndicator = (currentIndicatorIdx) => {
 
@@ -299,7 +308,10 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
         
 
         <TouchableOpacity
-          onPress={() => openPresetsMenu()}>
+          //onPress={() => presetRef.current?.present()}
+          //onPress={() => {navigation.navigate("PresetModal")}}
+          onPress={() => openPresetsMenu()}
+          >
           <View style={styles.buttonSmall}>
             <Text style={{ color: 'black', fontSize: 4 }}>
               <MaterialCommunityIcons name="content-save-outline" size={24} color="lightgray" />
@@ -340,6 +352,51 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
               onValueChange={(v) => setVolumeIndicator(v)}
               onSlidingComplete={ v => dispatch(actions.setVolume(v)) }/>
             <Text style={{color: isDarkMode ? "lightgray" : "black" }}>100%</Text>
+          </View>
+          
+        </View>
+      </BottomSheetModal>
+
+      <BottomSheetModal
+        ref={presetRef}
+        index={0}
+        enablePanDownToClose={true}
+        snapPoints={[200]}
+        backdropComponent={(props) => (<BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1}/> )}
+        handleIndicatorStyle={{backgroundColor: isDarkMode ? "teal" : "black"}}
+        backgroundStyle={{backgroundColor: isDarkMode ? "#1f1f1f" : "#f1f1f1"}}>
+        <View style={{flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1}}>
+          <Text style={{color: isDarkMode ? "lightgray" : "gray", margin: 10}} >Save new preset</Text>
+          <BottomSheetTextInput 
+            style={{padding: 10, width: 200, margin:10, borderWidth: 1, borderRadius: 6, borderColor: "gray", color: isDarkMode ? "lightgray" : "black"}}
+            onChangeText={ v => setPresetName(v) }
+            placeholder='Preset name'
+            />
+          <View style={{flexDirection: "row", marginBottom: 20}}>
+            <Button
+              color="gray"
+              title="Cancel"
+              onPress={()=> {
+                setPresetName("")
+                presetRef.current?.close()}}
+            />
+            <Button color="teal" title="Save"
+              onPress={() => {
+                if (presetName === "") return
+                const preset = {
+                  id: uuid.v4(),
+                  name: presetName,
+                  tempo: tempo,
+                  vibrate: isVibrateEnabled,
+                  sound: isSoundEnabled,
+                  volume: volume,
+                  indicators: indicators
+                } 
+                dispatch(actions.savePreset(preset))
+                dispatch(actions.setCurrentPreset(preset))
+                setPresetName("")
+                presetRef.current?.close()
+              }}></Button>
           </View>
           
         </View>

@@ -19,6 +19,7 @@ import { DefaultTheme, DarkTheme } from '@react-navigation/native';
 import Settings from "./screens/settings"
 import Metronome from "./screens/metronome"
 import Presets from "./screens/presets"
+import PresetModal from "./screens/preset-modal"
 
 import { PersistGate } from 'redux-persist/integration/react'
 import {store, persistor} from './store'
@@ -28,6 +29,19 @@ import { useDarkTheme } from './utils/ui-utils';
 
 const Stack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
+
+const MetronomeStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Metronome" component={Metronome} options={{headerShown: false}}/>
+      <Stack.Screen
+        name="PresetModal"
+        component={PresetModal}
+        options={{ presentation: 'transparentModal', headerShown: false, animationEnabled: false }}
+      />
+    </Stack.Navigator>
+  )
+}
 
 const getColor = (isFocused, isDarkTheme) => {
   if (isFocused && isDarkTheme) { return "teal"}
@@ -60,7 +74,7 @@ const AppNavigator = () => {
           options={{tabBarIcon: ({focused}) => <Ionicons name="list-outline" size={24} color={getColor(focused, useDarkTheme())} />}}/>
         <Tabs.Screen 
           name="Metronome"
-          component={Metronome}
+          component={MetronomeStack}
           options={{tabBarIcon: ({focused}) => <MaterialCommunityIcons name="metronome-tick" size={24} color={getColor(focused, useDarkTheme())} />}}/>
         <Tabs.Screen
           name="Settings" 
