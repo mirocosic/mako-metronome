@@ -22,7 +22,7 @@ export default {
   green: "#0097A7",
   red: "#FF5722",
   lightRed: "rgb(255,100,100)",
-  teal: "teal",
+  teal: "rgb(54, 155, 156)",
   white: "#ffffff",
   black: "#000000",
   mandy: "#ff0000",

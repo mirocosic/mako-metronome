@@ -17,6 +17,7 @@ import {
 import * as Haptics from 'expo-haptics'
 import { useDarkTheme } from '../utils/ui-utils'
 import { msToBpm } from '../utils/common'
+import palette from '../utils/palette'
 import SaveDialog from '../components/save-dialog'
 import Indicators from '../components/indicators'
 import TempoControls from '../components/tempo-controls'
@@ -148,14 +149,14 @@ const Metronome = () => {
               backgroundStyle={{backgroundColor: isDarkMode ? "#1f1f1f" : "white"}}
             >
               <ScrollView contentContainerStyle={{paddingBottom: 40}}>
-                <Button title="1 Beat" color="teal" onPress={() => dispatch(actions.setIndicators(1))} />
-                <Button title="2 Beats" color="teal" onPress={() => dispatch(actions.setIndicators(2))} />
-                <Button title="3 Beats" color="teal" onPress={() => dispatch(actions.setIndicators(3))} />
-                <Button title="4 Beats" color="teal" onPress={() => dispatch(actions.setIndicators(4))} />
-                <Button title="5 Beats" color="teal"  onPress={() => dispatch(actions.setIndicators(5))} />
-                <Button title="6 Beats" color="teal" onPress={() => dispatch(actions.setIndicators(6))} />
-                <Button title="7 Beats" color="teal" onPress={() => dispatch(actions.setIndicators(7))} />
-                <Button title="8 Beats" color="teal" onPress={() => dispatch(actions.setIndicators(8))} />
+                <Button title="1 Beat" color={palette.teal} onPress={() => dispatch(actions.setIndicators(1))} />
+                <Button title="2 Beats" color={palette.teal} onPress={() => dispatch(actions.setIndicators(2))} />
+                <Button title="3 Beats" color={palette.teal} onPress={() => dispatch(actions.setIndicators(3))} />
+                <Button title="4 Beats" color={palette.teal} onPress={() => dispatch(actions.setIndicators(4))} />
+                <Button title="5 Beats" color={palette.teal}  onPress={() => dispatch(actions.setIndicators(5))} />
+                <Button title="6 Beats" color={palette.teal} onPress={() => dispatch(actions.setIndicators(6))} />
+                <Button title="7 Beats" color={palette.teal} onPress={() => dispatch(actions.setIndicators(7))} />
+                <Button title="8 Beats" color={palette.teal} onPress={() => dispatch(actions.setIndicators(8))} />
                 {/* <Button title="9 Beats" onPress={() => dispatch(actions.setIndicators(9))} />
                 <Button title="10 Beats" onPress={() => dispatch(actions.setIndicators(10))} />
                 <Button title="11 Beats" onPress={() => dispatch(actions.setIndicators(11))} />

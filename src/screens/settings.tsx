@@ -33,7 +33,7 @@ const Settings = props => {
         containerStyle: {
           backgroundColor: isDarkMode ? palette.dark : palette.light
         },
-        tintColor: "teal",
+        tintColor: palette.teal,
         textStyle: { color: isDarkMode ? palette.light : palette.dark },
         titleTextStyle: { color: isDarkMode ? palette.lightGray : palette.gray }
       },
@@ -71,7 +71,7 @@ const Settings = props => {
         }}>
         <Copy value="Theme" />
         <TouchableOpacity onPress={selectTheme}>
-          <Text style={{ textTransform: 'capitalize', color: 'teal' }}>
+          <Text style={{ textTransform: 'capitalize', color: palette.teal }}>
             {theme}
           </Text>
         </TouchableOpacity>
@@ -88,7 +88,7 @@ const Settings = props => {
         }}>
         <Copy value="Sound" />
         <TouchableOpacity onPress={() => bottomSheetModalRef.current?.present()}>
-          <Text style={{ textTransform: 'capitalize', color: 'teal' }}>
+          <Text style={{ textTransform: 'capitalize', color: palette.teal }}>
             {voice || "click"}
           </Text>
         </TouchableOpacity>
@@ -104,8 +104,8 @@ const Settings = props => {
         backgroundStyle={{backgroundColor: isDarkMode ? "#1f1f1f" : "white"}}
       >
         <View>
-          <Button title="Click" color="teal" onPress={() => dispatch(actions.setVoice("click"))} />
-          <Button title="Clave" color="teal" onPress={() => dispatch(actions.setVoice("clave"))} />
+          <Button title="Click" color={palette.teal} onPress={() => dispatch(actions.setVoice("click"))} />
+          <Button title="Clave" color={palette.teal} onPress={() => dispatch(actions.setVoice("clave"))} />
           
         </View>
       </BottomSheetModal>

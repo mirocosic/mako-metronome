@@ -4,6 +4,7 @@ import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolateColo
 import { useSelector, useDispatch } from 'react-redux'
 import { useDarkTheme } from '../utils/ui-utils'
 import { actions } from '../store'
+import palette from '../utils/palette'
 
 const styles = StyleSheet.create({
   outerCircle: {
@@ -45,7 +46,7 @@ const Indicator = ({idx, indicator, currentIndicatorIdx, isPlaying, sharedValues
     const backgroundColor = interpolateColor(
       sharedValues.value[idx],
       [0, 1],
-      [isDarkMode ? "gray" : "lightgray", "teal"]
+      [isDarkMode ? "gray" : "lightgray", palette.teal]
     )
     return {
       backgroundColor,
@@ -56,7 +57,7 @@ const Indicator = ({idx, indicator, currentIndicatorIdx, isPlaying, sharedValues
     const borderColor = interpolateColor(
       sharedValues.value[idx],
       [0, 1],
-      [isDarkMode ? "gray" : "lightgray", "teal"]
+      [isDarkMode ? "gray" : "lightgray", palette.teal]
     )
     return {
       borderColor,

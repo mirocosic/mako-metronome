@@ -55,8 +55,8 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
         containerStyle: {
           backgroundColor: isDarkMode ? palette.dark : palette.light
         },
-        tintColor: "teal",
-        textStyle: {color: "teal"},
+        tintColor: palette.teal,
+        textStyle: {color: palette.teal},
         //textStyle: { color: isDarkMode ? palette.light : palette.dark },
         titleTextStyle: { color: isDarkMode ? palette.lightGray : palette.gray }
       },
@@ -279,9 +279,9 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           <View style={styles.buttonLarge}>
             <Text style={{ color: 'black', fontSize: 20 }}>
               {isPlaying ? (
-                <Ionicons name="pause" size={24} color="teal" />
+                <Ionicons name="pause" size={24} color={palette.teal} />
               ) : (
-                <Ionicons name="play" size={24} color="teal" />
+                <Ionicons name="play" size={24} color={palette.teal} />
               )}
             </Text>
           </View>
@@ -346,8 +346,8 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
               minimumValue={0}
               maximumValue={1}
               value={volume}
-              thumbTintColor="teal"
-              minimumTrackTintColor="teal"
+              thumbTintColor={palette.teal}
+              minimumTrackTintColor={palette.teal}
               maximumTrackTintColor="darkgray"
               onValueChange={(v) => setVolumeIndicator(v)}
               onSlidingComplete={ v => dispatch(actions.setVolume(v)) }/>
@@ -363,7 +363,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
         enablePanDownToClose={true}
         snapPoints={[200]}
         backdropComponent={(props) => (<BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1}/> )}
-        handleIndicatorStyle={{backgroundColor: isDarkMode ? "teal" : "black"}}
+        handleIndicatorStyle={{backgroundColor: isDarkMode ? palette.teal : "black"}}
         backgroundStyle={{backgroundColor: isDarkMode ? "#1f1f1f" : "#f1f1f1"}}>
         <View style={{flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1}}>
           <Text style={{color: isDarkMode ? "lightgray" : "gray", margin: 10}} >Save new preset</Text>
@@ -380,7 +380,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
                 setPresetName("")
                 presetRef.current?.close()}}
             />
-            <Button color="teal" title="Save"
+            <Button color={palette.teal} title="Save"
               onPress={() => {
                 if (presetName === "") return
                 const preset = {
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
   },
 
   buttonSmall: {
-      backgroundColor: 'teal',
+      backgroundColor: palette.teal,
       width: 40,
       height: 40,
       borderRadius: 100,
