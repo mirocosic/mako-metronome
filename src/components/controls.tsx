@@ -43,6 +43,8 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const [volumeIndicator, setVolumeIndicator] = useState(volume)
   const theme = useSelector(state => state.settings.theme)
 
+  const startTimeRef = useRef(null)
+
   const navigation = useNavigation();
 
   const openPresetsMenu = () => {
@@ -119,6 +121,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const loop = useCallback((setIntervalObj) => {
     togglePlaying(true)
     let currentIndicatorIdx = 0
+    startTimeRef.current = new Date().getTime()
 
     //trigger first indicator
     toggleIndicator(currentIndicatorIdx)
@@ -175,6 +178,8 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const stopLoop = useCallback((interval) => {
     togglePlaying(false)
     clearInterval(interval)
+    const timeElapsed = new Date().getTime() - startTimeRef.current
+    dispatch(actions.saveTimeUsage(timeElapsed))
   }, [])
 
   const getTapTempo = () => {

@@ -2750,6 +2750,13 @@
   resolved "https://registry.npmjs.org/@types/json-schema/-/json-schema-7.0.12.tgz"
   integrity sha512-Hr5Jfhc9eYOQNPYO5WLDq/n4jqijdHNlDXjuAQkkt+mWdQR+XJToOHrsD4cPaMXpn6KO7y2+wM8AZEs8VpBLVA==
 
+"@types/moment-duration-format@^2.2.6":
+  version "2.2.6"
+  resolved "https://registry.yarnpkg.com/@types/moment-duration-format/-/moment-duration-format-2.2.6.tgz#953e24479475b1bfbce948e75fd47c5a4ec7f837"
+  integrity sha512-Qw+6ys3sQCatqukjoIBsL1UJq6S7ep4ixrNvDkdViSgzw2ZG3neArXNu3ww7mEG8kwP32ZDoON/esWb7OUckRQ==
+  dependencies:
+    moment ">=2.14.0"
+
 "@types/node@*":
   version "20.2.5"
   resolved "https://registry.npmjs.org/@types/node/-/node-20.2.5.tgz"
@@ -6813,6 +6820,16 @@ mkdirp@^1.0.3, mkdirp@^1.0.4:
   version "1.0.4"
   resolved "https://registry.npmjs.org/mkdirp/-/mkdirp-1.0.4.tgz"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
+
+moment-duration-format@^2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/moment-duration-format/-/moment-duration-format-2.3.2.tgz#5fa2b19b941b8d277122ff3f87a12895ec0d6212"
+  integrity sha512-cBMXjSW+fjOb4tyaVHuaVE/A5TqkukDWiOfxxAjY+PEqmmBQlLwn+8OzwPiG3brouXKY5Un4pBjAeB6UToXHaQ==
+
+moment@>=2.14.0, moment@^2.29.4:
+  version "2.29.4"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.4.tgz#3dbe052889fe7c1b2ed966fcb3a77328964ef108"
+  integrity sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==
 
 ms@2.0.0:
   version "2.0.0"

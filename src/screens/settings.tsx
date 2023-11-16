@@ -14,12 +14,17 @@ import palette from '../utils/palette'
 import { useSelector, useDispatch } from 'react-redux'
 import { actions } from '../store'
 import Copy from '../components/copy'
+import moment from 'moment';
+import 'moment-duration-format';
+
+
 
 const Settings = props => {
   const dispatch = useDispatch()
   const isDarkMode = useDarkTheme()
   const theme = useSelector(state => state.settings.theme)
   const voice = useSelector(state => state.settings.voice)
+  const totalTimeUsage = useSelector(state => state.settings.totalTimeUsage)
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
 
@@ -54,7 +59,7 @@ const Settings = props => {
       }
     );
   };
-
+  
   return (
     <SafeAreaView style={{ margin: 20 }}>
       <Copy style={{textAlign: "center"}} value="Settings" />
@@ -92,6 +97,18 @@ const Settings = props => {
             {voice || "click"}
           </Text>
         </TouchableOpacity>
+      </View>
+
+      <View style={{
+          paddingVertical: 10,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          borderBottomWidth: 1,
+          borderColor: "gray"
+        }}>
+        <Copy value="Total time usage" />
+        <Copy value={moment.duration((totalTimeUsage / 1000), "seconds").format("hh[h]:mm[m]:ss[s]")}></Copy>
       </View>
 
       <BottomSheetModal

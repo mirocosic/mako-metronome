@@ -22,6 +22,7 @@ const settingsSlice = createSlice({
     volume: 0.5,
     currentPreset: {},
     beats: 5,
+    totalTimeUsage: 0,
   },
   reducers: {
     setVibrate: (state, {payload}) => {
@@ -47,6 +48,12 @@ const settingsSlice = createSlice({
     },
     setVoice: (state, {payload}) => {
       state.voice = payload
+    },
+    saveTimeUsage: (state, {payload}) => {
+      state.totalTimeUsage = state.totalTimeUsage + payload
+    },
+    resetTimeUsage: (state, {payload}) => {
+      state.totalTimeUsage = 0
     }
   }
 })
@@ -141,7 +148,9 @@ export const actions = {
   setCurrentPreset: settingsSlice.actions.setCurrentPreset,
   setCurrentPresetName: settingsSlice.actions.setCurrentPresetName,
   setBeats: settingsSlice.actions.setBeats,
-  setVoice: settingsSlice.actions.setVoice
+  setVoice: settingsSlice.actions.setVoice,
+  saveTimeUsage: settingsSlice.actions.saveTimeUsage,
+  resetTimeUsage: settingsSlice.actions.resetTimeUsage,
 }
 
 const reducers = combineReducers({
