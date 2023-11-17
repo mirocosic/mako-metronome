@@ -17,6 +17,8 @@ import Copy from '../components/copy'
 import moment from 'moment';
 import 'moment-duration-format';
 
+import * as Application from 'expo-application';
+
 
 
 const Settings = props => {
@@ -59,9 +61,9 @@ const Settings = props => {
       }
     );
   };
-  
+
   return (
-    <SafeAreaView style={{ margin: 20 }}>
+    <SafeAreaView style={{ margin: 20, flex: 1 }}>
       <Copy style={{textAlign: "center"}} value="Settings" />
 
       <View
@@ -110,6 +112,12 @@ const Settings = props => {
         <Copy value="Total time usage" />
         <Copy value={moment.duration((totalTimeUsage / 1000), "seconds").format("hh[h]:mm[m]:ss[s]")}></Copy>
       </View>
+
+      <View style={{flexDirection: "row", justifyContent: "space-between", paddingVertical: 10, flex: 1, alignItems: "flex-end"}}>
+        <Copy value={`Version: ${Application.nativeApplicationVersion}`}></Copy>
+        <Copy value={`Build: ${Application.nativeBuildVersion}`}></Copy>
+      </View>
+      
 
       <BottomSheetModal
         ref={bottomSheetModalRef}

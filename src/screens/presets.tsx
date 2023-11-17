@@ -16,7 +16,13 @@ const Presets = ({navigation}) => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <ScrollView style={{flex: 1}}>
+      <ScrollView style={{flex: 1}} contentContainerStyle={{flex: 1}}>
+      
+      { presets.length === 0 && 
+        <View style={{flex: 1, alignItems:"center", justifyContent: "center"}}>
+          <Copy style={{textAlign: "center"}} value="Save your metronome presets and view them here" />
+        </View>
+      }
       {
         presets.map((preset, idx) => {
           return (
@@ -63,14 +69,16 @@ const Presets = ({navigation}) => {
         })
       }
 
-      <TouchableOpacity
-        onPress={() => {
-          dispatch(actions.clearPresets({}))
-        }}
-        style={{margin: 10, borderBottomColor: "lightgray", borderBottomWidth: 0, padding: 10}}>
-        <Copy style={{textAlign: "center", fontWeight: "bold"}} value="Clear all presets" />
-        
-      </TouchableOpacity>
+      { presets.length !== 0 &&
+        <TouchableOpacity
+          onPress={() => {
+            dispatch(actions.clearPresets({}))
+          }}
+          style={{margin: 10, borderBottomColor: "lightgray", borderBottomWidth: 0, padding: 10}}>
+          <Copy style={{textAlign: "center", fontWeight: "bold"}} value="Clear all presets" />
+          
+        </TouchableOpacity>
+      }
 
       </ScrollView>
     </SafeAreaView>

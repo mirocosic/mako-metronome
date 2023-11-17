@@ -222,6 +222,9 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
     voiceRef.current = voice
   }, [tempo, isSoundEnabled, indicators, voice])
 
+
+  console.log(currentPreset.name)
+
   return (
     <View>
 
@@ -328,7 +331,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
       <Text style={{color:"black", textAlign: "center"}}>{tapMessage}</Text>
       <View>
-        {currentPreset.name !== '' ? (
+        {(currentPreset.name !== '' && typeof currentPreset.name !== "undefined"  ) ? (
           <Copy style={{textAlign: "center", color: isDarkMode ? "lightgray" : "gray"}} value={`Preset: ${currentPreset.name}`} />
         ) : null}
       </View>
