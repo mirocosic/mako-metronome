@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react'
-import { View, TouchableOpacity, StyleSheet, Text, TextInput, NativeModules, Button } from 'react-native'
+import { SafeAreaView, Switch, View, TouchableOpacity, StyleSheet, Text, TextInput, NativeModules, Button, Platform } from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Fontisto from 'react-native-vector-icons/Fontisto'
@@ -15,6 +15,8 @@ import Slider from '@react-native-community/slider'
 import { connectActionSheet } from '@expo/react-native-action-sheet'
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolateColor } from 'react-native-reanimated'
 import uuid from 'react-native-uuid'
+
+import { VolumeManager } from 'react-native-volume-manager';
 
 import { useNavigation } from '@react-navigation/native';
 
@@ -36,6 +38,13 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const volume = useSelector(state => state.settings.volume)
   const voice = useSelector(state => state.settings.voice)
   const voiceRef = useRef(voice)
+  const gapTrainer = useSelector(state => state.settings.gapTrainer)
+  const gapTrainerRef = useRef(gapTrainer)
+  const gapBarsNormal = useSelector(state => state.settings.gapBarsNormal)
+  const gapBarsMuted = useSelector(state => state.settings.gapBarsMuted)
+  const gapBarsNormalRef = useRef(gapBarsNormal)
+  const gapBarsMutedRef = useRef(gapBarsMuted)
+
 
   const [intervalObj, setIntervalObj] = useState(null)
   const [taps, setTaps] = useState([0])
@@ -44,8 +53,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const theme = useSelector(state => state.settings.theme)
 
   const startTimeRef = useRef(null)
-
-  const navigation = useNavigation();
+  const barCounterRef = useRef(1)
 
   const openPresetsMenu = () => {
     showActionSheetWithOptions(
@@ -96,6 +104,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
   const volumeSheetRef = useRef<BottomSheetModal>(null)
   const presetRef = useRef<BottomSheetModal>(null)
+  const gapTrainerModalRef = useRef<BottomSheetModal>(null)
 
   const toggleIndicator = (currentIndicatorIdx) => {
 
@@ -123,6 +132,12 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
     let currentIndicatorIdx = 0
     startTimeRef.current = new Date().getTime()
 
+    console.log("Current bar: ", barCounterRef.current)
+    console.log("Gap trainer enabled: ", gapTrainerRef.current)
+
+    const totalGapBars = gapBarsNormalRef.current + gapBarsMutedRef.current
+    console.log("Total gap bars: ", totalGapBars)
+
     //trigger first indicator
     toggleIndicator(currentIndicatorIdx)
 
@@ -146,6 +161,8 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
       if (diffMs > bpmToMs(tempoRef.current)) {
 
+        console.log("Current bar: ", barCounterRef.current)
+
         toggleIndicator(currentIndicatorIdx)
 
         let indicatorLevel0Active = indicatorsRef.current[currentIndicatorIdx].levels[0].active
@@ -153,11 +170,18 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
         const voice = indicatorLevel1Active ? voiceRef.current + "1" : voiceRef.current
 
-        if (soundEnabledRef.current && indicatorLevel0Active) {
+        // gapTrainer
+        //const gapTrainerMute = gapTrainerRef.current && barCounterRef.current % 2 === 0  // testing
+
+        const totalGapBars = gapBarsNormalRef.current + gapBarsMutedRef.current
+        const mutedBarNum = barCounterRef.current - gapBarsNormalRef.current
+        console.log("muted bar num: ", mutedBarNum)
+        const gapTrainerMute = gapTrainerRef.current && mutedBarNum > 0
+        console.log("Gap trainer mute: ", gapTrainerMute)
+
+        if (soundEnabledRef.current && indicatorLevel0Active && !gapTrainerMute) {
           RTNSoundmodule?.playSound(voice, false)
         }
-
-        console.log(voiceRef.current)
 
         currentIndicatorIdx = currentIndicatorIdx + 1 // increment indicator after sound
 
@@ -165,6 +189,11 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
         if (currentIndicatorIdx >= indicatorsRef.current.length) {
           currentIndicatorIdx = 0 // reset indicator
+          barCounterRef.current = barCounterRef.current + 1 // increment bar counter
+          if (barCounterRef.current > totalGapBars) {
+            barCounterRef.current = 1 // reset bar counter
+          }
+          
         }
       }
 
@@ -180,6 +209,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
     clearInterval(interval)
     const timeElapsed = new Date().getTime() - startTimeRef.current
     dispatch(actions.saveTimeUsage(timeElapsed))
+    barCounterRef.current = 1
   }, [])
 
   const getTapTempo = () => {
@@ -220,7 +250,10 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
     soundEnabledRef.current = isSoundEnabled
     indicatorsRef.current = indicators
     voiceRef.current = voice
-  }, [tempo, isSoundEnabled, indicators, voice])
+    gapTrainerRef.current = gapTrainer
+    gapBarsMutedRef.current = gapBarsMuted
+    gapBarsNormalRef.current = gapBarsNormal
+  }, [tempo, isSoundEnabled, indicators, voice, gapTrainer, gapBarsMuted, gapBarsNormal])
 
 
   console.log(currentPreset.name)
@@ -284,12 +317,12 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
             {loop(setIntervalObj)} 
             else 
             { stopLoop(intervalObj)}}}>
-          <View style={styles.buttonLarge}>
+          <View style={[styles.buttonLarge, isPlaying && {backgroundColor: "lightgray"}]}>
             <Text style={{ color: 'black', fontSize: 20 }}>
               {isPlaying ? (
                 <Ionicons name="pause" size={24} color={palette.teal} />
               ) : (
-                <Ionicons name="play" size={24} color={palette.teal} />
+                <Ionicons name="play" size={24} color="lightgray" />
               )}
             </Text>
           </View>
@@ -313,16 +346,21 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           </View>
         </TouchableOpacity>
 
-        
 
         <TouchableOpacity
-          //onPress={() => presetRef.current?.present()}
-          //onPress={() => {navigation.navigate("PresetModal")}}
           onPress={() => openPresetsMenu()}
           >
           <View style={styles.buttonSmall}>
             <Text style={{ color: 'black', fontSize: 4 }}>
               <MaterialCommunityIcons name="content-save-outline" size={24} color="lightgray" />
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => gapTrainerModalRef.current.present()}>
+          <View style={[styles.buttonSmall, gapTrainer && {backgroundColor: "lightgray"}]}>
+            <Text style={{ color: 'black', fontSize: 4 }}>
+              <MaterialCommunityIcons name="transit-skip" size={24} color={gapTrainer ? "teal" : "lightgray"} />
             </Text>
           </View>
         </TouchableOpacity>
@@ -358,7 +396,10 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
               minimumTrackTintColor={palette.teal}
               maximumTrackTintColor="darkgray"
               onValueChange={(v) => setVolumeIndicator(v)}
-              onSlidingComplete={ v => dispatch(actions.setVolume(v)) }/>
+              onSlidingComplete={ async (v) => {
+                await VolumeManager.setVolume(v)
+                dispatch(actions.setVolume(v)) 
+                }}/>
             <Text style={{color: isDarkMode ? "lightgray" : "black" }}>100%</Text>
           </View>
           
@@ -409,13 +450,58 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           
         </View>
       </BottomSheetModal>
+
+      <BottomSheetModal
+        ref={gapTrainerModalRef}
+        index={0}
+        enablePanDownToClose={true}
+        snapPoints={[350]}
+        backdropComponent={(props) => (<BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1}/> )}
+        handleIndicatorStyle={{backgroundColor: isDarkMode ? "black" : "black"}}
+        backgroundStyle={{backgroundColor: isDarkMode ? "#1f1f1f" : "#f1f1f1"}}>
+        <SafeAreaView style={{flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1, marginBottom: 20}}>
+          
+          <View style={{flexDirection: "row", alignItems: "center", gap: 40}}>
+            <Copy value="Gap trainer" style={{fontSize: 20, color: palette.teal}} />
+            <Switch
+              onChange={() => {
+                dispatch(actions.toggleGapTrainer(!gapTrainer))}}
+              value={gapTrainer}
+              trackColor={{false: palette.teal, true: palette.teal}}/>
+          </View>
+          
+
+          <View style={{flexDirection: "row", width: "100%",  flex: 1, alignItems: "center", marginTop: 10, justifyContent: "space-evenly"}}>
+              <View>
+                <Copy value="Normal bars" />
+                <Button title="1 bar" color={gapBarsNormal === 1 ? palette.teal : "gray"} onPress={()=>dispatch(actions.setGapBarsNormal(1))}/>
+                <Button title="2 bars" color={gapBarsNormal === 2 ? palette.teal : "gray"} onPress={()=>dispatch(actions.setGapBarsNormal(2))}/>
+                <Button title="3 bars" color={gapBarsNormal === 3 ? palette.teal : "gray"} onPress={()=>dispatch(actions.setGapBarsNormal(3))}/>
+                <Button title="4 bars" color={gapBarsNormal === 4 ? palette.teal : "gray"} onPress={()=>dispatch(actions.setGapBarsNormal(4))}/>
+                <Button title="5 bars" color={gapBarsNormal === 5 ? palette.teal : "gray"} onPress={()=>dispatch(actions.setGapBarsNormal(5))}/>
+              </View>
+
+              <View>
+                <Copy value="Muted bars" />
+                <Button title="1 bar" color={gapBarsMuted === 1 ? palette.teal : "gray"} onPress={()=>dispatch(actions.setGapBarsMuted(1))}/>
+                <Button title="2 bars" color={gapBarsMuted === 2 ? palette.teal : "gray"} onPress={()=>dispatch(actions.setGapBarsMuted(2))}/>
+                <Button title="3 bars" color={gapBarsMuted === 3 ? palette.teal : "gray"} onPress={()=>dispatch(actions.setGapBarsMuted(3))}/>
+                <Button title="4 bars" color={gapBarsMuted === 4 ? palette.teal : "gray"} onPress={()=>dispatch(actions.setGapBarsMuted(4))}/>
+                <Button title="5 bars" color={gapBarsMuted === 5 ? palette.teal : "gray"} onPress={()=>dispatch(actions.setGapBarsMuted(5))}/>
+              </View>
+          </View>
+          
+          
+        </SafeAreaView>
+      </BottomSheetModal>
+
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   buttonLarge: {
-    backgroundColor: 'lightgray',
+    backgroundColor: palette.teal,
     width: 60,
     height: 60,
     padding: 10,

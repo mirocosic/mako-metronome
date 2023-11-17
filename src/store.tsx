@@ -23,6 +23,10 @@ const settingsSlice = createSlice({
     currentPreset: {},
     beats: 5,
     totalTimeUsage: 0,
+    gapTrainer: false,
+    gapBarsNormal: 2,
+    gapBarsMuted: 1,
+
   },
   reducers: {
     setVibrate: (state, {payload}) => {
@@ -54,6 +58,15 @@ const settingsSlice = createSlice({
     },
     resetTimeUsage: (state, {payload}) => {
       state.totalTimeUsage = 0
+    },
+    toggleGapTrainer: (state, {payload}) => {
+      state.gapTrainer = payload
+    },
+    setGapBarsNormal: (state, {payload}) => {
+      state.gapBarsNormal = payload
+    },
+    setGapBarsMuted: (state, {payload}) => {
+      state.gapBarsMuted = payload
     }
   }
 })
@@ -151,6 +164,10 @@ export const actions = {
   setVoice: settingsSlice.actions.setVoice,
   saveTimeUsage: settingsSlice.actions.saveTimeUsage,
   resetTimeUsage: settingsSlice.actions.resetTimeUsage,
+  toggleGapTrainer: settingsSlice.actions.toggleGapTrainer,
+  setGapBarsNormal: settingsSlice.actions.setGapBarsNormal,
+  setGapBarsMuted: settingsSlice.actions.setGapBarsMuted,
+  
 }
 
 const reducers = combineReducers({
