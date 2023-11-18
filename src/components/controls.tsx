@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react'
-import { SafeAreaView, Switch, View, TouchableOpacity, StyleSheet, Text, TextInput, NativeModules, Button, Platform } from 'react-native'
+import { SafeAreaView, View, TouchableOpacity, StyleSheet, Text, TextInput, NativeModules, Button, Platform } from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Fontisto from 'react-native-vector-icons/Fontisto'
@@ -16,11 +16,94 @@ import { connectActionSheet } from '@expo/react-native-action-sheet'
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolateColor } from 'react-native-reanimated'
 import uuid from 'react-native-uuid'
 
+import { ScrollView, Switch } from "react-native-gesture-handler"
 import { VolumeManager } from 'react-native-volume-manager';
-
-import { useNavigation } from '@react-navigation/native';
-
 import RTNSoundmodule from 'rtn-soundmodule/js/NativeSoundmodule'
+
+const BarButton = ({ selected, btnIdx, onPress }) => {
+  const dispatch = useDispatch()
+  return (
+    <TouchableOpacity
+      style={[styles.barButton, selected && styles.barButtonSelected]}
+      onPress={onPress}>
+      <Text style={[styles.barButtonText, selected && {color: "white"}]}>{btnIdx === 1 ? "1 bar" : btnIdx + " bars"}</Text>
+    </TouchableOpacity>
+  );
+};
+
+
+const GapTrainer = ({gapBarsNormal, gapBarsMuted, gapTrainer}) => {
+  const dispatch = useDispatch()
+  const mutedBarsScrollViewRef = useRef(null)
+  const normalBarsScrollViewRef = useRef(null)
+  const [switchValue, setSwitchValue] = useState(gapTrainer)
+
+  return (
+    <SafeAreaView style={{flex: 1,  marginBottom: 20, padding: 0}}>
+
+          <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 40, paddingHorizontal:15}}>
+            <Copy value="Gap trainer" style={{fontSize: 20, color: palette.teal}} />
+            <Switch
+              onValueChange={() => {
+                setSwitchValue(!switchValue)
+                dispatch(actions.toggleGapTrainer(!gapTrainer))
+              }}
+              value={switchValue}
+              trackColor={{false: palette.teal, true: palette.teal}}
+              />
+          </View>
+          
+
+          <View style={{flex: 1, padding: 10, paddingHorizontal: 0}}
+          //style={{flexDirection: "column", width: "100%",  flex: 1, alignItems: "center", marginTop: 10, justifyContent: "space-evenly"}}
+          >
+              <View style={{padding:5}}>
+                <Copy value="Normal bars" style={{paddingHorizontal: 10}}/>
+                <ScrollView
+                  ref={normalBarsScrollViewRef}
+                  decelerationRate="fast"
+                  showsHorizontalScrollIndicator={false} 
+                  horizontal={true}
+                  contentContainerStyle={{paddingHorizontal: 10}}
+                  onLayout={()=> {
+                    normalBarsScrollViewRef.current.scrollTo({x: (gapBarsNormal - 1) * 65, y: 0, animated: false})
+                  }}
+                  >
+                  { [...Array(16).keys()].map((i) => {
+                    const btnIdx = i + 1
+                    return (
+                      <BarButton key={i} btnIdx={btnIdx} selected={gapBarsNormal === btnIdx} onPress={()=>dispatch(actions.setGapBarsNormal(btnIdx))}/>
+                    )})}
+                  
+                </ScrollView>
+              </View>
+
+              <View style={{padding: 5}}>
+                <Copy value="Muted bars" style={{paddingHorizontal: 10}}/>
+                <ScrollView
+                  ref={mutedBarsScrollViewRef}
+                  decelerationRate="fast"
+                  showsHorizontalScrollIndicator={false}
+                  horizontal={true}
+                  contentContainerStyle={{paddingHorizontal: 10}}
+                  onLayout={()=> {
+                    mutedBarsScrollViewRef.current.scrollTo({x: (gapBarsMuted - 1) * 65, y: 0, animated: false})
+                  }}
+                  >
+                  { [...Array(16).keys()].map((i) => {
+                    const btnIdx = i + 1
+                    return (
+                      <BarButton key={i} btnIdx={btnIdx} selected={gapBarsMuted === btnIdx} onPress={()=>dispatch(actions.setGapBarsMuted(btnIdx))}/>
+                    )})}
+                  
+                </ScrollView>
+              </View>
+          </View>
+          
+          
+        </SafeAreaView>
+  )
+}
 
 const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndicatorIdx, sharedValues, bottomSheetModalRef, showActionSheetWithOptions, setPresetDialogVisible}) => {
   const dispatch = useDispatch()
@@ -101,6 +184,8 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   };
 
 
+
+  const [switchValue, setSwitchValue] = useState(false)
 
   const volumeSheetRef = useRef<BottomSheetModal>(null)
   const presetRef = useRef<BottomSheetModal>(null)
@@ -254,9 +339,6 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
     gapBarsMutedRef.current = gapBarsMuted
     gapBarsNormalRef.current = gapBarsNormal
   }, [tempo, isSoundEnabled, indicators, voice, gapTrainer, gapBarsMuted, gapBarsNormal])
-
-
-  console.log(currentPreset.name)
 
   return (
     <View>
@@ -455,44 +537,13 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
         ref={gapTrainerModalRef}
         index={0}
         enablePanDownToClose={true}
-        snapPoints={[350]}
+        snapPoints={[250]}
         backdropComponent={(props) => (<BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1}/> )}
         handleIndicatorStyle={{backgroundColor: isDarkMode ? "black" : "black"}}
         backgroundStyle={{backgroundColor: isDarkMode ? "#1f1f1f" : "#f1f1f1"}}>
-        <SafeAreaView style={{flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1, marginBottom: 20}}>
-          
-          <View style={{flexDirection: "row", alignItems: "center", gap: 40}}>
-            <Copy value="Gap trainer" style={{fontSize: 20, color: palette.teal}} />
-            <Switch
-              onChange={() => {
-                dispatch(actions.toggleGapTrainer(!gapTrainer))}}
-              value={gapTrainer}
-              trackColor={{false: palette.teal, true: palette.teal}}/>
-          </View>
-          
 
-          <View style={{flexDirection: "row", width: "100%",  flex: 1, alignItems: "center", marginTop: 10, justifyContent: "space-evenly"}}>
-              <View>
-                <Copy value="Normal bars" />
-                <Button title="1 bar" color={gapBarsNormal === 1 ? palette.teal : "gray"} onPress={()=>dispatch(actions.setGapBarsNormal(1))}/>
-                <Button title="2 bars" color={gapBarsNormal === 2 ? palette.teal : "gray"} onPress={()=>dispatch(actions.setGapBarsNormal(2))}/>
-                <Button title="3 bars" color={gapBarsNormal === 3 ? palette.teal : "gray"} onPress={()=>dispatch(actions.setGapBarsNormal(3))}/>
-                <Button title="4 bars" color={gapBarsNormal === 4 ? palette.teal : "gray"} onPress={()=>dispatch(actions.setGapBarsNormal(4))}/>
-                <Button title="5 bars" color={gapBarsNormal === 5 ? palette.teal : "gray"} onPress={()=>dispatch(actions.setGapBarsNormal(5))}/>
-              </View>
-
-              <View>
-                <Copy value="Muted bars" />
-                <Button title="1 bar" color={gapBarsMuted === 1 ? palette.teal : "gray"} onPress={()=>dispatch(actions.setGapBarsMuted(1))}/>
-                <Button title="2 bars" color={gapBarsMuted === 2 ? palette.teal : "gray"} onPress={()=>dispatch(actions.setGapBarsMuted(2))}/>
-                <Button title="3 bars" color={gapBarsMuted === 3 ? palette.teal : "gray"} onPress={()=>dispatch(actions.setGapBarsMuted(3))}/>
-                <Button title="4 bars" color={gapBarsMuted === 4 ? palette.teal : "gray"} onPress={()=>dispatch(actions.setGapBarsMuted(4))}/>
-                <Button title="5 bars" color={gapBarsMuted === 5 ? palette.teal : "gray"} onPress={()=>dispatch(actions.setGapBarsMuted(5))}/>
-              </View>
-          </View>
-          
-          
-        </SafeAreaView>
+        <GapTrainer gapBarsNormal={gapBarsNormal} gapBarsMuted={gapBarsMuted} gapTrainer={gapTrainer} />
+        
       </BottomSheetModal>
 
     </View>
@@ -519,7 +570,23 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
       margin: 5
-  }
+  },
+  barButton: {
+    //paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+    marginTop: 4,
+    width: 65,
+  },
+  barButtonSelected: {
+    backgroundColor: palette.teal,
+  },
+  barButtonText: {
+    color: 'gray',
+    fontSize: 16,
+    //fontWeight: 'bold',
+    textAlign: 'center',
+  },
 })
 
 export default connectActionSheet(Controls)
