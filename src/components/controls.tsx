@@ -20,8 +20,99 @@ import { ScrollView, Switch } from "react-native-gesture-handler"
 import { VolumeManager } from 'react-native-volume-manager';
 import RTNSoundmodule from 'rtn-soundmodule/js/NativeSoundmodule'
 
-const BarButton = ({ selected, btnIdx, onPress }) => {
+const BpmButton = ({ selected, btnIdx, onPress }) => {
+  return (
+    <TouchableOpacity
+      style={[styles.bpmButton, selected && styles.bpmButtonSelected]}
+      onPress={onPress}>
+      <Text style={[styles.bpmButtonText, selected && {color: "white"}]}>{"+" + btnIdx + " bpm"}</Text>
+    </TouchableOpacity>
+  );
+};
+
+const TempoChanger = () => {
+  const tempoChanger = useSelector(state => state.settings.tempoChanger)
+  const tempoChangerBpms = useSelector(state => state.settings.tempoChangerBpms)
+  const tempoChangerBars = useSelector(state => state.settings.tempoChangerBars)
+  const [tempoChangerValue, setTempoChangerValue] = useState(tempoChanger)
+  const tempoChangerBarsScrollViewRef = useRef(null)
+  const tempoChangerBpmsScrollViewRef = useRef(null)
   const dispatch = useDispatch()
+
+  return (
+    <View style={{marginBottom: 20, flex: 1}}>
+
+      <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 40, paddingHorizontal:15}}>
+        <Copy value="Tempo changer" style={{fontSize: 18, color: palette.teal}} />
+        <Switch
+          onValueChange={() => {
+            setTempoChangerValue(!tempoChangerValue)
+            dispatch(actions.toggleTempoChanger(!tempoChanger))
+          }}
+          value={tempoChangerValue}
+          trackColor={{false: palette.teal, true: palette.teal}}/>
+      </View>
+
+
+      <View style={{flex: 1, padding: 10, paddingHorizontal: 0}}>
+              <View style={{padding:5}}>
+                <Copy value="Change tempo by" style={{paddingHorizontal: 10}}/>
+                <ScrollView
+                  ref={tempoChangerBpmsScrollViewRef}
+                  decelerationRate="fast"
+                  showsHorizontalScrollIndicator={false} 
+                  horizontal={true}
+                  contentContainerStyle={{paddingHorizontal: 10}}
+                  onLayout={()=> {
+                    tempoChangerBpmsScrollViewRef.current.scrollTo({x: (tempoChangerBpms - 1) * 70, y: 0, animated: false})
+                  }}
+                  >
+                  { [...Array(10).keys()].map((i) => {
+                    const btnIdx = i + 1
+                    return (
+                      <BpmButton
+                        key={i} 
+                        btnIdx={btnIdx} 
+                        selected={tempoChangerBpms === btnIdx}
+                        onPress={() => dispatch(actions.setTempoChangerBpms(btnIdx))}
+                        />
+                    )})}
+                  
+                </ScrollView>
+              </View>
+
+              <View style={{padding: 5, paddingTop: 10}}>
+                <Copy value="Every " style={{paddingHorizontal: 10}}/>
+                <ScrollView
+                  ref={tempoChangerBarsScrollViewRef}
+                  decelerationRate="fast"
+                  showsHorizontalScrollIndicator={false}
+                  horizontal={true}
+                  contentContainerStyle={{paddingHorizontal: 10}}
+                  onLayout={()=> {
+                    tempoChangerBarsScrollViewRef.current.scrollTo({x: (tempoChangerBars - 1) * 65, y: 0, animated: false})
+                  }}
+                  >
+                  { [...Array(16).keys()].map((i) => {
+                    const btnIdx = i + 1
+                    return (
+                      <BarButton 
+                        key={i} 
+                        btnIdx={btnIdx} 
+                        selected={tempoChangerBars === btnIdx} 
+                        onPress={()=>dispatch(actions.setTempoChangerBars(btnIdx))}
+                        />
+                    )})}
+                  
+                </ScrollView>
+              </View>
+          </View>
+      
+    </View>
+  )
+}
+
+const BarButton = ({ selected, btnIdx, onPress }) => {
   return (
     <TouchableOpacity
       style={[styles.barButton, selected && styles.barButtonSelected]}
@@ -42,7 +133,7 @@ const GapTrainer = ({gapBarsNormal, gapBarsMuted, gapTrainer}) => {
     <SafeAreaView style={{flex: 1,  marginBottom: 20, padding: 0}}>
 
           <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 40, paddingHorizontal:15}}>
-            <Copy value="Gap trainer" style={{fontSize: 20, color: palette.teal}} />
+            <Copy value="Gap trainer" style={{fontSize: 18, color: palette.teal}} />
             <Switch
               onValueChange={() => {
                 setSwitchValue(!switchValue)
@@ -54,9 +145,7 @@ const GapTrainer = ({gapBarsNormal, gapBarsMuted, gapTrainer}) => {
           </View>
           
 
-          <View style={{flex: 1, padding: 10, paddingHorizontal: 0}}
-          //style={{flexDirection: "column", width: "100%",  flex: 1, alignItems: "center", marginTop: 10, justifyContent: "space-evenly"}}
-          >
+          <View style={{flex: 1, padding: 10, paddingHorizontal: 0}}>
               <View style={{padding:5}}>
                 <Copy value="Normal bars" style={{paddingHorizontal: 10}}/>
                 <ScrollView
@@ -78,7 +167,7 @@ const GapTrainer = ({gapBarsNormal, gapBarsMuted, gapTrainer}) => {
                 </ScrollView>
               </View>
 
-              <View style={{padding: 5}}>
+              <View style={{padding: 5, paddingTop: 10}}>
                 <Copy value="Muted bars" style={{paddingHorizontal: 10}}/>
                 <ScrollView
                   ref={mutedBarsScrollViewRef}
@@ -128,6 +217,13 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const gapBarsNormalRef = useRef(gapBarsNormal)
   const gapBarsMutedRef = useRef(gapBarsMuted)
 
+  const tempoChanger = useSelector(state => state.settings.tempoChanger)
+  const tempoChangerRef = useRef(tempoChanger)
+  const tempoChangerBpms = useSelector(state => state.settings.tempoChangerBpms)
+  const tempoChangerBpmsRef = useRef(tempoChangerBpms)
+  const tempoChangerBars = useSelector(state => state.settings.tempoChangerBars)
+  const tempoChangerBarsRef = useRef(tempoChangerBars)
+
 
   const [intervalObj, setIntervalObj] = useState(null)
   const [taps, setTaps] = useState([0])
@@ -137,6 +233,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
   const startTimeRef = useRef(null)
   const barCounterRef = useRef(1)
+  const tempoChangerBarCounterRef = useRef(1)
 
   const openPresetsMenu = () => {
     showActionSheetWithOptions(
@@ -190,6 +287,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const volumeSheetRef = useRef<BottomSheetModal>(null)
   const presetRef = useRef<BottomSheetModal>(null)
   const gapTrainerModalRef = useRef<BottomSheetModal>(null)
+  const tempoChangerModalRef = useRef<BottomSheetModal>(null)
 
   const toggleIndicator = (currentIndicatorIdx) => {
 
@@ -217,11 +315,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
     let currentIndicatorIdx = 0
     startTimeRef.current = new Date().getTime()
 
-    console.log("Current bar: ", barCounterRef.current)
-    console.log("Gap trainer enabled: ", gapTrainerRef.current)
-
     const totalGapBars = gapBarsNormalRef.current + gapBarsMutedRef.current
-    console.log("Total gap bars: ", totalGapBars)
 
     //trigger first indicator
     toggleIndicator(currentIndicatorIdx)
@@ -246,8 +340,6 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
       if (diffMs > bpmToMs(tempoRef.current)) {
 
-        console.log("Current bar: ", barCounterRef.current)
-
         toggleIndicator(currentIndicatorIdx)
 
         let indicatorLevel0Active = indicatorsRef.current[currentIndicatorIdx].levels[0].active
@@ -256,13 +348,9 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
         const voice = indicatorLevel1Active ? voiceRef.current + "1" : voiceRef.current
 
         // gapTrainer
-        //const gapTrainerMute = gapTrainerRef.current && barCounterRef.current % 2 === 0  // testing
-
         const totalGapBars = gapBarsNormalRef.current + gapBarsMutedRef.current
         const mutedBarNum = barCounterRef.current - gapBarsNormalRef.current
-        console.log("muted bar num: ", mutedBarNum)
         const gapTrainerMute = gapTrainerRef.current && mutedBarNum > 0
-        console.log("Gap trainer mute: ", gapTrainerMute)
 
         if (soundEnabledRef.current && indicatorLevel0Active && !gapTrainerMute) {
           RTNSoundmodule?.playSound(voice, false)
@@ -278,6 +366,13 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           if (barCounterRef.current > totalGapBars) {
             barCounterRef.current = 1 // reset bar counter
           }
+
+          // tempoChanger
+          if (tempoChangerRef.current && tempoChangerBarCounterRef.current % tempoChangerBarsRef.current === 0) {
+            dispatch(actions.saveTempo(tempoRef.current + tempoChangerBpmsRef.current))
+          }
+
+          tempoChangerBarCounterRef.current = tempoChangerBarCounterRef.current + 1 // increment tempoChanger bar counter
           
         }
       }
@@ -295,6 +390,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
     const timeElapsed = new Date().getTime() - startTimeRef.current
     dispatch(actions.saveTimeUsage(timeElapsed))
     barCounterRef.current = 1
+    tempoChangerBarCounterRef.current = 1
   }, [])
 
   const getTapTempo = () => {
@@ -338,7 +434,10 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
     gapTrainerRef.current = gapTrainer
     gapBarsMutedRef.current = gapBarsMuted
     gapBarsNormalRef.current = gapBarsNormal
-  }, [tempo, isSoundEnabled, indicators, voice, gapTrainer, gapBarsMuted, gapBarsNormal])
+    tempoChangerRef.current = tempoChanger
+    tempoChangerBpmsRef.current = tempoChangerBpms
+    tempoChangerBarsRef.current = tempoChangerBars
+  }, [tempo, isSoundEnabled, indicators, voice, gapTrainer, gapBarsMuted, gapBarsNormal, tempoChanger, tempoChangerBpms, tempoChangerBars])
 
   return (
     <View>
@@ -394,21 +493,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => {
-          if (!isPlaying) 
-            {loop(setIntervalObj)} 
-            else 
-            { stopLoop(intervalObj)}}}>
-          <View style={[styles.buttonLarge, isPlaying && {backgroundColor: "lightgray"}]}>
-            <Text style={{ color: 'black', fontSize: 20 }}>
-              {isPlaying ? (
-                <Ionicons name="pause" size={24} color={palette.teal} />
-              ) : (
-                <Ionicons name="play" size={24} color="lightgray" />
-              )}
-            </Text>
-          </View>
-        </TouchableOpacity>
+        
 
         <TouchableOpacity
           onPress={() => dispatch(actions.toggleSound(!isSoundEnabled))}
@@ -428,6 +513,23 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           </View>
         </TouchableOpacity>
 
+        <TouchableOpacity onPress={() => {
+          if (!isPlaying) 
+            {loop(setIntervalObj)} 
+            else 
+            { stopLoop(intervalObj)}}}>
+          <View style={[styles.buttonLarge, isPlaying && {backgroundColor: "lightgray"}]}>
+            <Text style={{ color: 'black', fontSize: 20 }}>
+              {isPlaying ? (
+                <Ionicons name="pause" size={24} color={palette.teal} />
+              ) : (
+                <Text style={{color: "lightgray", fontWeight: "bold"}}>GO!</Text>
+                // <Ionicons name="play" size={24} color="lightgray" />
+              )}
+            </Text>
+          </View>
+        </TouchableOpacity>
+
 
         <TouchableOpacity
           onPress={() => openPresetsMenu()}
@@ -443,6 +545,16 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           <View style={[styles.buttonSmall, gapTrainer && {backgroundColor: "lightgray"}]}>
             <Text style={{ color: 'black', fontSize: 4 }}>
               <MaterialCommunityIcons name="transit-skip" size={24} color={gapTrainer ? "teal" : "lightgray"} />
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => tempoChangerModalRef.current.present()}>
+          <View style={[styles.buttonSmall, 
+                        {transform: [{ scaleX: -1 }]},
+                        tempoChanger && {backgroundColor: "lightgray"}]}>
+            <Text style={{ color: 'black', fontSize: 4 }}>
+              <MaterialCommunityIcons name="history" size={24} color={tempoChanger ? "teal" : "lightgray"} />
             </Text>
           </View>
         </TouchableOpacity>
@@ -534,6 +646,19 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
       </BottomSheetModal>
 
       <BottomSheetModal
+        ref={tempoChangerModalRef}
+        index={0}
+        enablePanDownToClose={true}
+        snapPoints={[250]}
+        backdropComponent={(props) => (<BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1}/> )}
+        handleIndicatorStyle={{backgroundColor: isDarkMode ? "black" : "black"}}
+        backgroundStyle={{backgroundColor: isDarkMode ? "#1f1f1f" : "#f1f1f1"}}>
+
+        <TempoChanger />
+        
+      </BottomSheetModal>
+
+      <BottomSheetModal
         ref={gapTrainerModalRef}
         index={0}
         enablePanDownToClose={true}
@@ -587,6 +712,24 @@ const styles = StyleSheet.create({
     //fontWeight: 'bold',
     textAlign: 'center',
   },
+
+  bpmButton: {
+    //paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+    marginTop: 4,
+    width: 70,
+  },
+  bpmButtonSelected: {
+    backgroundColor: palette.teal,
+  },
+  bpmButtonText: {
+    color: 'gray',
+    fontSize: 16,
+    //fontWeight: 'bold',
+    textAlign: 'center',
+  },
+
 })
 
 export default connectActionSheet(Controls)

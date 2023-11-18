@@ -26,6 +26,9 @@ const settingsSlice = createSlice({
     gapTrainer: false,
     gapBarsNormal: 2,
     gapBarsMuted: 1,
+    tempoChanger: false,
+    tempoChangerBpms: 1,
+    tempoChangerBars: 1,
 
   },
   reducers: {
@@ -67,7 +70,16 @@ const settingsSlice = createSlice({
     },
     setGapBarsMuted: (state, {payload}) => {
       state.gapBarsMuted = payload
-    }
+    },
+    toggleTempoChanger: (state, {payload}) => {
+      state.tempoChanger = payload
+    },
+    setTempoChangerBpms: (state, {payload}) => {
+      state.tempoChangerBpms = payload
+    },
+    setTempoChangerBars: (state, {payload}) => {
+      state.tempoChangerBars = payload
+    },
   }
 })
 
@@ -78,7 +90,10 @@ const tempoSlice = createSlice({
   },
   reducers: {
     saveTempo: (state, action) => {
-      state.value = action.payload
+      if (action.payload > 0 && action.payload <= 400) {
+        state.value = action.payload
+      }
+      
     },
     loadTempo: (state, action) => {
       state.value = action.payload
@@ -167,7 +182,9 @@ export const actions = {
   toggleGapTrainer: settingsSlice.actions.toggleGapTrainer,
   setGapBarsNormal: settingsSlice.actions.setGapBarsNormal,
   setGapBarsMuted: settingsSlice.actions.setGapBarsMuted,
-  
+  toggleTempoChanger: settingsSlice.actions.toggleTempoChanger,
+  setTempoChangerBpms: settingsSlice.actions.setTempoChangerBpms,
+  setTempoChangerBars: settingsSlice.actions.setTempoChangerBars,
 }
 
 const reducers = combineReducers({
