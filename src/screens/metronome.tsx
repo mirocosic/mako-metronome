@@ -139,37 +139,7 @@ const Metronome = () => {
           <SaveDialog isPresetDialogVisible={isPresetDialogVisible} setPresetDialogVisible={setPresetDialogVisible}/>
           
           
-          <BottomSheetModal
-              ref={bottomSheetModalRef}
-              index={0}
-              enablePanDownToClose={true}
-              snapPoints={[250]}
-              backdropComponent={(props) => (<BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1}/> )}
-              handleIndicatorStyle={{backgroundColor: isDarkMode ? "white" : "black"}}
-              backgroundStyle={{backgroundColor: isDarkMode ? "#1f1f1f" : "white"}}
-            >
-              <ScrollView contentContainerStyle={{paddingBottom: 40}}>
-                <Button title="1 Beat" color={palette.teal} onPress={() => dispatch(actions.setIndicators(1))} />
-                <Button title="2 Beats" color={palette.teal} onPress={() => dispatch(actions.setIndicators(2))} />
-                <Button title="3 Beats" color={palette.teal} onPress={() => dispatch(actions.setIndicators(3))} />
-                <Button title="4 Beats" color={palette.teal} onPress={() => dispatch(actions.setIndicators(4))} />
-                <Button title="5 Beats" color={palette.teal}  onPress={() => dispatch(actions.setIndicators(5))} />
-                <Button title="6 Beats" color={palette.teal} onPress={() => dispatch(actions.setIndicators(6))} />
-                <Button title="7 Beats" color={palette.teal} onPress={() => dispatch(actions.setIndicators(7))} />
-                <Button title="8 Beats" color={palette.teal} onPress={() => dispatch(actions.setIndicators(8))} />
-                {/* <Button title="9 Beats" onPress={() => dispatch(actions.setIndicators(9))} />
-                <Button title="10 Beats" onPress={() => dispatch(actions.setIndicators(10))} />
-                <Button title="11 Beats" onPress={() => dispatch(actions.setIndicators(11))} />
-                <Button title="12 Beats" onPress={() => dispatch(actions.setIndicators(12))} />
-                <Button title="13 Beats" onPress={() => dispatch(actions.setIndicators(13))} />
-                <Button title="14 Beats" onPress={() => dispatch(actions.setIndicators(14))} />
-                <Button title="15 Beats" onPress={() => dispatch(actions.setIndicators(15))} />
-                <Button title="16 Beats" onPress={() => dispatch(actions.setIndicators(16))} /> */}
-
-                
-                
-              </ScrollView>
-            </BottomSheetModal>
+          
 
         </View>
       </KeyboardAvoidingView>

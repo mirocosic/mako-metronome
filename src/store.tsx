@@ -29,6 +29,7 @@ const settingsSlice = createSlice({
     tempoChanger: false,
     tempoChangerBpms: 1,
     tempoChangerBars: 1,
+    subdivisions: [true, false, false, false]
 
   },
   reducers: {
@@ -80,6 +81,10 @@ const settingsSlice = createSlice({
     setTempoChangerBars: (state, {payload}) => {
       state.tempoChangerBars = payload
     },
+    setSubdivisions: (state, {payload}) => {
+      console.log("set subs: " , payload)
+      state.subdivisions = payload
+    }
   }
 })
 
@@ -185,6 +190,7 @@ export const actions = {
   toggleTempoChanger: settingsSlice.actions.toggleTempoChanger,
   setTempoChangerBpms: settingsSlice.actions.setTempoChangerBpms,
   setTempoChangerBars: settingsSlice.actions.setTempoChangerBars,
+  setSubdivisions: settingsSlice.actions.setSubdivisions,
 }
 
 const reducers = combineReducers({

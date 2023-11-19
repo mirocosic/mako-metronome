@@ -122,6 +122,18 @@ const BarButton = ({ selected, btnIdx, onPress }) => {
   );
 };
 
+const TimeSignatureButton = ({ title, selected, onPress }) => {
+  return (
+    <TouchableOpacity
+      style={[styles.timeSigButton, selected && styles.barButtonSelected]}
+      onPress={onPress}>
+      <Text style={[styles.barButtonText, selected && {color: "white"}]}>
+        {title}
+        </Text>
+    </TouchableOpacity>
+  );
+};
+
 
 const GapTrainer = ({gapBarsNormal, gapBarsMuted, gapTrainer}) => {
   const dispatch = useDispatch()
@@ -224,6 +236,9 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const tempoChangerBars = useSelector(state => state.settings.tempoChangerBars)
   const tempoChangerBarsRef = useRef(tempoChangerBars)
 
+  const subdivisions = useSelector(state => state.settings.subdivisions)
+  const subdivisionsRef = useRef(subdivisions)
+
 
   const [intervalObj, setIntervalObj] = useState(null)
   const [taps, setTaps] = useState([0])
@@ -288,6 +303,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const presetRef = useRef<BottomSheetModal>(null)
   const gapTrainerModalRef = useRef<BottomSheetModal>(null)
   const tempoChangerModalRef = useRef<BottomSheetModal>(null)
+  const timeSignatureModalRef = useRef<BottomSheetModal>(null)
 
   const toggleIndicator = (currentIndicatorIdx) => {
 
@@ -313,9 +329,15 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const loop = useCallback((setIntervalObj) => {
     togglePlaying(true)
     let currentIndicatorIdx = 0
+    let currentSubdivisionIdx = 0
     startTimeRef.current = new Date().getTime()
 
     const totalGapBars = gapBarsNormalRef.current + gapBarsMutedRef.current
+
+    //console.log("Subdivisions: ", subdivisionsRef.current)
+    // console.log("Indicator idx: ", currentIndicatorIdx)
+    // console.log("Subdivision idx: ", currentSubdivisionIdx)
+    console.log(currentIndicatorIdx, currentSubdivisionIdx)
 
     //trigger first indicator
     toggleIndicator(currentIndicatorIdx)
@@ -327,10 +349,12 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
     // first sound
     if (soundEnabledRef.current && indicatorLevel0Active) {
-      RTNSoundmodule?.playSound(voice, false)
+        RTNSoundmodule?.playSound(voice, false)
+      
     }
 
-    currentIndicatorIdx = currentIndicatorIdx + 1 // increment indicator after first sound
+    //currentIndicatorIdx = currentIndicatorIdx + 1 // increment indicator after first sound
+    currentSubdivisionIdx = currentSubdivisionIdx + 1 // increment subdivision after first sound
 
     // and then the rest
     let startTime = new Date().getTime();
@@ -338,43 +362,59 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
     const interval = setInterval(() => {
       const diffMs = new Date().getTime() - startTime;
 
-      if (diffMs > bpmToMs(tempoRef.current)) {
+      if (diffMs > (bpmToMs(tempoRef.current) / subdivisionsRef.current.length)) {
 
-        toggleIndicator(currentIndicatorIdx)
-
+        if (currentSubdivisionIdx === 0) {
+          toggleIndicator(currentIndicatorIdx)
+        }
+        
         let indicatorLevel0Active = indicatorsRef.current[currentIndicatorIdx].levels[0].active
         let indicatorLevel1Active = indicatorsRef.current[currentIndicatorIdx].levels[1].active
 
         const voice = indicatorLevel1Active ? voiceRef.current + "1" : voiceRef.current
 
-        // gapTrainer
+        //gapTrainer
         const totalGapBars = gapBarsNormalRef.current + gapBarsMutedRef.current
         const mutedBarNum = barCounterRef.current - gapBarsNormalRef.current
         const gapTrainerMute = gapTrainerRef.current && mutedBarNum > 0
 
         if (soundEnabledRef.current && indicatorLevel0Active && !gapTrainerMute) {
-          RTNSoundmodule?.playSound(voice, false)
+          if (currentSubdivisionIdx === 0) {
+            RTNSoundmodule?.playSound(voice, false)
+          } else if (subdivisionsRef.current[currentSubdivisionIdx]) {
+            RTNSoundmodule?.playSound("click", false)
+          }
         }
 
-        currentIndicatorIdx = currentIndicatorIdx + 1 // increment indicator after sound
+        
+        currentSubdivisionIdx = currentSubdivisionIdx + 1 // increment subdivision after sound
 
         startTime = new Date().getTime() // reset start time
 
-        if (currentIndicatorIdx >= indicatorsRef.current.length) {
-          currentIndicatorIdx = 0 // reset indicator
-          barCounterRef.current = barCounterRef.current + 1 // increment bar counter
-          if (barCounterRef.current > totalGapBars) {
-            barCounterRef.current = 1 // reset bar counter
+
+        if (currentSubdivisionIdx >= subdivisionsRef.current.length) {
+          currentSubdivisionIdx = 0 // reset subdivision
+
+          if ((currentIndicatorIdx + 1) === indicatorsRef.current.length) {
+            currentIndicatorIdx = 0 // reset indicator
+            barCounterRef.current = barCounterRef.current + 1 // increment bar counter
+            if (barCounterRef.current > totalGapBars) {
+                barCounterRef.current = 1 // reset bar counter
+              }
+
+            //tempoChanger
+            if (tempoChangerRef.current && tempoChangerBarCounterRef.current % tempoChangerBarsRef.current === 0) {
+              dispatch(actions.saveTempo(tempoRef.current + tempoChangerBpmsRef.current))
+            }
+
+            tempoChangerBarCounterRef.current = tempoChangerBarCounterRef.current + 1 // increment tempoChanger bar counter
+
+          } else {
+            currentIndicatorIdx = currentIndicatorIdx + 1 // increment indicator after sound
           }
 
-          // tempoChanger
-          if (tempoChangerRef.current && tempoChangerBarCounterRef.current % tempoChangerBarsRef.current === 0) {
-            dispatch(actions.saveTempo(tempoRef.current + tempoChangerBpmsRef.current))
-          }
-
-          tempoChangerBarCounterRef.current = tempoChangerBarCounterRef.current + 1 // increment tempoChanger bar counter
-          
         }
+
       }
 
     }, 1)
@@ -437,7 +477,8 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
     tempoChangerRef.current = tempoChanger
     tempoChangerBpmsRef.current = tempoChangerBpms
     tempoChangerBarsRef.current = tempoChangerBars
-  }, [tempo, isSoundEnabled, indicators, voice, gapTrainer, gapBarsMuted, gapBarsNormal, tempoChanger, tempoChangerBpms, tempoChangerBars])
+    subdivisionsRef.current = subdivisions
+  }, [tempo, isSoundEnabled, indicators, voice, gapTrainer, gapBarsMuted, gapBarsNormal, tempoChanger, tempoChangerBpms, tempoChangerBars, subdivisions])
 
   return (
     <View>
@@ -485,7 +526,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
         </TouchableOpacity> */}
 
         <TouchableOpacity
-          onPress={() => bottomSheetModalRef.current.present()}>
+          onPress={() => timeSignatureModalRef.current.present()}>
           <View style={styles.buttonSmall}>
             <Text style={{ color: 'black', fontSize: 14 }}>
               <Fontisto name="heartbeat-alt" size={24} color="lightgray" />
@@ -671,6 +712,57 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
         
       </BottomSheetModal>
 
+
+      <BottomSheetModal
+        ref={timeSignatureModalRef}
+        index={0}
+        enablePanDownToClose={true}
+        snapPoints={[250]}
+        backdropComponent={(props) => (<BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1}/> )}
+        handleIndicatorStyle={{backgroundColor: isDarkMode ? "white" : "black"}}
+        backgroundStyle={{backgroundColor: isDarkMode ? "#1f1f1f" : "white"}}>
+
+        <View>
+          <Copy value="Time signature" style={{color: palette.teal, fontSize: 18, padding: 10}} />
+
+        </View>
+
+        <ScrollView contentContainerStyle={{paddingBottom: 10}} horizontal={true}>
+          <Button title="1/4" color="lightgray" onPress={() => dispatch(actions.setIndicators(1))} />
+          <Button title="2/4" color="lightgray" onPress={() => dispatch(actions.setIndicators(2))} />
+          <Button title="3/4" color="lightgray" onPress={() => dispatch(actions.setIndicators(3))} />
+          <Button title="4/4" color="lightgray" onPress={() => dispatch(actions.setIndicators(4))} />
+          <Button title="5/4" color="lightgray" onPress={() => dispatch(actions.setIndicators(5))} />
+          <Button title="6/4" color="lightgray" onPress={() => dispatch(actions.setIndicators(6))} />
+          <Button title="7/4" color="lightgray" onPress={() => dispatch(actions.setIndicators(7))} />
+          <Button title="8/4" color="lightgray" onPress={() => dispatch(actions.setIndicators(8))} />
+        </ScrollView>
+
+        <Copy value="Subdivisons" style={{color: palette.teal, fontSize: 18, padding: 10}} />
+        <ScrollView contentContainerStyle={{paddingBottom: 10}} horizontal={true}>
+          <TimeSignatureButton 
+            title="♩"
+            selected={subdivisions.toString() === [true, false, false, false].toString()}
+            onPress={() => dispatch(actions.setSubdivisions([true, false, false, false]))}/>
+
+          <TimeSignatureButton 
+            title="♫"
+            selected={subdivisions.toString() === [true, false, true, false].toString()}
+            onPress={() => dispatch(actions.setSubdivisions([true, false, true, false]))}/>
+            
+          <TimeSignatureButton 
+            title="♬♬"
+            selected={subdivisions.toString() === [true, true, true, true].toString()}
+            onPress={() => dispatch(actions.setSubdivisions([true, true, true, true]))}/>
+
+          <TimeSignatureButton 
+            title="♩♩♩"
+            selected={subdivisions.toString() === [true, true, true].toString()}
+            onPress={() => dispatch(actions.setSubdivisions([true, true, true]))}/>
+        </ScrollView>
+
+      </BottomSheetModal>
+
     </View>
   )
 }
@@ -729,6 +821,14 @@ const styles = StyleSheet.create({
     //fontWeight: 'bold',
     textAlign: 'center',
   },
+
+  timeSigButton: {
+    height: 30,
+    paddingVertical: 5,
+    borderRadius: 5,
+    marginTop: 4,
+    width: 65,
+  }
 
 })
 
