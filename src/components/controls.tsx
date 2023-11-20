@@ -240,7 +240,6 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const subdivisionsRef = useRef(subdivisions)
 
 
-  const [intervalObj, setIntervalObj] = useState(null)
   const [taps, setTaps] = useState([0])
   const [tapMessage, setTapMessage] = useState("")
   const [volumeIndicator, setVolumeIndicator] = useState(volume)
@@ -249,6 +248,8 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
   const startTimeRef = useRef(null)
   const barCounterRef = useRef(1)
   const tempoChangerBarCounterRef = useRef(1)
+
+  const isPlayingRef = useRef(false)
 
   const openPresetsMenu = () => {
     showActionSheetWithOptions(
@@ -295,10 +296,6 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
     );
   };
 
-
-
-  const [switchValue, setSwitchValue] = useState(false)
-
   const volumeSheetRef = useRef<BottomSheetModal>(null)
   const presetRef = useRef<BottomSheetModal>(null)
   const gapTrainerModalRef = useRef<BottomSheetModal>(null)
@@ -326,18 +323,16 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
   }
 
-  const loop = useCallback((setIntervalObj) => {
+  const loop = useCallback(() => {
     togglePlaying(true)
+    isPlayingRef.current = true
+
     let currentIndicatorIdx = 0
     let currentSubdivisionIdx = 0
     startTimeRef.current = new Date().getTime()
 
     const totalGapBars = gapBarsNormalRef.current + gapBarsMutedRef.current
 
-    //console.log("Subdivisions: ", subdivisionsRef.current)
-    // console.log("Indicator idx: ", currentIndicatorIdx)
-    // console.log("Subdivision idx: ", currentSubdivisionIdx)
-    console.log(currentIndicatorIdx, currentSubdivisionIdx)
 
     //trigger first indicator
     toggleIndicator(currentIndicatorIdx)
@@ -357,16 +352,15 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
     currentSubdivisionIdx = currentSubdivisionIdx + 1 // increment subdivision after first sound
 
     // and then the rest
-    let startTime = new Date().getTime();
+    //let startTime = new Date().getTime();
+    //let startTime = performance.now();
 
-    const interval = setInterval(() => {
-      const diffMs = new Date().getTime() - startTime;
+    const timer = () => {
 
-      if (diffMs > (bpmToMs(tempoRef.current) / subdivisionsRef.current.length)) {
-
-        if (currentSubdivisionIdx === 0) {
+      
+      if (currentSubdivisionIdx === 0) {
           toggleIndicator(currentIndicatorIdx)
-        }
+      }
         
         let indicatorLevel0Active = indicatorsRef.current[currentIndicatorIdx].levels[0].active
         let indicatorLevel1Active = indicatorsRef.current[currentIndicatorIdx].levels[1].active
@@ -385,11 +379,9 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
             RTNSoundmodule?.playSound("click", false)
           }
         }
-
         
         currentSubdivisionIdx = currentSubdivisionIdx + 1 // increment subdivision after sound
 
-        startTime = new Date().getTime() // reset start time
 
 
         if (currentSubdivisionIdx >= subdivisionsRef.current.length) {
@@ -397,10 +389,11 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
           if ((currentIndicatorIdx + 1) === indicatorsRef.current.length) {
             currentIndicatorIdx = 0 // reset indicator
+
             barCounterRef.current = barCounterRef.current + 1 // increment bar counter
             if (barCounterRef.current > totalGapBars) {
                 barCounterRef.current = 1 // reset bar counter
-              }
+            }
 
             //tempoChanger
             if (tempoChangerRef.current && tempoChangerBarCounterRef.current % tempoChangerBarsRef.current === 0) {
@@ -415,18 +408,25 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
         }
 
+
+
+
+
+      if (isPlayingRef.current) {
+        setTimeout(timer, (bpmToMs(tempoRef.current) / subdivisionsRef.current.length))
       }
+    }
 
-    }, 1)
-
-    setIntervalObj(interval)
+    setTimeout(timer, (bpmToMs(tempoRef.current) / subdivisionsRef.current.length))
 
 
   }, [tempo])
 
-  const stopLoop = useCallback((interval) => {
+  const stopLoop = useCallback(() => {
     togglePlaying(false)
-    clearInterval(interval)
+
+    isPlayingRef.current = false
+
     const timeElapsed = new Date().getTime() - startTimeRef.current
     dispatch(actions.saveTimeUsage(timeElapsed))
     barCounterRef.current = 1
@@ -556,9 +556,9 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
         <TouchableOpacity onPress={() => {
           if (!isPlaying) 
-            {loop(setIntervalObj)} 
+            {loop()} 
             else 
-            { stopLoop(intervalObj)}}}>
+            { stopLoop()}}}>
           <View style={[styles.buttonLarge, isPlaying && {backgroundColor: "lightgray"}]}>
             <Text style={{ color: 'black', fontSize: 20 }}>
               {isPlaying ? (
