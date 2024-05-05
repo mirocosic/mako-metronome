@@ -7971,6 +7971,9 @@ rimraf@~2.6.2:
   dependencies:
     glob "^7.1.3"
 
+rtn-metronome-module@../RTNMetronomeModule:
+  version "0.1.0"
+
 rtn-soundmodule@../RTNSoundmodule:
   version "0.0.1"
 

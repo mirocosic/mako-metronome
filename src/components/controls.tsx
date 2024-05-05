@@ -20,6 +20,12 @@ import { ScrollView, Switch } from "react-native-gesture-handler"
 import { VolumeManager } from 'react-native-volume-manager';
 import RTNSoundmodule from 'rtn-soundmodule/js/NativeSoundmodule'
 
+import RTNMetronomeModule from "rtn-metronome-module/src/NativeRTNMetronomeModule"
+
+RTNMetronomeModule.multiply(3, 7, (result) => {
+  console.log('3 * 7 = ', result);
+})
+
 const BpmButton = ({ selected, btnIdx, onPress }) => {
   return (
     <TouchableOpacity
@@ -357,7 +363,8 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
 
     const timer = () => {
 
-      
+      let startTime = performance.now();
+
       if (currentSubdivisionIdx === 0) {
           toggleIndicator(currentIndicatorIdx)
       }
@@ -409,7 +416,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
         }
 
 
-
+      //console.log("time: ", (performance.now() - startTime) * 1000)
 
 
       if (isPlayingRef.current) {
@@ -608,6 +615,23 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           <Copy style={{textAlign: "center", color: isDarkMode ? "lightgray" : "gray"}} value={`Preset: ${currentPreset.name}`} />
         ) : null}
       </View>
+
+      <Button 
+        title="Start"
+        color={palette.teal} 
+        onPress={() => {
+          console.log("bpms: ")
+          console.log(bpmToMs(tempoRef.current))
+          RTNMetronomeModule.start(bpmToMs(tempoRef.current), () => console.log("Callback from native"))}}>
+      </Button>
+
+      <Button 
+        title="Stop"
+        onPress={() => {
+          stopLoop()
+          RTNMetronomeModule.stop()}}
+        color={palette.teal}>
+      </Button>
 
       <BottomSheetModal
         ref={volumeSheetRef}

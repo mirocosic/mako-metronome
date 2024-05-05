@@ -1263,6 +1263,22 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - rtn-metronome-module (0.1.4):
+    - hermes-engine
+    - RCT-Folly (= 2021.07.22.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-graphics
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - rtn-soundmodule (0.0.1):
     - hermes-engine
     - RCT-Folly (= 2021.07.22.00)
@@ -1371,6 +1387,7 @@ DEPENDENCIES:
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
+  - rtn-metronome-module (from `../node_modules/rtn-metronome-module`)
   - rtn-soundmodule (from `../node_modules/rtn-soundmodule`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -1516,6 +1533,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-screens"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
+  rtn-metronome-module:
+    :path: "../node_modules/rtn-metronome-module"
   rtn-soundmodule:
     :path: "../node_modules/rtn-soundmodule"
   Yoga:
@@ -1596,6 +1615,7 @@ SPEC CHECKSUMS:
   RNReanimated: 0643b65384721180721a0a726a3b9233e9c4da09
   RNScreens: cfd9491b1c7cac6a46bfb8c0326a5e79ca3e6286
   RNVectorIcons: 5cea2a7af07c79659c4e4eb41ba2311a365d4aeb
+  rtn-metronome-module: 7e9afd5f20a2c2643aaa102aba4ad3ca038b7430
   rtn-soundmodule: 004910c3796c0d6936151d11fe4e00fdcd9180ea
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: b76f1acfda8212aa16b7e26bcce3983230c82603
@@ -1603,4 +1623,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: e5732a0ace53a9115b66d3364bb4e2db6ef3a4f3
 
-COCOAPODS: 1.14.2
+COCOAPODS: 1.15.2

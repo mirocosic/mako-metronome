@@ -43,6 +43,7 @@
     "react-redux": "^8.1.1",
     "redux": "^4.2.1",
     "redux-persist": "^6.0.0",
+    "rtn-metronome-module": "../RTNMetronomeModule",
     "rtn-soundmodule": "../RTNSoundmodule",
     "yarn": "^1.22.19"
   },
