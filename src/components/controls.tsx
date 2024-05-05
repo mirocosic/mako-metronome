@@ -616,13 +616,13 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
         ) : null}
       </View>
 
-      <Button 
+      {/* <Button
         title="Start"
         color={palette.teal} 
         onPress={() => {
           console.log("bpms: ")
           console.log(bpmToMs(tempoRef.current))
-          RTNMetronomeModule.start(bpmToMs(tempoRef.current), () => console.log("Callback from native"))}}>
+          RTNMetronomeModule.start(bpmToMs(tempoRef.current))}}>
       </Button>
 
       <Button 
@@ -631,7 +631,7 @@ const Controls = ({togglePlaying, isPlaying, tempo, indicators, setCurrentIndica
           stopLoop()
           RTNMetronomeModule.stop()}}
         color={palette.teal}>
-      </Button>
+      </Button> */}
 
       <BottomSheetModal
         ref={volumeSheetRef}
