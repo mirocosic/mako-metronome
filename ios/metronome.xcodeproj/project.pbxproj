@@ -18,6 +18,7 @@
 		4EC6D2E62B00F06C00842636 /* click1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4EC6D2E52B00F06C00842636 /* click1.mp3 */; };
 		4EC6D2E82B00F0BA00842636 /* clave.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 4EC6D2E72B00F0BA00842636 /* clave.mp3 */; };
 		60933BEB87868434D92B4001 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C26D73CF8B06B841D9ED9B03 /* ExpoModulesProvider.swift */; };
+		6132EF182BDFF13200BBE14D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6132EF172BDFF13200BBE14D /* PrivacyInfo.xcprivacy */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		D05DABD0C85E6E46A2EB8B1B /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1415A8D880AE8CFEA86702E1 /* ExpoModulesProvider.swift */; };
 		F453E15C99BEF9C2C16DC0F8 /* libPods-metronome.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ABABE39A77905B6B3992B302 /* libPods-metronome.a */; };
@@ -73,6 +74,7 @@
 		4EFADE4B2AEE7DCB0069DEF5 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SimpleLineIcons.ttf; sourceTree = "<group>"; };
 		4EFADE4C2AEE7DCB0069DEF5 /* FontAwesome6_Brands.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome6_Brands.ttf; sourceTree = "<group>"; };
 		4EFADE4D2AEE7DCB0069DEF5 /* MaterialIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = MaterialIcons.ttf; sourceTree = "<group>"; };
+		6132EF172BDFF13200BBE14D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = metronome/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		79912986A874756297EF5FB2 /* Pods-metronome-metronomeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-metronome-metronomeTests.debug.xcconfig"; path = "Target Support Files/Pods-metronome-metronomeTests/Pods-metronome-metronomeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = metronome/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		ABABE39A77905B6B3992B302 /* libPods-metronome.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-metronome.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -195,6 +197,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				6132EF172BDFF13200BBE14D /* PrivacyInfo.xcprivacy */,
 				13B07FAE1A68108700A75B9A /* metronome */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* metronomeTests */,
@@ -341,6 +344,7 @@
 			files = (
 				4EC6D2E82B00F0BA00842636 /* clave.mp3 in Resources */,
 				4E5841CC2A306C3800254337 /* click.mp3 in Resources */,
+				6132EF182BDFF13200BBE14D /* PrivacyInfo.xcprivacy in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				4EC6D2E62B00F06C00842636 /* click1.mp3 in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
@@ -611,7 +615,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = metronome/metronome.entitlements;
-				CURRENT_PROJECT_VERSION = 66;
+				CURRENT_PROJECT_VERSION = 67;
 				DEVELOPMENT_TEAM = QDRTVHPM2W;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = metronome/Info.plist;
@@ -643,7 +647,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = metronome/metronome.entitlements;
-				CURRENT_PROJECT_VERSION = 66;
+				CURRENT_PROJECT_VERSION = 67;
 				DEVELOPMENT_TEAM = QDRTVHPM2W;
 				INFOPLIST_FILE = metronome/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Makonome;
@@ -740,11 +744,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DRN_FABRIC_ENABLED",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-Wl",
-					"-ld_classic",
-				);
+				OTHER_LDFLAGS = "$(inherited)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -820,11 +820,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DRN_FABRIC_ENABLED",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-Wl",
-					"-ld_classic",
-				);
+				OTHER_LDFLAGS = "$(inherited)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
