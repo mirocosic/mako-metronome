@@ -45,7 +45,7 @@
     "redux-persist": "^6.0.0",
     "rtn-metronome-module": "../RTNMetronomeModule",
     "rtn-soundmodule": "../RTNSoundmodule",
-    "yarn": "^1.22.19"
+    "yarn": "^1.22.22"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",
